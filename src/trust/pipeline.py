@@ -108,18 +108,27 @@ class VirtualSensor:
                 yield {"t": i / self.fs, "channel": name, "samples": v[i:i + self.n]}
 
 
+_V5 = {}
+REASONS = {"ppg_unavailable": "PPG channel unavailable", "incomplete_ecg_window": "Incomplete ECG window"}
+
+
 def run_alarm(rec, alarm_type, d):
-    """d: результат cinc.load. V3 (замороженная логистическая регрессия, models/v3_logreg.json) + q (quality_v2).
-    Метка записи сюда НЕ передаётся."""
-    from . import model as M          # локально: features.py импортирует pipeline
-    from .features import extract
-    e1 = d["ecg"][0] if d["ecg"] else None
-    e2 = d["ecg"][1] if len(d["ecg"]) > 1 else None
-    seg = {"ecg1": e1, "ecg2": e2, "ppg": d["ppg"], "alarm_type": alarm_type, "fs": FS}
-    win = np.array([x[-Q_WIN * FS:] for x in d["ecg"]])
-    q = quality(win) if len(win) else 0.0
-    v0, info = verify_detail(seg)      # V0 остаётся для пояснения (ЧСС за 10 с), не для решения
-    if e1 is None or alarm_type not in SUPPORTED:
-        return {"q": round(q, 3), "p_true": None, "info": info, **decide(q, None, alarm_type)}
-    p = M.predict(M.load(), extract(d, alarm_type))
-    return {"q": round(q, 3), "p_true": round(p, 3), "info": info, **decide(q, p, alarm_type)}
+    """V5: LightGBM на feat2 (models/v5_lgbm.txt), красный только при p >= T (T=0.7155, выбран на VTaC validation).
+    Шлюз качества BUT на ICU убран из условия красного. Жёлтый с причиной, если нет PPG или окно ЭКГ неполное. Метка сюда НЕ передаётся."""
+    import json as _j
+    import lightgbm as lgb      # без torch в одном процессе (segfault)
+    from . import feat2
+    if not _V5:
+        _V5["cfg"] = _j.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "models", "v5_config.json")))
+        _V5["b"] = lgb.Booster(model_file=os.path.join(os.path.dirname(__file__), "..", "..", "models", "v5_lgbm.txt"), params={"num_threads": 1})
+    cfg = _V5["cfg"]
+    if not d["ecg"] or len(d["ecg"][0]) < 300 * FS:
+        return {"p_true": None, "state": "yellow", "reason_code": "incomplete_ecg_window", "reason": REASONS["incomplete_ecg_window"], "T": cfg["T"], "f": {}}
+    f = feat2.extract(d, alarm_type)
+    import pandas as _pd
+    p = float(_V5["b"].predict(_pd.DataFrame([f])[cfg["features"]])[0])
+    if d["ppg"] is None:
+        return {"p_true": round(p, 3), "state": "yellow", "reason_code": "ppg_unavailable", "reason": REASONS["ppg_unavailable"], "T": cfg["T"], "f": f}
+    if p >= cfg["T"]:
+        return {"p_true": round(p, 3), "state": "red", "reason_code": "score_at_or_above_threshold", "reason": "Model score %.2f is at or above the threshold %.2f." % (p, cfg["T"]), "T": cfg["T"], "f": f}
+    return {"p_true": round(p, 3), "state": "yellow", "reason_code": "score_below_threshold", "reason": "Model score %.2f is below the threshold %.2f." % (p, cfg["T"]), "T": cfg["T"], "f": f}

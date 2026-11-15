@@ -1,13 +1,15 @@
 """Сборка сцен демо ИЗ ДАННЫХ. Ничего не подставляется: нет файла/записи -> исключение, экран покажет ошибку."""
 import csv, json, os
 import numpy as np
+from pathlib import Path
 from scipy.signal import resample_poly
-from .cinc import load, read_alarms
+from . import vtac
 from .pipeline import run_alarm, quality, Q_GOOD, Q_WIN
 from .signal import FS, flat_frac
 
-SPLIT = "data/split.json"
-BUT = "data/butqdb/111001"
+DEMO_DATA = Path(__file__).resolve().parents[2] / "demo_data"
+SCENE_MANIFEST = DEMO_DATA / "scenes.json"
+BUT = DEMO_DATA / "butqdb" / "111001"
 BUT_T0 = 67740  # с от начала записи 111001 (фрагмент 180 с)
 BUT_DUR = 180
 ACC_CAL = [(6.7297, -17228), (9.4294, 8015), (7.124, 4634)]  # из 111001_ACC.hea: gain, baseline (мг)
@@ -15,9 +17,10 @@ ACC_CAL = [(6.7297, -17228), (9.4294, 8015), (7.124, 4634)]  # из 111001_ACC.h
 TYPE_RU = {"Asystole": "Asystole", "Bradycardia": "Bradycardia", "Tachycardia": "Tachycardia",
            "Ventricular_Tachycardia": "Ventricular tachycardia", "Ventricular_Flutter_Fib": "Ventricular flutter/fibrillation"}
 ACTION = {
-    "red": "Looks real. Check the person now",
-    "yellow": "Event not excluded. Check",
+    "red": "Available signals support the monitor alert.",
+    "yellow": "Verification inconclusive. The original alert remains active.",
 }
+VT = "Ventricular_Tachycardia"
 
 
 def _r(x, n=4):
@@ -25,68 +28,47 @@ def _r(x, n=4):
 
 
 def pick_scene_b():
-    """Правило выбора (фиксировано, без просмотра сигналов): validation, есть PLETH, первая по отсортированным ID запись
-    для каждого сценария: (1) метка true и решение red; (2) метка false, жёлтый и q<0.3; (3) метка false, жёлтый, q>=0.6 (правило условие не подтвердило)."""
-    sp = json.load(open(SPLIT))
-    al = read_alarms()
-    want = {"true_red": None, "false_bad": None, "false_good": None}
-    for r in sorted(sp["validation"]):  # ключ holdout не используется
-        if all(want.values()):
-            break
-        t, y = al[r]
-        d = load(r)
-        if d["ppg"] is None or len(d["ecg"]) < 1:
-            continue
-        o = run_alarm(r, t, d)
-        if want["true_red"] is None and y == 1 and o["state"] == "red":
-            want["true_red"] = r
-        elif want["false_bad"] is None and y == 0 and o["state"] == "yellow" and o["q"] < 0.3:
-            want["false_bad"] = r
-        elif want["false_good"] is None and y == 0 and o["state"] == "yellow" and o["q"] >= Q_GOOD:
-            want["false_good"] = r
-    return want
+    """Fixed B1-B3 selectors: only the three bundled VTaC validation excerpts are loaded."""
+    rows = vtac.events()
+    selectors = json.loads(SCENE_MANIFEST.read_text())["b"]
+    selected = {}
+    for spec in selectors:
+        match = rows[(rows.record == spec["record"]) & (rows.event == spec["event"])]
+        if len(match) != 1 or match.iloc[0].split != "val":
+            raise RuntimeError(f"Bundled scene {spec['id']} is missing from the VTaC validation metadata")
+        row = match.iloc[0]
+        if bool(row.y) != bool(spec["decision"]):
+            raise RuntimeError(f"Bundled VTaC label mismatch for {spec['id']}")
+        data = vtac.load(spec["record"], spec["event"])
+        result = run_alarm(spec["event"], VT, data)
+        if result["state"] != spec["expected_state"]:
+            raise RuntimeError(f"Bundled scene {spec['id']} changed state: expected {spec['expected_state']}, got {result['state']}")
+        selected[spec["id"]] = (spec, int(row.y), data, result)
+    return selected
 
 
 def build_b():
-    al = read_alarms()
     scenes = []
-    titles = {"true_red": "B1", "false_bad": "B2", "false_good": "B3"}
-    for key, rec in pick_scene_b().items():
-        if rec is None:
-            raise RuntimeError("no record found for scene " + key)
-        t, y = al[rec]
-        d = load(rec)
-        o = run_alarm(rec, t, d)
+    for key, (spec, y, d, o) in pick_scene_b().items():
+        rec, evn = spec["record"], spec["event"]
+        f = o["f"]
         n30 = 30 * FS
         ch = [{"name": n, "x": _r(x[-n30:])} for n, x in zip(d["ecg_names"][:2], d["ecg"][:2])]
         ch.append({"name": "PLETH", "x": _r(d["ppg"][-n30:])})
-        flats = {n: round(flat_frac(x[-Q_WIN * FS:]), 2) for n, x in zip(d["ecg_names"][:2], d["ecg"][:2])}
-        info = o["info"]
-        if o["p_true"] is None:
-            check = "Check not run: no ECG, or alarm type not supported."
-        else:
-            check = ("Logistic model (trained on 450 ICU alarms, not validated for clinical use): model score (not calibrated) %.2f "
-                     "(red needs at least 0.50 and signal quality at least %.2f). Heart rate over the last 10 s: %.0f bpm from %d beats."
-                     % (o["p_true"], Q_GOOD, info["hr"], info["n_beats"]))
-            if o["reason_code"] == "signal_quality_low":
-                check += " ECG quality is low, so the result is not used to set the alarm aside."
-            elif o["state"] == "yellow":
-                check += " The model did not confirm the event, but it cannot rule it out, so the alarm stays open."
+        detail = ("Model score %.2f, threshold %.2f. Heart rate over the last 10 s: ECG %.0f bpm, PPG pulse %.0f bpm. "
+                  "Model: LightGBM on ECG and PPG features, trained on ICU alarms; not clinically validated." % (o["p_true"], o["T"], f.get("hr_last10", 0), f.get("ppg_hr10", 0)))
         scenes.append({
-            "id": key, "title": titles[key], "record": rec, "alarm_type": TYPE_RU[t], "t_alarm": 300,
+            "id": key, "title": spec["title"], "record": evn, "alarm_type": TYPE_RU[VT], "t_alarm": 300,
             "state": o["state"], "action": ACTION[o["state"]], "reason_code": o["reason_code"],
-            "quality_line": ("ECG (%s) quality score %.2f of 1 (experimental score, not a probability; sufficient from %.2f). Flat seconds in last 10 s: %s."
-                             % ("/".join(d["ecg_names"][:2]), o["q"], Q_GOOD, ", ".join("%s %.0f%%" % (k, 100 * v) for k, v in flats.items()))
-                             + (" Signal quality low. Check the sensor." if o["q"] < Q_GOOD else "")),
-            "check_line": check, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
-            "label_reveal": "CinC 2015 expert label: alarm %s." % ("confirmed" if y == 1 else "not confirmed"),
+            "reason_line": o["reason"], "detail_line": detail, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
+            "label_reveal": "VTaC expert label: alert %s." % ("confirmed" if y == 1 else "not confirmed"),
         })
     return scenes
 
 
 def _but_ann_classes(n_s):
     """Консенсусный класс на каждую секунду фрагмента (из _ANN.csv, группа 4, отсчёты 1-based 1000 Гц)."""
-    rows = list(csv.reader(open(os.path.join(BUT, "111001_ANN.csv"))))
+    rows = list(csv.reader(open(BUT / "111001_ANN.csv")))
     seg = [(int(r[9]), int(r[10]), int(r[11])) for r in rows if r[11].strip() != ""]
     cls = np.zeros(n_s * 1000, int)
     lo, hi = BUT_T0 * 1000 + 1, (BUT_T0 + n_s) * 1000
@@ -98,8 +80,8 @@ def _but_ann_classes(n_s):
 
 
 def build_a():
-    ecg = np.fromfile(os.path.join(BUT, "frag_ECG_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").astype(float)
-    acc = np.fromfile(os.path.join(BUT, "frag_ACC_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").reshape(-1, 3).astype(float)
+    ecg = np.fromfile(BUT / ("frag_ECG_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").astype(float)
+    acc = np.fromfile(BUT / ("frag_ACC_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").reshape(-1, 3).astype(float)
     if len(ecg) != BUT_DUR * 1000 or len(acc) != BUT_DUR * 100:
         raise RuntimeError("BUT QDB fragment is incomplete")
     ecg250 = resample_poly(ecg, 1, 4)  # антиалиасинг, не срез [::4]

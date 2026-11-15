@@ -1,9 +1,11 @@
 # NASA Space Apps 2026, Budapest: Trust Layer (команда «Zakaz Konina»)
 
 **Демо (3 строки):**
-1. Установка: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` (данные в `data/` скачать по `docs/04-data-plan.md`, в git их нет).
-2. Запуск: `./run_demo.sh` (интернет не нужен: шрифты и скрипты локальные, внешних URL в коде нет).
-3. Адрес: http://127.0.0.1:8000 (сцены `?scene=true_red`, `false_bad`, `false_good`, `a`).
+1. Установка: `python3 -m venv .venv && .venv/bin/pip install -r requirements-demo.txt`.
+2. Запуск: `./run_demo.sh` — после установки зависимостей сеть не нужна; демо использует только `demo_data/` и модели из `models/`.
+3. Открой http://127.0.0.1:8000: B1 — подтверждённая VT-тревога, B2 — жёлтая неподтверждённая тревога, B3 — настоящая тревога остаётся активной, A — запись BUT QDB.
+
+В репозитории лежит только нужный небольшой набор сцен (примерно 2,75 MB), не полные VTaC и BUT QDB. Атрибуция, состав и лицензии: [`demo_data/ATTRIBUTION.md`](demo_data/ATTRIBUTION.md). Модель V5 и параметры V5/Q-gate находятся в git: `models/v5_lgbm.txt`, `models/v5_config.json`, `models/quality_v2.json`.
 
 ## Detector attempt 2: frozen exploratory protocol
 

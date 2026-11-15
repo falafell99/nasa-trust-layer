@@ -1,0 +1,7 @@
+{
+  "b": [
+    {"id":"true_red","title":"B1","record":"0060de","event":"0060de_0560","decision":true,"expected_state":"red"},
+    {"id":"false_yellow","title":"B2","record":"012473","event":"012473_0351","decision":false,"expected_state":"yellow"},
+    {"id":"true_yellow","title":"B3","record":"02d43c","event":"02d43c_0267","decision":true,"expected_state":"yellow"}
+  ]
+}

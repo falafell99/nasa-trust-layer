@@ -1,12 +1,13 @@
 """Загрузка VTaC v1.1: каналы по именам (ECG = всё кроме PLETH/ABP/RESP), 250 Гц, обрезка до 300 с ДО обработки.
 VTaC = только тревоги VT (по docs/11 лида) -> тип 'Ventricular_Tachycardia'."""
 import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import wfdb
 from .cinc import FS, N_ALARM, pick_channels
 
-ROOT = "data/vtac"
+ROOT = str(Path(__file__).resolve().parents[2] / "demo_data" / "vtac")
 
 
 def events(root=ROOT):

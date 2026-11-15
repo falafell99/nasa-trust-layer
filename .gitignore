@@ -3,6 +3,7 @@ data/
 *.dat
 *.mat
 *.pkl
+!demo_data/**/*.dat
 .venv/
 __pycache__/
 .ipynb_checkpoints/
