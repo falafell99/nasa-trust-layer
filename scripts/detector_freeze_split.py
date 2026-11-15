@@ -80,7 +80,7 @@ def main() -> None:
         "seed": SEED,
         "ratios": RATIOS,
         "holdout_policy": "Do not compute or inspect holdout predictions until model and threshold are frozen from training/validation.",
-        "annotation_merge_gap_seconds": 1.0,
+        "annotation_merge_gap_seconds": 0.0,
         "datasets": split,
         "annotation_counts_for_stratification_only": metadata,
     }
