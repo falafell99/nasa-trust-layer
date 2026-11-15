@@ -15,7 +15,7 @@ def job(a):
     if ds == "cinc":
         d = load(key); t = AL[key][0]; y = AL[key][1]; grp = key
     else:
-        rec, ev = key; d = vtac.load(rec, ev); t = None; y = None; grp = rec
+        rec, ev = key; d = vtac.load(rec, ev); t = "Ventricular_Tachycardia"; y = None; grp = rec
     f = feat2.extract(d, t)
     return f, feat2.cnn_input(d)
 
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         ev = vtac.events()
         for p in parts:
             for _, e in ev[ev.split == p].iterrows():
-                keys.append((e.record, e.event)); rows.append(dict(split=p, record=e.event, group=e.record, y=int(e.y), alarm_type="unknown"))
+                keys.append((e.record, e.event)); rows.append(dict(split=p, record=e.event, group=e.record, y=int(e.y), alarm_type="Ventricular_Tachycardia"))
     with ProcessPoolExecutor(16) as ex:
         res = list(ex.map(job, [(ds, k) for k in keys], chunksize=8))
     df = pd.concat([pd.DataFrame(rows), pd.DataFrame([r[0] for r in res])], axis=1)
