@@ -37,7 +37,7 @@ input[type=range]{width:100%;accent-color:var(--ink);margin:8px 0 0}
 @media (max-width:640px){.action{font-size:23px}.row{grid-template-columns:1fr;gap:0}}
 </style></head><body><main>
 <header>
- <div><h1>Trust Layer, offline replay on recorded data.</h1><p>Earth data, not astronauts. Check step is a small logistic model trained on ICU alarms, not clinically validated.</p></div>
+ <div><h1>Trust Layer, offline replay on recorded data.</h1><p>Earth data, not astronauts. Check step is a LightGBM model trained on ICU alarms, not clinically validated.</p></div>
  <nav id="nav" aria-label="Scenes"></nav>
 </header>
 <div id="view"></div><div class="foot" id="foot"></div>
@@ -72,15 +72,15 @@ function plot(cv,rows,o){
  return m;
 }
 function sceneB(s){
- $('#view').innerHTML=`<div class="alarm"><span class="k">Original monitor alarm</span><span class="v">${esc(s.alarm_type)}</span><span class="m">${num('record '+s.record+', raised at '+s.t_alarm+' s')}</span></div>
+ $('#view').innerHTML=`<div class="alarm"><span class="k">Original monitor alert</span><span class="v">${esc(s.alarm_type)}</span><span class="m">${num('record '+s.record+', raised at '+s.t_alarm+' s')}</span></div>
  <div class="sig"><canvas id="cv" style="height:min(46vh,380px)"></canvas></div>
  <div class="action ${CLS[s.state]}">${esc(s.action)}</div>
- <div class="row"><div class="k">Signal quality</div><div class="t">${num(esc(s.quality_line))}</div></div>
- <div class="row"><div class="k">Check result</div><div class="t">${num(esc(s.check_line))}</div></div>
+ <div class="row"><div class="k">Reason</div><div class="t">${num(esc(s.reason_line))}</div></div>
+ <div class="row"><div class="k">Details</div><div class="t">${num(esc(s.detail_line))}</div></div>
  <div class="tools"><button class="link" id="rv">Show labels</button><span id="rvt" class="labels"></span><span>Shaded: the last ${num(s.highlight_s)} s the check used.</span></div>`;
  const w=$('#cv').clientWidth;plot($('#cv'),[{x:s.channels[0].x,name:s.channels[0].name,h:3},{x:s.channels[1].x,name:s.channels[1].name,h:3},{x:s.channels[2].x,name:'PPG',h:2}],{dur:30,t0:s.t_alarm-30,hi:s.highlight_s});
  let on=false;$('#rv').onclick=()=>{on=!on;$('#rv').textContent=on?'Hide labels':'Show labels';$('#rvt').innerHTML=on?num(esc(s.label_reveal)):''};
- $('#foot').textContent='Records come from the validation split by a fixed rule (first by ID with the needed outcome). They illustrate the logic and say nothing about accuracy.';
+ $('#foot').textContent='Events come from the VTaC validation split by a fixed rule (first by ID with the needed outcome). They illustrate the logic and say nothing about accuracy. B3 shows a real alert the model did not confirm: it stays active.';
 }
 function sceneA(){
  const a=D.a;$('#view').innerHTML=`<div class="alarm"><span class="k">Source</span><span class="m" style="color:var(--ink);font-size:16px">${num(esc(a.record)+', '+a.duration_s+' s from second '+a.t0_s+'. No alarm in this clip.')}</span></div>

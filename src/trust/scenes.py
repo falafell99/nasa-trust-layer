@@ -2,6 +2,7 @@
 import csv, json, os
 import numpy as np
 from scipy.signal import resample_poly
+from . import vtac
 from .cinc import load, read_alarms
 from .pipeline import run_alarm, quality, Q_GOOD, Q_WIN
 from .signal import FS, flat_frac
@@ -15,9 +16,10 @@ ACC_CAL = [(6.7297, -17228), (9.4294, 8015), (7.124, 4634)]  # из 111001_ACC.h
 TYPE_RU = {"Asystole": "Asystole", "Bradycardia": "Bradycardia", "Tachycardia": "Tachycardia",
            "Ventricular_Tachycardia": "Ventricular tachycardia", "Ventricular_Flutter_Fib": "Ventricular flutter/fibrillation"}
 ACTION = {
-    "red": "Looks real. Check the person now",
-    "yellow": "Event not excluded. Check",
+    "red": "Available signals support the monitor alert.",
+    "yellow": "Verification inconclusive. The original alert remains active.",
 }
+VT = "Ventricular_Tachycardia"
 
 
 def _r(x, n=4):
@@ -25,61 +27,44 @@ def _r(x, n=4):
 
 
 def pick_scene_b():
-    """Правило выбора (фиксировано, без просмотра сигналов): validation, есть PLETH, первая по отсортированным ID запись
-    для каждого сценария: (1) метка true и решение red; (2) метка false, жёлтый и q<0.3; (3) метка false, жёлтый, q>=0.6 (правило условие не подтвердило)."""
-    sp = json.load(open(SPLIT))
-    al = read_alarms()
-    want = {"true_red": None, "false_bad": None, "false_good": None}
-    for r in sorted(sp["validation"]):  # ключ holdout не используется
+    """Правило (фиксировано, без просмотра сигналов): VTaC validation (модель на ней не обучалась, порог выбран на ней), есть PLETH, первая по отсортированному ID событию:
+    (1) метка true и красный; (2) метка false и жёлтый; (3) метка true и жёлтый (настоящая тревога без подтверждения, тревога остаётся)."""
+    ev = vtac.events(); ev = ev[ev.split == "val"].sort_values("event")
+    want = {"true_red": None, "false_yellow": None, "true_yellow": None}
+    for _, e in ev.iterrows():
         if all(want.values()):
             break
-        t, y = al[r]
-        d = load(r)
-        if d["ppg"] is None or len(d["ecg"]) < 1:
+        d = vtac.load(e.record, e.event)
+        if d["ppg"] is None:
             continue
-        o = run_alarm(r, t, d)
-        if want["true_red"] is None and y == 1 and o["state"] == "red":
-            want["true_red"] = r
-        elif want["false_bad"] is None and y == 0 and o["state"] == "yellow" and o["q"] < 0.3:
-            want["false_bad"] = r
-        elif want["false_good"] is None and y == 0 and o["state"] == "yellow" and o["q"] >= Q_GOOD:
-            want["false_good"] = r
+        o = run_alarm(e.event, VT, d)
+        k = ("true_" if e.y == 1 else "false_") + o["state"]
+        if k in want and want[k] is None:
+            want[k] = (e.record, e.event)
     return want
 
 
 def build_b():
-    al = read_alarms()
     scenes = []
-    titles = {"true_red": "B1", "false_bad": "B2", "false_good": "B3"}
-    for key, rec in pick_scene_b().items():
-        if rec is None:
+    titles = {"true_red": "B1", "false_yellow": "B2", "true_yellow": "B3"}
+    for key, rk in pick_scene_b().items():
+        if rk is None:
             raise RuntimeError("no record found for scene " + key)
-        t, y = al[rec]
-        d = load(rec)
-        o = run_alarm(rec, t, d)
+        rec, evn = rk
+        y = int(vtac.events().set_index("event").loc[evn, "y"])
+        d = vtac.load(rec, evn)
+        o = run_alarm(evn, VT, d)
+        f = o["f"]
         n30 = 30 * FS
         ch = [{"name": n, "x": _r(x[-n30:])} for n, x in zip(d["ecg_names"][:2], d["ecg"][:2])]
         ch.append({"name": "PLETH", "x": _r(d["ppg"][-n30:])})
-        flats = {n: round(flat_frac(x[-Q_WIN * FS:]), 2) for n, x in zip(d["ecg_names"][:2], d["ecg"][:2])}
-        info = o["info"]
-        if o["p_true"] is None:
-            check = "Check not run: no ECG, or alarm type not supported."
-        else:
-            check = ("Logistic model (trained on 450 ICU alarms, not validated for clinical use): model score (not calibrated) %.2f "
-                     "(red needs at least 0.50 and signal quality at least %.2f). Heart rate over the last 10 s: %.0f bpm from %d beats."
-                     % (o["p_true"], Q_GOOD, info["hr"], info["n_beats"]))
-            if o["reason_code"] == "signal_quality_low":
-                check += " ECG quality is low, so the result is not used to set the alarm aside."
-            elif o["state"] == "yellow":
-                check += " The model did not confirm the event, but it cannot rule it out, so the alarm stays open."
+        detail = ("Model score %.2f, threshold %.2f. Heart rate over the last 10 s: ECG %.0f bpm, PPG pulse %.0f bpm. "
+                  "Model: LightGBM on ECG and PPG features, trained on ICU alarms; not clinically validated." % (o["p_true"], o["T"], f.get("hr_last10", 0), f.get("ppg_hr10", 0)))
         scenes.append({
-            "id": key, "title": titles[key], "record": rec, "alarm_type": TYPE_RU[t], "t_alarm": 300,
+            "id": key, "title": titles[key], "record": evn, "alarm_type": TYPE_RU[VT], "t_alarm": 300,
             "state": o["state"], "action": ACTION[o["state"]], "reason_code": o["reason_code"],
-            "quality_line": ("ECG (%s) quality score %.2f of 1 (experimental score, not a probability; sufficient from %.2f). Flat seconds in last 10 s: %s."
-                             % ("/".join(d["ecg_names"][:2]), o["q"], Q_GOOD, ", ".join("%s %.0f%%" % (k, 100 * v) for k, v in flats.items()))
-                             + (" Signal quality low. Check the sensor." if o["q"] < Q_GOOD else "")),
-            "check_line": check, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
-            "label_reveal": "CinC 2015 expert label: alarm %s." % ("confirmed" if y == 1 else "not confirmed"),
+            "reason_line": o["reason"], "detail_line": detail, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
+            "label_reveal": "VTaC expert label: alert %s." % ("confirmed" if y == 1 else "not confirmed"),
         })
     return scenes
 
