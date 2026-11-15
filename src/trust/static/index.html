@@ -1,96 +1,112 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Trust Layer · офлайн-демо</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trust Layer</title>
 <style>
-:root{--bg:#0f1318;--fg:#e8ecf1;--mut:#9aa6b2;--card:#1a2029;--bd:#2c3644;--red:#d64545;--yel:#e0b020;--gry:#7d8794;--ok:#3fa66b}
-@media (prefers-color-scheme:light){:root{--bg:#f4f6f8;--fg:#14202b;--mut:#51606f;--card:#fff;--bd:#cfd7df}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
-main{max-width:1000px;margin:0 auto;padding:16px}
-h1{font-size:18px;margin:0 0 4px}.sub{color:var(--mut);font-size:13px;margin-bottom:12px}
-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-nav button{background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:7px 11px;cursor:pointer}
-nav button.on{border-color:var(--fg);font-weight:600}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px 14px;margin-bottom:10px}
-.lbl{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.alarm{font-size:17px;font-weight:600}
-.action{border-radius:8px;padding:14px;font-size:20px;font-weight:700;margin-bottom:10px;border:2px solid}
-.action .tag{font-size:12px;font-weight:600;display:block;opacity:.85}
-.red{background:rgba(214,69,69,.15);border-color:var(--red)}.yellow{background:rgba(224,176,32,.15);border-color:var(--yel)}.gray{background:rgba(125,135,148,.18);border-color:var(--gry)}.okc{background:rgba(63,166,107,.15);border-color:var(--ok)}
-canvas{width:100%;display:block;background:var(--card);border:1px solid var(--bd);border-radius:6px}
-button.act{background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:7px 11px;cursor:pointer;margin:6px 6px 0 0}
-.foot{color:var(--mut);font-size:12px;margin-top:14px}.err{color:var(--red)}
-input[type=range]{width:100%}
+@font-face{font-family:"DM Sans";src:url(/static/fonts/DMSans.ttf);font-weight:100 1000}
+@font-face{font-family:"JetBrains Mono";src:url(/static/fonts/JetBrainsMono.ttf);font-weight:100 800}
+:root{--bg:#f4efe6;--ink:#1f1b16;--mut:#7a7268;--rule:#ddd5c7;--band:#e8dec9;--alarm:#d1121b;--real:#8c2f2f;--yel:#c9962b;--gry:#8d877d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:18px 24px 28px}
+.n{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.92em;letter-spacing:-.01em}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;margin-bottom:14px}
+header h1{font-size:16px;font-weight:600;margin:0}
+header p{margin:2px 0 0;color:var(--mut);font-size:14px;max-width:62ch}
+nav{display:flex;gap:18px}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mut);font:inherit;font-size:14px;padding:2px 0;cursor:pointer}
+nav button.on{color:var(--ink);border-color:var(--ink)}
+nav button:focus-visible,.link:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.alarm{display:flex;gap:14px;align-items:baseline;margin:0 0 6px}
+.alarm .k{color:var(--mut);font-size:14px}
+.alarm .v{color:var(--alarm);font-size:22px;font-weight:700}
+.alarm .m{color:var(--mut);font-size:14px}
+canvas{width:100%;display:block}
+.sig{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.action{margin:18px 0 12px;padding-left:16px;border-left:8px solid var(--gry);font-size:30px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.action.real{border-color:var(--real)}.action.yel{border-color:var(--yel)}.action.gry{border-color:var(--gry)}
+.row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:7px 0;border-top:1px solid var(--rule);max-width:980px}
+.row:last-of-type{border-bottom:1px solid var(--rule)}
+.row .k{color:var(--mut);font-size:14px}
+.row .t{font-size:15px}
+.tools{margin-top:12px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--mut)}
+.link{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--ink);margin:8px 0 0}
+.labels{color:var(--ink);font-size:14px;max-width:980px}
+.foot{color:var(--mut);font-size:13px;margin-top:16px;max-width:90ch}
+.err{color:var(--alarm)}
+@media (max-width:640px){.action{font-size:23px}.row{grid-template-columns:1fr;gap:0}}
 </style></head><body><main>
-<h1>Trust Layer · офлайн-демо на записанных данных</h1>
-<div class="sub">Земные записи (реанимация, носимый датчик), не данные астронавтов. Проверка здесь — простая базовая линия V0, не обученная модель. Исходная тревога монитора не скрывается.</div>
-<nav id="nav"></nav><div id="view"></div>
-<div class="foot" id="foot"></div>
+<header>
+ <div><h1>Trust Layer, offline replay on recorded data.</h1><p>Earth data, not astronauts. Check step is a simple baseline, not a trained model.</p></div>
+ <nav id="nav" aria-label="Scenes"></nav>
+</header>
+<div id="view"></div><div class="foot" id="foot"></div>
 </main>
 <script>
 const $=s=>document.querySelector(s);let D=null,cur=null;
-const COL={red:'#d64545',yellow:'#e0b020',gray:'#7d8794'};
-function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v)}
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const num=t=>String(t).replace(/(\d+(?:\.\d+)?)/g,'<span class="n">$1</span>');
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const CLS={red:'real',yellow:'yel',gray:'gry'};
 async function init(){
- try{D=await (await fetch('/api/scenes')).json()}catch(e){$('#view').innerHTML='<div class="card err">Не удалось получить данные: '+e+'</div>';return}
+ try{D=await (await fetch('/api/scenes')).json()}catch(e){$('#view').innerHTML='<p class="err">Could not load scenes: '+esc(e)+'</p>';return}
  const tabs=[];
- if(D.b)D.b.forEach(s=>tabs.push({id:s.id,label:s.title.split(' · ')[0]+' '+s.record,fn:()=>sceneB(s)}));
- if(D.a)tabs.push({id:'a',label:'A · BUT QDB 111001',fn:sceneA});
- Object.entries(D.errors).forEach(([k,v])=>tabs.push({id:'e'+k,label:'Ошибка '+k,fn:()=>{$('#view').innerHTML='<div class="card err">Сцена не собрана: '+v+'</div>'}}));
- $('#nav').innerHTML='';tabs.forEach(t=>{const b=document.createElement('button');b.textContent=t.label;b.id='tab_'+t.id;b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');t.fn()};$('#nav').appendChild(b)});
+ if(D.b)D.b.forEach(s=>tabs.push({id:s.id,label:s.title+' '+s.record,fn:()=>sceneB(s)}));
+ if(D.a)tabs.push({id:'a',label:'A BUT QDB',fn:sceneA});
+ Object.entries(D.errors).forEach(([k,v])=>tabs.push({id:'e'+k,label:'Error '+k,fn:()=>{$('#view').innerHTML='<p class="err">Scene not built: '+esc(v)+'</p>'}}));
+ tabs.forEach(t=>{const b=document.createElement('button');b.textContent=t.label;b.id='tab_'+t.id;b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cur=t.fn;t.fn()};$('#nav').appendChild(b)});
  const q=new URLSearchParams(location.search).get('scene');(document.getElementById('tab_'+q)||$('#nav button')).click();
 }
-function plot(cv,series,opt){ // series:[{x,name}], draw min/max per pixel
- const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext('2d');c.scale(dpr,dpr);
- const fg=css('--fg'),mut=css('--mut');c.clearRect(0,0,W,H);
- const n=series[0].x.length,L=56,R=8,T=6,B=18,h=(H-T-B)/series.length;
- if(opt.hi){const x0=L+(W-L-R)*(1-opt.hi/(n/opt.fs)),x1=W-R;c.fillStyle='rgba(224,176,32,.18)';c.fillRect(x0,T,x1-x0,H-T-B)}
- series.forEach((s,i)=>{const y0=T+i*h;let mn=Infinity,mx=-Infinity;const lo=s.x.slice().sort((a,b)=>a-b);mn=lo[Math.floor(lo.length*.005)];mx=lo[Math.floor(lo.length*.995)];if(mx==mn){mx=mn+1}
-  c.fillStyle=mut;c.font='11px sans-serif';c.fillText(s.name,4,y0+14);c.strokeStyle=fg;c.lineWidth=1;c.beginPath();
-  const pw=W-L-R;for(let px=0;px<pw;px++){const a=Math.floor(px/pw*n),b=Math.max(a+1,Math.floor((px+1)/pw*n));let lo2=Infinity,hi2=-Infinity;for(let k=a;k<b;k++){const v=s.x[k];if(v<lo2)lo2=v;if(v>hi2)hi2=v}
-   const ya=y0+h-4-(Math.min(Math.max(lo2,mn),mx)-mn)/(mx-mn)*(h-10),yb=y0+h-4-(Math.min(Math.max(hi2,mn),mx)-mn)/(mx-mn)*(h-10);c.moveTo(L+px+.5,ya);c.lineTo(L+px+.5,yb)}c.stroke();
-  c.strokeStyle='rgba(128,128,128,.3)';c.beginPath();c.moveTo(L,y0+h);c.lineTo(W-R,y0+h);c.stroke()});
- c.fillStyle=mut;const dur=n/opt.fs;for(let k=0;k<=6;k++){const t=(opt.t0||0)+dur*k/6,x=L+(W-L-R)*k/6;c.fillText(t.toFixed(0)+' с',x-10,H-4)}
- return {L,R,T,B,W,H,n,dur};
+// Рисует ряды сигналов: min/max на пиксель. rows:[{x,name,h}]
+function plot(cv,rows,o){
+ const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+ const ink=css('--ink'),mut=css('--mut'),L=34,R=2,T=4,B=20,n=rows[0].x.length,tot=rows.reduce((a,r)=>a+r.h,0),pw=W-L-R;
+ const X=t=>L+pw*t/o.dur;
+ const bd=o.band||(o.hi?[o.dur-o.hi,o.dur]:null);if(bd)c.fillStyle=css('--band'),c.fillRect(X(bd[0]),T,X(bd[1])-X(bd[0]),H-T-B);
+ let y0=T;const m={L,R,T,B,W,H,X};
+ rows.forEach(r=>{const h=(H-T-B)*r.h/tot,s=r.x.slice().sort((a,b)=>a-b);let mn=s[Math.floor(s.length*.004)],mx=s[Math.floor(s.length*.996)];if(mx<=mn)mx=mn+1;
+  c.fillStyle=mut;c.font='12px "JetBrains Mono",monospace';c.fillText(r.name,0,y0+11);c.strokeStyle=ink;c.lineWidth=1.1;c.beginPath();
+  for(let px=0;px<pw;px++){const a=Math.floor(px/pw*n),b=Math.max(a+1,Math.floor((px+1)/pw*n));let lo=1e18,hi=-1e18;for(let k=a;k<b;k++){const v=r.x[k];if(v<lo)lo=v;if(v>hi)hi=v}
+   const f=v=>y0+h-5-(Math.min(Math.max(v,mn),mx)-mn)/(mx-mn)*(h-12);c.moveTo(L+px+.5,f(lo));c.lineTo(L+px+.5,f(hi)+.6)}c.stroke();y0+=h});
+ c.fillStyle=mut;c.font='12px "JetBrains Mono",monospace';for(let k=0;k<=6;k++){const t=o.t0+o.dur*k/6;c.fillText(Math.round(t)+' s',X(o.dur*k/6)-(k==6?24:k?10:0),H-5)}
+ return m;
 }
 function sceneB(s){
- $('#view').innerHTML=`<div class="card"><div class="lbl">Original monitor alarm</div><div class="alarm">${s.alarm_type} · запись ${s.record} · момент тревоги t = ${s.t_alarm} с</div></div>
- <div class="action ${s.state}"><span class="tag">СТРОКА ДЕЙСТВИЯ</span>${s.action}</div>
- <div class="card"><div class="lbl">Качество сигнала</div>${s.quality_line}</div>
- <div class="card"><div class="lbl">Что показала проверка</div>${s.check_line}<div style="color:var(--mut);font-size:13px;margin-top:4px">Подсвечен участок, на котором считались качество и проверка: последние ${s.highlight_s} с до тревоги.</div></div>
- <canvas id="cv" style="height:360px"></canvas>
- <div><button class="act" id="rv">Показать разметку</button><span id="rvt" style="color:var(--mut)"></span></div>`;
- plot($('#cv'),s.channels.map(c=>({x:c.x,name:c.name})),{fs:s.fs,hi:s.highlight_s,t0:s.t_alarm-30});
- $('#rv').onclick=()=>{$('#rvt').textContent=' '+s.label_reveal};
- $('#foot').textContent='Записи выбраны из validation по фиксированному правилу (первая по ID с нужным исходом решения), не случайно и не репрезентативно. Это иллюстрация логики, не оценка точности. Статус «серый» применяется только при достаточном качестве.';
+ $('#view').innerHTML=`<div class="alarm"><span class="k">Original monitor alarm</span><span class="v">${esc(s.alarm_type)}</span><span class="m">${num('record '+s.record+', raised at '+s.t_alarm+' s')}</span></div>
+ <div class="sig"><canvas id="cv" style="height:min(46vh,380px)"></canvas></div>
+ <div class="action ${CLS[s.state]}">${esc(s.action)}</div>
+ <div class="row"><div class="k">Signal quality</div><div class="t">${num(esc(s.quality_line))}</div></div>
+ <div class="row"><div class="k">Check result</div><div class="t">${num(esc(s.check_line))}</div></div>
+ <div class="tools"><button class="link" id="rv">Show labels</button><span id="rvt" class="labels"></span><span>Shaded: the last ${num(s.highlight_s)} s the check used.</span></div>`;
+ const w=$('#cv').clientWidth;plot($('#cv'),[{x:s.channels[0].x,name:s.channels[0].name,h:3},{x:s.channels[1].x,name:s.channels[1].name,h:3},{x:s.channels[2].x,name:'PPG',h:2}],{dur:30,t0:s.t_alarm-30,hi:s.highlight_s});
+ let on=false;$('#rv').onclick=()=>{on=!on;$('#rv').textContent=on?'Hide labels':'Show labels';$('#rvt').innerHTML=on?num(esc(s.label_reveal)):''};
+ $('#foot').textContent='Records come from the validation split by a fixed rule (first by ID with the needed outcome). They illustrate the logic and say nothing about accuracy.';
 }
 function sceneA(){
- const a=D.a;$('#view').innerHTML=`<div class="card"><div class="lbl">Источник</div><div class="alarm">${a.record} · фрагмент ${a.t0_s}–${a.t0_s+a.duration_s} с · 1000 Гц → 250 Гц (resample_poly)</div><div style="color:var(--mut);font-size:13px">Здесь нет тревоги и нет утверждений об аритмии: показывается только качество сигнала ЭКГ.</div></div>
- <div class="action okc" id="st"><span class="tag">СТРОКА ДЕЙСТВИЯ</span><span id="stt"></span></div>
- <div class="card"><div class="lbl">Качество сигнала</div><span id="ql"></span></div>
- <div class="card"><div class="lbl">Что показала проверка</div>Тревоги нет, проверка события не запускалась. Окно качества ${a.win_s} с, порог «достаточно» ${a.q_gate} (задан заранее, эвристика).</div>
- <canvas id="cv1" style="height:220px"></canvas><canvas id="cv2" style="height:170px;margin-top:6px"></canvas>
- <input type="range" id="sl" min="0" max="${a.windows.length-1}" value="0"><div><button class="act" id="rv">Показать разметку</button><span id="rvt" style="color:var(--mut)"></span></div>`;
- let showL=false;const mean=Object.entries(a.by_class);
+ const a=D.a;$('#view').innerHTML=`<div class="alarm"><span class="k">Source</span><span class="m" style="color:var(--ink);font-size:16px">${num(esc(a.record)+', '+a.duration_s+' s from second '+a.t0_s+'. No alarm in this clip.')}</span></div>
+ <div class="sig"><canvas id="cv1" style="height:min(36vh,300px)"></canvas><canvas id="cv2" style="height:110px;border-top:1px solid var(--rule)"></canvas></div>
+ <input type="range" id="sl" min="0" max="${a.windows.length-1}" value="0" aria-label="Window position">
+ <div class="action gry" id="st"></div>
+ <div class="row"><div class="k">Signal quality</div><div class="t" id="ql"></div></div>
+ <div class="row"><div class="k">Check result</div><div class="t">No alarm here, so no event check was run. Windows are ${num(a.win_s)} s; sufficient quality starts at ${num(a.q_gate)} (preset heuristic).</div></div>
+ <div class="tools"><button class="link" id="rv">Show labels</button><span id="rvt" class="labels"></span></div>`;
+ let showL=false;const by=Object.entries(a.by_class);
  function draw(){const i=+$('#sl').value,w=a.windows[i];
-  const m=plot($('#cv1'),[{x:a.ecg,name:'ЭКГ (норм.)'}],{fs:a.fs,t0:0});
-  const c=$('#cv1').getContext('2d'),dpr=window.devicePixelRatio||1;c.setTransform(dpr,0,0,dpr,0,0);
-  const px=t=>m.L+(m.W-m.L-m.R)*t/a.duration_s;
-  c.fillStyle='rgba(224,176,32,.2)';c.fillRect(px(w.t-a.win_s),m.T,px(w.t)-px(w.t-a.win_s),m.H-m.T-m.B);
-  if(showL){const cc=['','#3fa66b','#e0b020','#d64545'];a.class_per_s.forEach((k,t)=>{c.fillStyle=cc[k]||'#888';c.fillRect(px(t),m.H-m.B-5,px(t+1)-px(t)+1,5)})}
-  // q curve
-  const cv=$('#cv2'),W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);
-  const L=m.L,R=m.R,pw=W-L-R,yq=q=>8+(H-26)*(1-q);g.fillStyle=css('--mut');g.font='11px sans-serif';g.fillText('q',20,16);
-  g.strokeStyle='rgba(224,176,32,.9)';g.setLineDash([4,3]);g.beginPath();g.moveTo(L,yq(a.q_gate));g.lineTo(W-R,yq(a.q_gate));g.stroke();g.setLineDash([]);
-  g.strokeStyle=css('--fg');g.beginPath();a.windows.forEach((ww,k)=>{const x=L+pw*ww.t/a.duration_s,y=yq(ww.q);k?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
-  const x=L+pw*w.t/a.duration_s;g.strokeStyle='#d64545';g.beginPath();g.moveTo(x,4);g.lineTo(x,H-18);g.stroke();
-  g.fillStyle=css('--mut');g.fillText('0 с',L-4,H-4);g.fillText(a.duration_s+' с',W-R-26,H-4);g.fillText('порог '+a.q_gate,L+4,yq(a.q_gate)-3);
-  const low=w.q<a.q_gate;$('#st').className='action '+(low?'yellow':'okc');$('#stt').textContent=low?a.text_low:a.text_ok;
-  $('#ql').innerHTML=`окно ${w.t-a.win_s}–${w.t} с от начала фрагмента: q = ${w.q.toFixed(2)} (эвристический балл, не вероятность); движение по акселерометру (СКО модуля, справочно) ${w.motion_mg} мг`+(showL?`; метка консенсуса экспертов в этом окне: класс ${w.cls}`:'');
+  const m=plot($('#cv1'),[{x:a.ecg,name:'ECG',h:1}],{dur:a.duration_s,t0:0,band:[w.t-a.win_s,w.t]});const c2=$('#cv1').getContext('2d');
+  if(showL){const cc=['','#8d877d','#c9962b','#8c2f2f'];a.class_per_s.forEach((k,t)=>{c2.fillStyle=cc[k];c2.fillRect(m.X(t),m.H-m.B-4,m.X(t+1)-m.X(t)+.5,4)})}
+  const cv=$('#cv2'),dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const L=m.L,pw=W-L-m.R,yq=q=>6+(H-26)*(1-q);g.font='12px "JetBrains Mono",monospace';g.fillStyle=css('--mut');g.fillText('q',12,16);
+  g.strokeStyle=css('--yel');g.setLineDash([4,3]);g.beginPath();g.moveTo(L,yq(a.q_gate));g.lineTo(W-m.R,yq(a.q_gate));g.stroke();g.setLineDash([]);g.fillText(a.q_gate.toFixed(2),L+3,yq(a.q_gate)-4);
+  g.strokeStyle=css('--ink');g.lineWidth=1.3;g.beginPath();a.windows.forEach((ww,k)=>{const x=L+pw*ww.t/a.duration_s,y=yq(ww.q);k?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+  const x=L+pw*w.t/a.duration_s;g.fillStyle=css('--ink');g.beginPath();g.arc(x,yq(w.q),4,0,7);g.fill();
+  const low=w.q<a.q_gate;$('#st').className='action '+(low?'yel':'gry');$('#st').textContent=low?a.text_low:a.text_ok;
+  $('#ql').innerHTML=num('Window '+(w.t-a.win_s)+' to '+w.t+' s: score '+w.q.toFixed(2)+' of 1 (heuristic score, not a probability).')+(showL?num(' Accelerometer spread '+w.motion_mg+' mg. Expert consensus class in this window: '+w.cls+'.'):'');
  }
- $('#sl').oninput=draw;$('#rv').onclick=()=>{showL=!showL;$('#rv').textContent=showL?'Скрыть разметку':'Показать разметку';
-  $('#rvt').innerHTML=showL?' Консенсус BUT QDB: 1 — видны P, QRS, T (зелёный), 2 — шум, QRS ещё детектируется (жёлтый), 3 — QRS не виден (красный). Средний q по окнам: '+mean.map(([k,v])=>`класс ${k}: ${v.mean_q} (окон ${v.n_windows}, ниже порога ${(v.share_below_gate*100).toFixed(0)}%)`).join('; '):'';draw()};
+ $('#sl').oninput=draw;
+ $('#rv').onclick=()=>{showL=!showL;$('#rv').textContent=showL?'Hide labels':'Show labels';
+  $('#rvt').innerHTML=showL?num('Expert consensus: class 1 grey bar = P, QRS, T visible; 2 yellow = noisy, QRS still detectable; 3 brick = QRS not visible. Mean score by class: '+by.map(([k,v])=>'class '+k+' '+v.mean_q+' ('+v.n_windows+' windows, '+Math.round(v.share_below_gate*100)+'% below '+a.q_gate+')').join('; ')):'';draw()};
  draw();
- $('#foot').textContent='Один фрагмент 180 с из одной записи одного субъекта: это иллюстрация, не оценка. Класс 3 в фрагменте занимает мало окон; разделение классов по q слабое (см. средние значения по кнопке).';
+ $('#foot').textContent='One 3-minute clip from one subject. It illustrates the quality score and says nothing about accuracy or arrhythmia.';
 }
 window.addEventListener('resize',()=>{if(cur)cur()});init();
 </script></body></html>

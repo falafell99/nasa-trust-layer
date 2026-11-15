@@ -39,15 +39,15 @@ def verify_detail(segment):
     hr = hr_from_peaks(pk, fs)
     ff = flat_frac(seg, fs)
     if typ == "Asystole":
-        p, cond = int(n <= 2 or ff > 0.5), "нет QRS или плоская линия"
+        p, cond = int(n <= 2 or ff > 0.5), "no QRS or flat line"
     elif typ == "Bradycardia":
-        p, cond = int(hr < 40), "ЧСС < 40"
+        p, cond = int(hr < 40), "HR < 40"
     elif typ == "Tachycardia":
-        p, cond = int(hr > 140), "ЧСС > 140"
+        p, cond = int(hr > 140), "HR > 140"
     elif typ == "Ventricular_Tachycardia":
-        p, cond = int(hr > 100), "ЧСС > 100"
+        p, cond = int(hr > 100), "HR > 100"
     else:
-        p, cond = int(hr > 150), "ЧСС > 150"
+        p, cond = int(hr > 150), "HR > 150"
     info = {"hr": round(hr, 1), "n_beats": int(n), "flat_frac": round(ff, 2), "cond": cond, "met": bool(p)}
     ppg = segment.get("ppg")
     if ppg is not None:

@@ -15,9 +15,9 @@ ACC_CAL = [(6.7297, -17228), (9.4294, 8015), (7.124, 4634)]  # из 111001_ACC.h
 TYPE_RU = {"Asystole": "Asystole", "Bradycardia": "Bradycardia", "Tachycardia": "Tachycardia",
            "Ventricular_Tachycardia": "Ventricular tachycardia", "Ventricular_Flutter_Fib": "Ventricular flutter/fibrillation"}
 ACTION = {
-    "red": "Похоже на настоящее. Проверь человека сейчас",
-    "yellow": "Событие не исключено · Проверь",
-    "gray": "Не подтверждено по доступным каналам",
+    "red": "Looks real. Check the person now",
+    "yellow": "Event not excluded. Check",
+    "gray": "Not confirmed by available channels",
 }
 
 
@@ -51,12 +51,10 @@ def pick_scene_b():
 def build_b():
     al = read_alarms()
     scenes = []
-    titles = {"true_red": "B1 · настоящая тревога, сигнал пригоден",
-              "false_bad": "B2 · тревога не подтверждена экспертом, плохой сигнал ЭКГ",
-              "false_good": "B3 · тревога не подтверждена экспертом, сигнал пригоден"}
+    titles = {"true_red": "B1", "false_bad": "B2", "false_good": "B3"}
     for key, rec in pick_scene_b().items():
         if rec is None:
-            raise RuntimeError("не найдена запись для сцены " + key)
+            raise RuntimeError("no record found for scene " + key)
         t, y = al[rec]
         d = load(rec)
         o = run_alarm(rec, t, d)
@@ -66,21 +64,21 @@ def build_b():
         flats = {n: round(flat_frac(x[-Q_WIN * FS:]), 2) for n, x in zip(d["ecg_names"][:2], d["ecg"][:2])}
         info = o["info"]
         if o["p_true"] is None:
-            check = "Проверка не выполнена: нет ЭКГ или тип тревоги не поддержан."
+            check = "Check not run: no ECG, or alarm type not supported."
         else:
-            check = ("V0 — простое правило по ЭКГ (не обученная модель): за последние 10 с ЧСС %.0f уд/мин (%d ударов), "
-                     "условие «%s» %s." % (info["hr"], info["n_beats"], info["cond"], "выполнено" if info["met"] else "не выполнено"))
+            check = ("Simple ECG rule (baseline, not a trained model): over the last 10 s, heart rate %.0f bpm from %d beats; "
+                     "condition \"%s\" %s." % (info["hr"], info["n_beats"], info["cond"], "met" if info["met"] else "not met"))
             if info.get("ppg_hr"):
-                check += " Пульс по PPG %.0f уд/мин (справочно, решение его не использует)." % info["ppg_hr"]
+                check += " PPG pulse %.0f bpm (shown for reference, not used)." % info["ppg_hr"]
             if o["state"] == "yellow":
-                check += " Качество ЭКГ низкое, поэтому результат правила не используется для подавления."
+                check += " ECG quality is low, so the rule result is not used to set the alarm aside."
         scenes.append({
             "id": key, "title": titles[key], "record": rec, "alarm_type": TYPE_RU[t], "t_alarm": 300,
             "state": o["state"], "action": ACTION[o["state"]], "reason_code": o["reason_code"],
-            "quality_line": "ЭКГ (%s) q = %.2f из 1 (эвристический балл, не вероятность; порог «достаточно» %.2f); доля плоских секунд за 10 с: %s"
+            "quality_line": "ECG (%s) quality score %.2f of 1 (heuristic score, not a probability; sufficient from %.2f). Flat seconds in last 10 s: %s"
                             % ("/".join(d["ecg_names"][:2]), o["q"], Q_GOOD, ", ".join("%s %.0f%%" % (k, 100 * v) for k, v in flats.items())),
             "check_line": check, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
-            "label_reveal": "Метка набора CinC 2015: тревога %s экспертами." % ("подтверждена" if y == 1 else "не подтверждена"),
+            "label_reveal": "CinC 2015 expert label: alarm %s." % ("confirmed" if y == 1 else "not confirmed"),
         })
     return scenes
 
@@ -102,7 +100,7 @@ def build_a():
     ecg = np.fromfile(os.path.join(BUT, "frag_ECG_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").astype(float)
     acc = np.fromfile(os.path.join(BUT, "frag_ACC_t%d_%ds.bin" % (BUT_T0, BUT_DUR)), "<i2").reshape(-1, 3).astype(float)
     if len(ecg) != BUT_DUR * 1000 or len(acc) != BUT_DUR * 100:
-        raise RuntimeError("фрагмент BUT неполный")
+        raise RuntimeError("BUT QDB fragment is incomplete")
     ecg250 = resample_poly(ecg, 1, 4)  # антиалиасинг, не срез [::4]
     accp = np.stack([(acc[:, i] - b) / g for i, (g, b) in enumerate(ACC_CAL)], 1)
     amag = np.linalg.norm(accp, axis=1)
@@ -123,8 +121,8 @@ def build_a():
         "record": "BUT QDB 111001", "t0_s": BUT_T0, "duration_s": BUT_DUR, "fs": FS,
         "ecg": _r(ecg250 / np.std(ecg250), 3), "acc_mag_mg": _r(amag, 1)[::2], "acc_fs": 50,
         "class_per_s": cls[::1000].tolist(), "windows": wins, "q_gate": Q_GOOD, "win_s": Q_WIN, "by_class": by,
-        "text_low": "Качество сигнала снизилось · Проверь датчик",
-        "text_ok": "Качество сигнала достаточное для оценки",
+        "text_low": "Signal quality low. Check the sensor.",
+        "text_ok": "Signal quality sufficient",
     }
 
 
