@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4efe6">
+<title>Trust Layer — Signal review</title>
+<style>
+@font-face{font-family:"DM Sans";src:url(fonts/DMSans.ttf);font-weight:100 1000}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono.ttf);font-weight:100 800}
+:root{color-scheme:light;--bg:#f4efe6;--ink:#1f1b16;--mut:#7a7268;--muted:#7a7268;--quiet:#7a7268;--rule:#ddd5c7;--line:#ddd5c7;--band:#e8dec9;--alarm:#d1121b;--real:#8c2f2f;--yel:#c9962b;--gry:#8d877d;--red:#8c2f2f;--amber:#c9962b;--cyan:#1f1b16;--blue:#7a7268;--green:#5d7a4a;--mono:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}
+body{margin:0;color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif;background:var(--bg);min-height:100vh}
+button,input{font:inherit}button{color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+/* top bar: brand left, case tabs right (was a dark side rail) */
+.app{display:block;min-height:100vh}
+.rail{max-width:1180px;margin:0 auto;padding:18px 24px 0;background:none;border:0;display:flex;flex-direction:row;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap}
+.brand{display:block;padding:0}
+.brand-mark,.rail-label,.rail-note,.rail-foot{display:none}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:0}
+.brand-sub{display:none}
+.case-list{display:flex;gap:18px;flex-wrap:wrap}
+.case-button{width:auto;border:0;border-bottom:2px solid transparent;background:none;border-radius:0;padding:2px 0;text-align:left;display:block;color:var(--mut);transition:none;box-shadow:none}
+.case-button:hover{background:none;color:var(--ink)}
+.case-button.active{background:none;border-color:var(--ink);color:var(--ink);box-shadow:none}
+.case-icon,.case-dot{display:none}
+.case-copy{display:block}
+.case-title{font-size:14px;font-weight:400;display:inline}
+.case-sub{display:none}
+.main{max-width:1180px;margin:0 auto;padding:10px 24px 28px;width:100%}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:18px;padding:0 0 10px;border-bottom:0}
+.crumb{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:13px}.crumb svg{display:none}.crumb strong{font-weight:400;color:var(--ink)}
+.pills{display:flex;align-items:center;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:1px 8px;border:1px solid var(--rule);border-radius:0;color:var(--mut);font:12px var(--mono);letter-spacing:.02em;text-transform:none;background:none}
+.pills a.pill{border:0;padding:0;font:14px "DM Sans",sans-serif;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.pill .live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:none}
+.pill.frozen{color:var(--mut)}
+.hero{padding:6px 0 14px;display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.eyebrow{display:none}
+h1{font-size:16px;font-weight:600;letter-spacing:0;line-height:1.5;margin:0}
+.hero p{color:var(--mut);margin:2px 0 0;max-width:62ch;font-size:14px}
+.hero-actions{display:flex;align-items:center;gap:14px;flex:none}
+.btn{border:1px solid var(--ink);background:none;border-radius:0;padding:5px 14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;transition:none;color:var(--ink)}
+.btn:hover{background:var(--band);transform:none;border-color:var(--ink)}
+.btn svg{width:14px;height:14px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:#3a342c}
+.btn.quiet{border-color:var(--rule);color:var(--mut)}
+.casebar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 10px;padding-top:10px;border-top:1px solid var(--rule)}
+.case-counter{font:13px var(--mono);letter-spacing:0;color:var(--mut);text-transform:uppercase}.case-counter b{color:var(--ink);font-weight:400}
+.case-switch{display:flex;gap:8px}
+.icon-btn{width:30px;height:30px;border:1px solid var(--rule);border-radius:0;display:grid;place-items:center;background:none;color:var(--mut)}
+.icon-btn:hover{border-color:var(--ink);color:var(--ink);background:var(--band)}.icon-btn svg{width:15px;height:15px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.stack{display:grid;gap:18px;min-width:0}
+.card{background:none;border:0;border-top:1px solid var(--rule);border-radius:0;box-shadow:none;overflow:visible}
+.signal-card{padding:12px 0 0}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:15px;margin-bottom:8px}
+.card-kicker{font:13px "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:var(--mut)}
+.card-title{font-size:14px;font-weight:600;margin-top:0;letter-spacing:0}
+.card-meta{font:12px var(--mono);color:var(--mut);display:flex;align-items:center;gap:7px}
+.meta-dot{width:6px;height:6px;border-radius:50%;background:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:13px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:2px;border-radius:0;background:var(--ink)}.legend .pleth{background:var(--real)}.legend .motion{background:var(--yel)}
+.wave-wrap{border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;overflow:visible;background:none}
+canvas{display:block;width:100%}#wave{height:330px}
+.chart-foot{display:flex;justify-content:space-between;gap:12px;color:var(--mut);font:12px var(--mono);padding:6px 0 0}
+.transport{display:grid;grid-template-columns:auto minmax(80px,1fr) auto auto;gap:14px;align-items:center;margin-top:12px}
+.transport button{border:0}
+.play-btn{width:34px;height:30px;border:1px solid var(--ink)!important;border-radius:0;background:none;color:var(--ink);display:grid;place-items:center}
+.play-btn:hover{background:var(--band)}.play-btn svg{width:14px;height:14px}
+.scrubber{min-width:0;display:flex;align-items:center;gap:10px;color:var(--mut);font:12px var(--mono)}
+input[type=range]{width:100%;accent-color:var(--ink);cursor:pointer}
+.speed{background:none;border:1px solid var(--rule)!important;border-radius:0;padding:4px 8px;color:var(--mut);font:12px var(--mono);min-width:47px}
+.speed:hover{color:var(--ink);border-color:var(--ink)!important}
+.live-time{min-width:50px;text-align:right;color:var(--ink);font:13px var(--mono)}
+.status-card{padding:12px 0 0}
+.status-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.status-tag{font:13px "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:var(--mut)}
+.state{display:inline-flex;align-items:center;gap:7px;border-radius:0;padding:1px 8px;font:12px var(--mono);letter-spacing:.02em;text-transform:none;border:1px solid var(--rule);background:none}
+.state:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.state.red{color:var(--real)}.state.yellow{color:var(--yel)}.state.gray{color:var(--gry)}
+.status-title{font-size:26px;line-height:1.2;font-weight:600;letter-spacing:-.01em;margin:12px 0 8px;padding-left:16px;border-left:8px solid var(--gry)}
+.status-card:has(.state.red) .status-title{border-color:var(--real)}
+.status-card:has(.state.yellow) .status-title{border-color:var(--yel)}
+.status-copy{color:var(--ink);font-size:15px;margin:0;max-width:65ch}
+.reason{margin-top:14px;padding:8px 0;border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;background:none;display:grid;grid-template-columns:150px 1fr;gap:12px}
+.reason-label{font:14px "DM Sans",sans-serif;color:var(--mut);letter-spacing:0;text-transform:none}
+.reason-text{font-size:15px;color:var(--ink);margin-top:0}
+.status-divider{height:1px;background:var(--rule);margin:14px 0}
+.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.measure{padding:8px 0;border:0;border-top:1px solid var(--rule);border-radius:0;background:none}
+.measure-label{font:13px "DM Sans",sans-serif;color:var(--mut);text-transform:none;letter-spacing:0}
+.measure-value{font:600 22px var(--mono);margin-top:2px;color:var(--ink);letter-spacing:-.02em}
+.measure-value small{font:13px "DM Sans",sans-serif;color:var(--mut)}
+.details-note{font-size:13px;line-height:1.5;color:var(--mut);margin:10px 0 0}
+.case-context{padding:12px 0 0}
+.context-head{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}.context-head svg{display:none}
+.context-text{font-size:14px;color:var(--mut);margin:4px 0 0;line-height:1.5}.context-text strong{color:var(--ink);font-weight:600}
+.review-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0}
+.reveal{border:0;padding:4px 0;background:none;color:var(--ink);font-size:14px;font-weight:400;text-decoration:underline;text-underline-offset:3px}
+.reveal-copy{font-size:14px;color:var(--ink);margin-left:auto;text-align:right}
+.side-card{padding:12px 0 0}
+.side-title{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}.side-title svg{display:none}
+.step-list{display:grid;gap:0;margin-top:10px}
+.step{position:relative;display:grid;grid-template-columns:26px 1fr;gap:10px;padding:0 0 14px}
+.step:not(:last-child):before{content:"";position:absolute;left:12px;top:26px;bottom:0;width:1px;background:var(--rule)}
+.step-num{width:24px;height:24px;border-radius:50%;border:1px solid var(--ink);background:var(--bg);color:var(--ink);display:grid;place-items:center;font:12px var(--mono);position:relative;z-index:1}
+.step strong{font-size:14px;font-weight:600;display:block;padding-top:1px}
+.step small{display:block;color:var(--mut);font-size:13px;margin-top:2px;line-height:1.4}
+.dataset{border-top:1px solid var(--rule);margin-top:1px;padding-top:10px}
+.data-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:3px 0;font-size:13px;color:var(--mut)}
+.data-row strong{color:var(--ink);font:13px var(--mono);font-weight:400;text-align:right}
+.note-callout{margin-top:12px;border:0;border-top:1px solid var(--rule);background:none;padding:10px 0 0;border-radius:0;color:var(--mut);font-size:13px;line-height:1.5}
+.note-callout b{color:var(--ink);font-weight:600}
+.case-a .side-card:first-child{border-color:var(--rule)}
+.quality-chart{margin-top:12px;border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;overflow:visible;background:none}
+.chart-label{padding:8px 0 0;color:var(--mut);font:13px "DM Sans",sans-serif;letter-spacing:0;text-transform:none}
+.quality-chart canvas{height:122px}
+.quality-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}.quality-metrics .measure{padding:6px 0}.quality-metrics .measure-value{font-size:18px}
+.class-key{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:13px;color:var(--mut)}
+.class-key span{display:flex;align-items:center;gap:6px}.class-key i{width:10px;height:10px;border-radius:0}
+.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--rule);padding-top:12px;margin-top:22px;color:var(--mut);font-size:13px}
+.footer strong{color:var(--ink);font-weight:600}
+.error{border:0;border-left:8px solid var(--alarm);background:none;color:var(--alarm);border-radius:0;padding:8px 0 8px 16px;font-size:15px}
+.empty{color:var(--mut);padding:30px;text-align:center}
+.toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:8px 14px;border:1px solid var(--ink);border-radius:0;background:var(--ink);color:var(--bg);font-size:14px;transition:.2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){.layout{grid-template-columns:1fr;gap:18px}.rail,.main{padding-inline:20px}#wave{height:300px}}
+@media(max-width:560px){.rail{padding:14px 16px 0}.main{padding:8px 16px 24px}.hero{display:block}.hero-actions{margin-top:12px}.topbar{display:block}.pills{margin-top:6px;flex-wrap:wrap;gap:8px}#wave{height:255px}.transport{grid-template-columns:auto minmax(60px,1fr) auto;gap:8px}.speed{grid-column:3}.live-time{display:none}.status-title{font-size:21px}.reason{grid-template-columns:1fr;gap:0}.footer{display:block}.footer span{display:block;margin-top:5px}.measure-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="rail">
+  <div class="brand"><div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2.2-6 4.4 12L16 10l1.4 2H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="brand-name">Trust Layer</div><div class="brand-sub">Signal review · prototype</div></div></div>
+  <div class="rail-label">Choose a case</div>
+  <nav id="caseList" class="case-list" aria-label="Demo cases"></nav>
+  <div class="rail-note"><div class="rail-note-title"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z" stroke="currentColor" stroke-width="1.6"/><path d="m8.5 12 2.2 2.2 4.8-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Alert stays in view</div><p>This prototype reviews a monitor alert. An uncertain result is shown as inconclusive; it does not dismiss the original alert.</p></div>
+  <div class="rail-foot">Recorded signals · local replay</div>
+ </aside>
+ <main class="main">
+  <div class="topbar"><div class="crumb"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>DEMO</span><span>/</span><strong>ALERT REVIEW</strong></div><div class="pills"><a class="pill" href="./">← Wearable station</a><span class="pill"><i class="live"></i>Local replay</span><span class="pill frozen">Model · frozen</span></div></div>
+  <section class="hero"><div><div class="eyebrow">A second look at the monitor</div><h1>Review the signal.<br>Keep the alert visible.</h1><p>Step through recorded examples to see what the Trust Layer can confirm, what remains uncertain, and why the monitor alert is never hidden.</p></div><div class="hero-actions"><button class="btn quiet" id="restartBtn" type="button" title="Restart this case"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11a8 8 0 1 1 2.1 5.4M4 4v7h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Restart case</button><button class="btn primary" id="nextBtn" type="button">Next case <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></section>
+  <div class="casebar"><div class="case-counter">CASE <b id="caseCount">01 / 04</b> <span id="caseCategory">· ALARM CONFIRMED</span></div><div class="case-switch"><button class="icon-btn" id="prevCase" aria-label="Previous case" title="Previous case"><svg viewBox="0 0 24 24" fill="none"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="icon-btn" id="nextCaseIcon" aria-label="Next case" title="Next case"><svg viewBox="0 0 24 24" fill="none"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+  <div id="workspace"><div class="empty">Loading the local demo cases…</div></div>
+  <footer class="footer"><span><strong>Prototype on public Earth data.</strong> Not validated for clinical use or spaceflight.</span><span id="footerSource">VTaC validation examples · BUT QDB quality replay</span></footer>
+ </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const app={data:null,cases:[],index:0,timer:null,playing:false,position:0,speed:1,showLabel:false,windowIndex:0};
+const ICON={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 11 7-11 7z"/></svg>',pause:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zm7 0h4v14h-4z"/></svg>'};
+const copy={true_red:{category:'ALARM SUPPORTED',headline:'Signals support the monitor alert.',blurb:'The replayed ECG and pulse signals align with a high model score. The original VT alert remains visible for the crew.',context:'A clear positive example: the monitor raises a VT alert, then the Trust Layer shows the supporting signals and its score.'},false_yellow:{category:'UNCERTAIN · ALERT PRESERVED',headline:'The alert is not confirmed.',blurb:'The model score stays below its confirmation threshold. That is not proof the event is false, so the original alert remains active.',context:'An inconclusive review is not a dismissal. The system keeps the original alert in view and makes the uncertainty explicit.'},true_yellow:{category:'TRUE ALERT · NOT CONFIRMED',headline:'The alert stays active.',blurb:'This expert-labelled event is not confirmed by the model. The prototype leaves the original monitor alert visible for human review.',context:'This is the important failure-safe case: a true expert-labelled alert receives no model confirmation, and is still kept active.'}};
+function labelFor(s){return s.title||s.id||'Case'}
+function metaFor(s){return s.id==='a'?{k:'a',title:'Signal quality',sub:'BUT QDB · movement & ECG'}:{k:s.id,title:labelFor(s)+' · '+(s.id==='true_red'?'Confirmed':'Review'),sub:'VTaC · VT alarm review'}}
+function stopReplay(){if(app.timer)clearInterval(app.timer);app.timer=null;app.playing=false}
+function defaultWindowIndex(s){return s?.id==='a'?s.windows.reduce((best,w,i,all)=>w.q<all[best].q?i:best,0):0}
+function toast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function renderNav(){const nav=$('#caseList');nav.innerHTML='';app.cases.forEach((s,i)=>{const m=metaFor(s),b=document.createElement('button');b.className='case-button'+(i===app.index?' active':'');b.dataset.id=s.id;b.setAttribute('aria-current',i===app.index?'page':'false');b.innerHTML=`<span class="case-icon">${esc(m.k==='a'?'A':labelFor(s))}</span><span class="case-copy"><span class="case-title">${esc(m.title)}</span><span class="case-sub">${esc(m.sub)}</span></span><span class="case-dot"></span>`;b.onclick=()=>selectCase(i);nav.appendChild(b)})}
+function selectCase(i){if(!app.cases.length)return;stopReplay();app.index=(i+app.cases.length)%app.cases.length;app.position=0;app.windowIndex=defaultWindowIndex(app.cases[app.index]);app.showLabel=false;render()}
+function changeCase(delta){selectCase(app.index+delta)}
+function current(){return app.cases[app.index]}
+function render(){const s=current();if(!s)return;renderNav();$('#caseCount').textContent=String(app.index+1).padStart(2,'0')+' / '+String(app.cases.length).padStart(2,'0');$('#caseCategory').textContent='· '+(s.id==='a'?'SIGNAL QUALITY':copy[s.id]?.category||'CASE REVIEW');$('#workspace').className=s.id==='a'?'layout case-a':'layout';$('#workspace').innerHTML=s.id==='a'?renderA(s):renderB(s);if(s.id==='a')initA(s);else initB(s);$('#nextBtn').innerHTML=(app.index===app.cases.length-1?'Back to first':'Next case')+' <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';$('#footerSource').textContent=s.id==='a'?'BUT QDB · one recorded quality-replay excerpt':'VTaC validation · recorded VT alarm example'}
+function renderB(s){const c=copy[s.id]||copy.false_yellow,red=s.state==='red',state=red?'red':'yellow',stateLabel=red?'SUPPORTED':'INCONCLUSIVE',score=Number(s.detail_line.match(/Model score (\d+(?:\.\d+)?)/)?.[1]||s.p_true||0),threshold=Number(s.detail_line.match(/threshold (\d+(?:\.\d+)?)/)?.[1]||s.T||0),hr=Number(s.detail_line.match(/ECG (\d+(?:\.\d+)?)/)?.[1]||0),phr=Number(s.detail_line.match(/PPG pulse (\d+(?:\.\d+)?)/)?.[1]||0);
+ return `<div class="stack"><section class="card signal-card"><div class="card-head"><div><div class="card-kicker">RECORDED SIGNAL · 30 SECOND WINDOW</div><div class="card-title">Monitor replay <span class="card-meta">· ${esc(s.record)}</span></div></div><div class="legend"><span><i></i>ECG lead</span><span><i class="pleth"></i>ECG lead</span><span><i class="motion"></i>PPG</span></div></div><div class="wave-wrap"><canvas id="wave" aria-label="ECG and pulse waveform replay"></canvas></div><div class="chart-foot"><span>270 s · BEFORE MONITOR ALERT</span><span>300 s · ALERT RAISED</span></div><div class="transport"><button class="play-btn" id="playBtn" aria-label="Play replay" title="Play replay">${ICON.play}</button><label class="scrubber"><span>REPLAY</span><input id="replaySlider" type="range" min="0" max="30" step="0.1" value="0" aria-label="Replay position"><span class="live-time" id="replayTime">00:00</span></label><button class="speed" id="speedBtn" type="button" aria-label="Replay speed">1×</button></div></section>
+ <section class="card status-card"><div class="status-top"><span class="status-tag">Trust Layer review</span><span class="state ${state}">${stateLabel}</span></div><h2 class="status-title">${esc(c.headline)}</h2><p class="status-copy">${esc(c.blurb)}</p><div class="reason"><div class="reason-label">Model explanation</div><div class="reason-text">${esc(s.reason_line||'The recorded event is reviewed using ECG and pulse features.')}</div></div><div class="status-divider"></div><div class="measure-grid"><div class="measure"><div class="measure-label">Model score</div><div class="measure-value">${score.toFixed(2)} <small>/ 1</small></div></div><div class="measure"><div class="measure-label">Threshold</div><div class="measure-value">${threshold.toFixed(2)}</div></div><div class="measure"><div class="measure-label">ECG rate</div><div class="measure-value">${Math.round(hr)} <small>bpm</small></div></div><div class="measure"><div class="measure-label">Pulse rate</div><div class="measure-value">${Math.round(phr)} <small>bpm</small></div></div></div><p class="details-note">${esc((s.detail_line||'').replace(/^Model score \d+(?:\.\d+)?, threshold \d+(?:\.\d+)?\.\s*/,'').replace(/Model:.*$/,'').trim())} The model is an experimental prototype, not clinically validated.</p></section>
+ <section class="card case-context"><div class="context-head"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>What this case demonstrates</div><p class="context-text">${esc(c.context)}</p></section><div class="review-row"><button class="reveal" id="revealBtn" type="button">Reveal reference annotation</button><span class="reveal-copy" id="referenceLabel" aria-live="polite"></span></div></div>
+ <aside class="side-card card"><div class="side-title"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h17M7 15l4-4 3 2 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Walkthrough</div><div class="step-list"><div class="step"><span class="step-num">01</span><div><strong>Monitor raises VT alert</strong><small>Original alert at 300 seconds</small></div></div><div class="step"><span class="step-num">02</span><div><strong>Review ECG + pulse</strong><small>Replay the 30 seconds before alert</small></div></div><div class="step"><span class="step-num">03</span><div><strong>Show score and reason</strong><small>Threshold is visible beside score</small></div></div><div class="step"><span class="step-num">04</span><div><strong>Keep crew in control</strong><small>Inconclusive never hides the alert</small></div></div></div><div class="dataset"><div class="data-row"><span>Dataset</span><strong>VTaC v1.1</strong></div><div class="data-row"><span>Split</span><strong>Validation</strong></div><div class="data-row"><span>Signal</span><strong>ECG + PPG</strong></div><div class="data-row"><span>Model</span><strong>Frozen V5</strong></div></div><div class="note-callout"><b>Interpretation:</b> a low score means “not confirmed.” It does not establish that the alarm was false.</div></aside>`}
+function renderA(a){return `<div class="stack"><section class="card signal-card"><div class="card-head"><div><div class="card-kicker">RECORDED SIGNAL · 180 SECOND EXCERPT</div><div class="card-title">ECG + movement <span class="card-meta">· BUT QDB 111001</span></div></div><div class="legend"><span><i></i>ECG</span><span><i class="motion"></i>Movement</span></div></div><div class="wave-wrap"><canvas id="wave" aria-label="ECG quality replay"></canvas></div><div class="chart-foot"><span>67,740 s · EXCERPT START</span><span>67,920 s · EXCERPT END</span></div><div class="transport"><button class="play-btn" id="playBtn" aria-label="Play quality replay" title="Play quality replay">${ICON.play}</button><label class="scrubber"><span>WINDOW</span><input id="windowSlider" type="range" min="0" max="${a.windows.length-1}" step="1" value="0" aria-label="Select signal window"><span class="live-time" id="windowTime">—</span></label><button class="speed" id="windowStep" type="button" aria-label="Next window">NEXT ›</button></div></section>
+ <section class="card status-card"><div class="status-top"><span class="status-tag">Signal quality gate</span><span class="state gray" id="qualityState">QUALITY</span></div><h2 class="status-title" id="qualityTitle">Signal review</h2><p class="status-copy">Move across the recording to inspect the signal-quality score and motion. This is a quality example, not an arrhythmia alert.</p><div class="quality-metrics"><div class="measure"><div class="measure-label">Quality score</div><div class="measure-value" id="qualityValue">—</div></div><div class="measure"><div class="measure-label">Preset gate</div><div class="measure-value">${Number(a.q_gate).toFixed(2)}</div></div><div class="measure"><div class="measure-label">Motion spread</div><div class="measure-value" id="motionValue">—</div></div></div><div class="quality-chart"><div class="chart-label">QUALITY SCORE ACROSS THE EXCERPT</div><canvas id="qualityPlot" aria-label="Quality score timeline"></canvas></div><div class="class-key"><span><i style="background:#8d877d"></i>Class 1 · visible QRS</span><span><i style="background:#c9962b"></i>Class 2 · noisy</span><span><i style="background:#8c2f2f"></i>Class 3 · QRS not visible</span></div><div class="reason"><div class="reason-label">Current window</div><div class="reason-text" id="qualityReason">Choose a window to begin.</div></div></section>
+ <section class="card case-context"><div class="context-head"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h17M7 15l4-4 3 2 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>What this case demonstrates</div><p class="context-text">A wearable ECG can become harder to interpret during movement. The quality gate surfaces signal uncertainty; it does not diagnose a rhythm or declare the person healthy.</p></section><div class="review-row"><button class="reveal" id="revealBtn" type="button">Reveal expert annotations</button><span class="reveal-copy" id="referenceLabel" aria-live="polite"></span></div></div>
+ <aside class="side-card card"><div class="side-title">Reading this case</div><div class="step-list"><div class="step"><span class="step-num">01</span><div><strong>Choose a time window</strong><small>Eight-second windows across the excerpt</small></div></div><div class="step"><span class="step-num">02</span><div><strong>Compare score to gate</strong><small>Preset threshold is shown on the chart</small></div></div><div class="step"><span class="step-num">03</span><div><strong>Inspect movement</strong><small>Accelerometer accompanies the ECG</small></div></div></div><div class="dataset"><div class="data-row"><span>Dataset</span><strong>BUT QDB 1.0.0</strong></div><div class="data-row"><span>Record</span><strong>111001</strong></div><div class="data-row"><span>Excerpt</span><strong>180 seconds</strong></div><div class="data-row"><span>ECG rate</span><strong>1,000 → 250 Hz</strong></div></div><div class="note-callout"><b>Scope:</b> one recorded excerpt from one subject. This walkthrough does not estimate performance.</div></aside>`}
+function plotSignals(canvas,rows,{t0=0,duration=30,highlight=null,cursor=0}={}){const dpr=window.devicePixelRatio||1,W=canvas.clientWidth,H=canvas.clientHeight;if(!W||!H)return;canvas.width=W*dpr;canvas.height=H*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);const L=51,R=12,T=16,B=25,pw=W-L-R,ph=H-T-B,colors=['#1f1b16','#8c2f2f','#c9962b'];c.font='11px "JetBrains Mono",monospace';c.textBaseline='middle';
+ for(let k=0;k<=4;k++){const y=T+ph*k/4;c.strokeStyle='#ddd5c7';c.lineWidth=1;c.beginPath();c.moveTo(L,y);c.lineTo(W-R,y);c.stroke()}
+ if(highlight){const x1=L+pw*highlight[0]/duration,x2=L+pw*highlight[1]/duration;c.fillStyle='#e8dec9';c.fillRect(x1,T,x2-x1,ph);c.strokeStyle='#c9b99a';c.setLineDash([4,4]);c.beginPath();c.moveTo(x1,T);c.lineTo(x1,T+ph);c.moveTo(x2,T);c.lineTo(x2,T+ph);c.stroke();c.setLineDash([])}
+ const bandH=ph/rows.length;rows.forEach((r,ri)=>{const y0=T+ri*bandH,arr=r.x||[],len=arr.length,color=r.color||colors[ri%colors.length];c.fillStyle=color;c.fillText(r.name,10,y0+12);if(!len)return;let sorted=null;if(len<30000)sorted=arr.slice().sort((a,b)=>a-b);let mn=sorted?sorted[Math.floor(sorted.length*.01)]:Math.min(...arr.slice(0,Math.min(len,8000))),mx=sorted?sorted[Math.floor(sorted.length*.99)]:Math.max(...arr.slice(0,Math.min(len,8000)));if(mx<=mn){mx=mn+1}const half=bandH*.34,mid=y0+bandH*.52;c.strokeStyle=color;c.globalAlpha=.92;c.lineWidth=1.05;c.beginPath();for(let px=0;px<pw;px++){const a=Math.floor(px/pw*len),b=Math.max(a+1,Math.floor((px+1)/pw*len));let lo=Infinity,hi=-Infinity;for(let k=a;k<b;k++){const v=arr[k];if(v<lo)lo=v;if(v>hi)hi=v}const clamp=v=>Math.min(mx,Math.max(mn,v)),ya=mid-(clamp(hi)-mn)/(mx-mn)*half*2,yb=mid-(clamp(lo)-mn)/(mx-mn)*half*2;c.moveTo(L+px+.5,ya);c.lineTo(L+px+.5,yb)}c.stroke();c.globalAlpha=1});
+ if(cursor>=0){const x=L+pw*Math.max(0,Math.min(duration,cursor))/duration;c.strokeStyle='#1f1b16';c.lineWidth=1;c.setLineDash([3,4]);c.beginPath();c.moveTo(x,T);c.lineTo(x,T+ph);c.stroke();c.setLineDash([]);c.fillStyle='#1f1b16';c.beginPath();c.arc(x,T+3,2.8,0,Math.PI*2);c.fill()}
+ c.fillStyle='#7a7268';c.textBaseline='alphabetic';for(let i=0;i<=6;i++){const x=L+pw*i/6;c.fillText(Math.round(t0+duration*i/6)+'s',x-10,H-7)}return{L,R,T,B,W,H,pw,ph};}
+function drawQualityPlot(a,selected){const cv=$('#qualityPlot');if(!cv)return;const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);const L=39,R=10,T=11,B=22,pw=W-L-R,ph=H-T-B,y=v=>T+ph*(1-v);c.strokeStyle='#ddd5c7';c.lineWidth=1;for(let i=0;i<=2;i++){let yy=T+ph*i/2;c.beginPath();c.moveTo(L,yy);c.lineTo(W-R,yy);c.stroke()}const gy=y(a.q_gate);c.strokeStyle='#c9962b';c.setLineDash([4,4]);c.beginPath();c.moveTo(L,gy);c.lineTo(W-R,gy);c.stroke();c.setLineDash([]);c.fillStyle='#c9962b';c.font='11px "JetBrains Mono"';c.fillText(a.q_gate.toFixed(2),5,gy+3);const ws=a.windows;c.beginPath();ws.forEach((w,i)=>{let x=L+pw*w.t/a.duration_s,yy=y(w.q);i?c.lineTo(x,yy):c.moveTo(x,yy)});c.strokeStyle='#1f1b16';c.lineWidth=1.5;c.stroke();const sel=ws[selected],x=L+pw*sel.t/a.duration_s;c.fillStyle=sel.q<a.q_gate?'#c9962b':'#1f1b16';c.beginPath();c.arc(x,y(sel.q),4,0,Math.PI*2);c.fill();c.fillStyle='#7a7268';c.fillText('0 s',L,H-6);c.fillText('180 s',W-R-31,H-6)}
+function initB(s){const wf=s.channels.map((c,i)=>({name:i===2?'PPG':c.name,x:c.x}));const draw=()=>plotSignals($('#wave'),wf,{t0:270,duration:30,highlight:[20,30],cursor:app.position});draw();$('#replaySlider').oninput=e=>{app.position=+e.target.value;$('#replayTime').textContent='00:'+String(Math.floor(app.position)).padStart(2,'0');draw()};$('#playBtn').onclick=toggleReplay;$('#speedBtn').onclick=()=>{app.speed=app.speed===1?2:app.speed===2?4:1;$('#speedBtn').textContent=app.speed+'×'};$('#revealBtn').onclick=()=>{app.showLabel=!app.showLabel;$('#referenceLabel').textContent=app.showLabel?s.label_reveal:'';$('#revealBtn').textContent=app.showLabel?'Hide reference annotation':'Reveal reference annotation'};window.onresize=draw}
+function toggleReplay(){const s=current();if(!s)return;if(app.playing){stopReplay();const b=$('#playBtn');if(b){b.innerHTML=ICON.play;b.setAttribute('aria-label','Play replay')}return}if(app.position>=30)app.position=0;app.playing=true;const b=$('#playBtn');if(b){b.innerHTML=ICON.pause;b.setAttribute('aria-label','Pause replay')}app.timer=setInterval(()=>{app.position+=.1*app.speed;if(app.position>=30){app.position=30;stopReplay();const button=$('#playBtn');if(button){button.innerHTML=ICON.play;button.setAttribute('aria-label','Play replay')}}const slider=$('#replaySlider');if(slider)slider.value=app.position;const time=$('#replayTime');if(time)time.textContent='00:'+String(Math.floor(app.position)).padStart(2,'0');const scene=current();if(scene&&scene.id!=='a')plotSignals($('#wave'),scene.channels.map((c,i)=>({name:i===2?'PPG':c.name,x:c.x})),{t0:270,duration:30,highlight:[20,30],cursor:app.position})},100)}
+function initA(a){const slider=$('#windowSlider');function draw(){app.windowIndex=Math.max(0,Math.min(a.windows.length-1,app.windowIndex));const w=a.windows[app.windowIndex],start=w.t-a.win_s;const plot=plotSignals($('#wave'),[{name:'ECG',x:a.ecg,color:'#1f1b16'},{name:'MOVE',x:a.acc_mag_mg,color:'#c9962b'}],{t0:0,duration:a.duration_s,highlight:[start,w.t],cursor:w.t});if(app.showLabel&&plot){const canvas=$('#wave'),ctx=canvas.getContext('2d'),dpr=devicePixelRatio||1;ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);const band=(plot.ph/2),barY=plot.T+band-6,colors={0:'#ddd5c7',1:'#8d877d',2:'#c9962b',3:'#8c2f2f'};a.class_per_s.forEach((cls,sec)=>{ctx.fillStyle=colors[cls]||colors[0];ctx.fillRect(plot.L+plot.pw*sec/a.duration_s,barY,Math.max(1,plot.pw/a.duration_s+.25),5)});ctx.restore()}drawQualityPlot(a,app.windowIndex);$('#windowTime').textContent=String(start).padStart(3,'0')+'–'+String(w.t).padStart(3,'0')+'s';$('#qualityValue').textContent=w.q.toFixed(2);$('#motionValue').textContent=Math.round(w.motion_mg)+' mg';const low=w.q<a.q_gate;$('#qualityState').className='state '+(low?'yellow':'gray');$('#qualityState').textContent=low?'BELOW GATE':'ABOVE GATE';$('#qualityTitle').textContent=low?'Signal quality is low.':'Signal quality is sufficient.';$('#qualityReason').textContent=low?a.text_low+' The original signal and annotations remain available.':a.text_ok+'. This is a signal-quality observation, not a diagnosis.';slider.value=app.windowIndex}slider.oninput=()=>{stopReplay();app.windowIndex=+slider.value;draw()};$('#windowStep').onclick=()=>{app.windowIndex=(app.windowIndex+1)%a.windows.length;draw()};$('#playBtn').onclick=()=>{if(app.playing){stopReplay();$('#playBtn').innerHTML=ICON.play;return}app.playing=true;$('#playBtn').innerHTML=ICON.pause;app.timer=setInterval(()=>{app.windowIndex=(app.windowIndex+1)%a.windows.length;draw()},420)};$('#revealBtn').onclick=()=>{app.showLabel=!app.showLabel;$('#referenceLabel').textContent=app.showLabel?'Reference classes are shown as colored bars under the ECG: grey = class 1, amber = class 2, coral = class 3. These are expert signal-quality annotations.':'';$('#revealBtn').textContent=app.showLabel?'Hide annotation guide':'Reveal expert annotations';};draw();window.onresize=draw}
+function init(){const q=new URLSearchParams(location.search).get('scene');fetch('scenes.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{app.data=data;const b=data.b||[];app.cases=[...b,...(data.a?[{...data.a,id:'a',title:'A'}]:[])];if(!app.cases.length)throw Error('No demo cases are available.');const requested=app.cases.findIndex(s=>s.id===q);app.index=requested>=0?requested:0;app.windowIndex=defaultWindowIndex(current());render();if(Object.keys(data.errors||{}).length){const failed=Object.entries(data.errors).map(([k,v])=>`${k}: ${v}`).join(' · ');toast('Some cases could not load: '+failed)}}).catch(e=>{$('#workspace').innerHTML=`<div class="error"><strong>Demo cases could not be loaded.</strong><br>${esc(e.message)}<br><small>Confirm that the local demo server is running and the bundled demo data is present.</small></div>`})}
+$('#prevCase').onclick=()=>changeCase(-1);$('#nextCaseIcon').onclick=()=>changeCase(1);$('#nextBtn').onclick=()=>changeCase(1);$('#restartBtn').onclick=()=>{stopReplay();app.position=0;app.windowIndex=defaultWindowIndex(current());app.showLabel=false;render();toast('Case replay restarted')};document.addEventListener('keydown',e=>{if(e.target.matches('input,button'))return;if(e.key==='ArrowRight')changeCase(1);if(e.key==='ArrowLeft')changeCase(-1);if(e.key===' '&&current()?.id!=='a'){e.preventDefault();toggleReplay()}});init();
+</script>
+</body>
+</html>

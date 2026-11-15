@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4efe6">
+<title>Trust Layer — Wearable telemetry</title>
+<style>
+@font-face{font-family:"DM Sans";src:url('fonts/DMSans.ttf');font-weight:100 1000}
+@font-face{font-family:"JetBrains Mono";src:url('fonts/JetBrainsMono.ttf');font-weight:100 800}
+:root{--bg:#f4efe6;--ink:#1f1b16;--mut:#7a7268;--rule:#ddd5c7;--band:#e8dec9;--alarm:#d1121b;--real:#8c2f2f;--yel:#c9962b;--gry:#8d877d;--font:"DM Sans",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font)}
+button,input{font:inherit}button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.hidden{display:none!important}
+.app{min-height:100vh}
+.main{max-width:1180px;margin:0 auto;padding:18px 24px 28px}
+/* top bar: brand left, scene tabs right, like the ECG demo */
+.rail{max-width:1180px;margin:0 auto;padding:18px 24px 0;display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;background:none;border:0;height:auto}
+.brand{font-size:16px;font-weight:600;display:block;white-space:nowrap}
+.brand-mark{display:none}
+.rail-group{display:flex;gap:18px}
+.rail-label,.rail-separator,.source-box,.nav-icon,.topline{display:none}
+.rail a{background:none;border-bottom:2px solid transparent;color:var(--mut);font-size:14px;padding:2px 0;border-radius:0}
+.rail a.selected{color:var(--ink);border-color:var(--ink);background:none;font-weight:400}
+.rail a:hover{color:var(--ink)}
+.main{padding-top:6px}
+.heading{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;padding:6px 0 14px}
+.eyebrow{display:none}
+.heading h1{font-size:16px;font-weight:600;margin:0;letter-spacing:0;line-height:1.5}
+.heading p{margin:2px 0 0;color:var(--mut);font-size:14px;max-width:62ch}
+.mode-switch{display:flex;gap:18px;background:none;padding:0;border-radius:0}
+.mode-switch button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;color:var(--mut);font-size:14px;font-weight:400;padding:2px 0}
+.mode-switch button.active{background:none;box-shadow:none;color:var(--ink);border-color:var(--ink)}
+.flow{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;background:none;border:0;border-top:1px solid var(--rule);border-radius:0;padding:10px 0;margin:0;color:var(--mut);font-size:14px}
+.flow strong{color:var(--ink);font-weight:600}
+.flow .step{display:inline-flex;gap:7px}.flow .arrow{color:var(--rule)}
+.flow .source-chip{margin-left:auto;background:none;color:var(--mut);border:1px solid var(--rule);border-radius:0;padding:1px 8px;font:12px var(--mono);letter-spacing:.02em}
+.board{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:40px;align-items:start}
+.maincol,.sidecol{display:grid;gap:18px;min-width:0}
+.panel{background:none;border:0;border-top:1px solid var(--rule);border-radius:0;box-shadow:none;overflow:visible}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0 6px}
+.panel-title{font-size:14px;font-weight:600}
+.panel-sub{font-size:13px;color:var(--mut)}
+.badge,.badge.real{font:12px var(--mono);letter-spacing:.02em;color:var(--mut);background:none;border:1px solid var(--rule);border-radius:0;padding:1px 8px;white-space:nowrap}
+.monitor-inner{padding:0 0 4px}
+.focus{display:flex;align-items:baseline;gap:14px;margin:4px 0 10px}
+.focus-value{color:var(--ink);font:600 44px/1.1 var(--mono);letter-spacing:-.02em}
+.focus-unit{font-size:14px;color:var(--mut);line-height:1.3}
+.focus-note{margin-left:auto;text-align:right;font-size:13px;color:var(--mut)}
+.focus-note b{display:block;color:var(--ink);font:14px var(--mono);margin-top:2px;font-weight:400}
+.plot-shell{position:relative;background:none;border:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0;overflow:visible}
+.plot-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0 0;color:var(--mut);font-size:13px;font-weight:400}
+.legend{display:flex;gap:16px}.legend span{white-space:nowrap}
+.legend i{display:inline-block;width:14px;height:2px;border-radius:0;background:var(--real);margin-right:6px;vertical-align:middle}
+.legend i.rr{background:var(--yel)}
+.plot-shell canvas{width:100%;height:235px;display:block}
+.plot-foot{display:flex;justify-content:space-between;padding:0 0 8px;color:var(--mut);font:12px var(--mono)}
+.emptyState{position:absolute;inset:34px 0 28px;display:grid;place-items:center;text-align:center;background:#f4efe6e6;color:var(--mut);font-size:14px;padding:15px}
+.transport{display:flex;align-items:center;gap:14px;padding-top:12px}
+.control{background:none;border:1px solid var(--ink);border-radius:0;color:var(--ink);padding:5px 14px;font-size:14px;font-weight:600;white-space:nowrap}
+.control:hover{background:var(--band)}
+.transport input{accent-color:var(--ink);width:100%;min-width:40px}
+.transport .t{color:var(--mut);font:13px var(--mono);min-width:42px;text-align:right}
+.readings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0 0 6px}
+.reading{padding:8px 14px 8px 0;min-width:0;border-right:0}
+.reading+.reading{padding-left:14px;border-left:1px solid var(--rule)}
+.reading .name{font-size:14px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reading .value{font:600 26px/1.2 var(--mono);letter-spacing:-.02em;margin:4px 0 0;color:var(--ink);white-space:nowrap}
+.reading:nth-child(1) .value,.reading:nth-child(2) .value{color:var(--ink)}
+.reading .unit{font-size:13px;color:var(--mut)}
+.reading .stamp{font:12px var(--mono);color:var(--mut);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scenario,.observation,.import{padding:12px 0 0}
+.scenario h2,.import h2{font-size:14px;font-weight:600;margin:0 0 8px}
+.stages{display:grid;grid-template-columns:1fr;gap:0}
+.stage{min-height:0;display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:baseline;border:0;border-top:1px solid var(--rule);border-left:4px solid transparent;background:none;border-radius:0;padding:8px 0 8px 10px;text-align:left;color:var(--ink)}
+.stage:last-child{border-bottom:1px solid var(--rule)}
+.stage:hover{background:var(--band)}
+.stage.active{border-left-color:var(--yel);font-weight:600}
+.stage .step-time{display:block;color:var(--mut);font:13px var(--mono);font-weight:400}
+.stage .step-name{display:block;color:var(--ink);font-size:14px;line-height:1.3;margin:0}
+.obs-status{color:var(--mut);font-size:13px;font-weight:400}
+.obs-status:before{display:none}
+.observation h2{font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.01em;margin:10px 0 10px;padding-left:16px;border-left:8px solid var(--yel)}
+.observation p{color:var(--ink);font-size:15px;line-height:1.5;margin:0}
+.obs-rule{height:1px;background:var(--rule);margin:14px 0}
+.meta{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px}
+.meta span{color:var(--mut)}.meta b{color:var(--ink);font-size:14px;font-weight:400;text-align:right}
+.smallnote{margin-top:14px;background:none;border-radius:0;padding:0;color:var(--mut);font-size:13px;line-height:1.5}
+.manual{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px;margin-top:12px}
+.manual input{accent-color:var(--ink)}
+.import p{font-size:14px;color:var(--mut);line-height:1.5;margin:0 0 12px}
+.import code{font:13px var(--mono);color:var(--ink)}
+.file{display:block;position:relative;background:none;border:1px dashed var(--mut);color:var(--ink);text-align:center;border-radius:0;padding:10px;font-size:14px;font-weight:600;cursor:pointer}
+.file:hover{background:var(--band)}
+.file input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.import-status{font-size:13px;color:var(--mut);margin-top:8px;min-height:1em}
+.import-status.error{color:var(--alarm)}
+.bottom{border-top:1px solid var(--rule);padding-top:12px;margin-top:22px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--mut);font-size:13px}
+.bottom a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-weight:400}
+@media(max-width:1000px){.board{grid-template-columns:1fr;gap:18px}.sidecol{grid-template-columns:1fr}.main{padding-inline:20px}.rail{padding-inline:20px}}
+@media(max-width:680px){.main{padding:6px 16px 24px}.rail{padding:14px 16px 0}.heading{display:block}.mode-switch{margin-top:10px}.flow .source-chip{margin-left:0}.readings{grid-template-columns:1fr 1fr}.reading:nth-child(3){padding-left:0;border-left:0}.focus-value{font-size:38px}.observation h2{font-size:20px}.bottom{display:block}.bottom span{display:block;margin-bottom:6px}}
+/* static build: Apple Health import needs the local app */
+.import,#watchTab{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand"><span class="brand-mark">⌁</span>Trust Layer</div>
+    <div class="rail-group"><div class="rail-label">WORKSPACE</div><a class="selected" href="/"><span class="nav-icon">01</span> Wearable telemetry</a><a href="cases.html"><span class="nav-icon">02</span> ECG alarm cases</a></div>
+    <div class="rail-separator"></div>
+    <div class="source-box"><div class="s1">● LOCAL SESSION</div><div class="s2">Recorded signal review and optional Apple Health readings.</div><div class="s3">EARTH DATA · PROTOTYPE</div></div>
+  </aside>
+  <main class="main">
+    <div class="topline"><span class="breadcrumb">MISSION HEALTH <span>/</span> <b>WEARABLE TELEMETRY</b></span><span class="topstatus"><i></i>LOCAL PROCESSING</span></div>
+    <header class="heading"><div><span class="eyebrow">Your health data, in context</span><h1>Health at a glance</h1><p>Follow a clearly labelled demo with scripted values. Earth data, not astronauts.</p></div><div class="mode-switch"><button id="demoTab" type="button">Scripted demo</button><button id="watchTab" type="button">Apple Health data</button></div></header>
+    <div id="flow" class="flow"></div>
+    <div class="board"><div class="maincol">
+      <section class="panel"><div class="panel-head"><span class="panel-title">Heart rate and breathing</span><span id="sourceTag" class="badge">SYNTHETIC DEMO</span></div><div class="monitor-inner"><div class="focus"><div id="focusValue" class="focus-value">—</div><div class="focus-unit">BPM<br>HEART RATE</div><div class="focus-note">SELECTED TIME<b id="selectedTime">—</b></div></div><div class="plot-shell"><div class="plot-head"><span>Readings over time</span><span class="legend"><span><i></i>HEART</span><span><i class="rr"></i>BREATHS</span></span></div><canvas id="plot" aria-label="Heart rate and breathing rate timeline"></canvas><div id="emptyState" class="emptyState hidden">Choose an Apple Health export to see your readings here.</div><div class="plot-foot"><span id="chartStart">START</span><span id="chartEnd">END</span></div></div><div id="transport" class="transport"><button id="play" class="control" type="button">▶ PLAY REPLAY</button><input id="scrub" type="range" min="0" max="3" step="1" value="0" aria-label="Replay position"><span id="time" class="t">00:00</span></div></div></section>
+      <section class="panel"><div class="panel-head"><span class="panel-title">All available readings</span><span id="readingMeta" class="panel-sub">SCRIPTED VALUES</span></div><div id="readings" class="readings"></div></section>
+    </div><div class="sidecol">
+      <section id="scenario" class="panel scenario"><h2>Choose a moment</h2><div id="stages" class="stages"></div></section>
+      <section class="panel observation"><div id="obsStatus" class="obs-status">OBSERVATION</div><h2 id="headline">Baseline readings</h2><p id="explanation">Start replay to see the change.</p><div class="obs-rule"></div><div class="meta"><span>Source</span><b id="source">Scripted example</b><span>ECG V5 model</span><b>ECG alarm cases only</b><span>Missing</span><b id="missing">None in script</b></div><div class="smallnote">This panel describes measurements. It cannot identify a medical cause or clear an alarm.</div><label id="symptomControl" class="manual"><input id="cough" type="checkbox"> Cough reported by person</label></section>
+      <section class="panel import"><h2>Bring in your Watch data</h2><p>On iPhone: Health → Summary → profile photo → Export All Health Data. Save the ZIP to Files, unzip it, then select <code>export.xml</code> here (up to 200 MB).</p><label class="file">SELECT EXPORT.XML<input id="healthFile" type="file" accept=".xml,text/xml,application/xml"></label><div id="importStatus" class="import-status" role="status"></div><p style="margin-top:13px">Supported: heart rate, respiratory rate, oxygen saturation and sleeping wrist temperature. iPhone Shortcut can send new samples to the local endpoint described in README.</p></section>
+    </div></div>
+    <footer class="bottom"><span>PROTOTYPE · SYNTHETIC SCENARIO OR PERSONAL HEALTH EXPORT · NO CLINICAL VALIDATION</span><span><a href="cases.html">OPEN ECG ALARM CASES →</a></span></footer>
+  </main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const scenario=[
+  {t:'00:00',hr:72,rr:14,oxygen:98,temp:36.2,title:'Baseline readings',detail:'First point in this scripted comparison.'},
+  {t:'00:15',hr:94,rr:17,oxygen:98,temp:36.2,title:'Pulse is rising',detail:'Heart rate is 22 bpm above the first scripted reading. Cause is unknown.'},
+  {t:'00:30',hr:112,rr:21,oxygen:97,temp:36.2,title:'Pulse and breathing changed',detail:'Both readings are higher than the first scripted reading. This observation does not identify a condition.'},
+  {t:'00:45',hr:78,rr:15,oxygen:98,temp:36.2,title:'Readings moved toward baseline',detail:'Heart rate and breathing are closer to the first scripted reading.'}
+];
+const labels={heart_rate:['Heart rate','bpm'],respiratory_rate:['Respiratory rate','breaths/min'],oxygen_saturation:['Blood oxygen','%'],wrist_temperature:['Sleeping wrist temp','°C']};
+let mode=new URLSearchParams(location.search).get('mode')==='watch'?'real':'demo',step=0,timer=null,real=[];
+function stop(){if(timer)clearInterval(timer);timer=null;$('#play').textContent='▶ PLAY REPLAY'}
+function reading(name,value,unit,stamp){const el=document.createElement('div');el.className='reading';el.innerHTML='<div class="name"></div><div class="value"></div><div class="unit"></div><div class="stamp"></div>';el.querySelector('.name').textContent=name;el.querySelector('.value').textContent=value??'—';el.querySelector('.unit').textContent=unit;el.querySelector('.stamp').textContent=stamp;return el}
+function readings(items){const box=$('#readings');box.replaceChildren(...items.map(x=>reading(...x)))}
+function plot(series,cursor){const cv=$('#plot'),w=cv.clientWidth,h=cv.clientHeight,d=devicePixelRatio||1;if(!w)return;cv.width=w*d;cv.height=h*d;const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const L=46,R=15,T=24,B=25,pw=w-L-R,ph=h-T-B;g.font='11px "JetBrains Mono"';g.fillStyle='#7a7268';g.strokeStyle='#ddd5c7';g.lineWidth=1;for(let i=0;i<=4;i++){let y=T+ph*i/4;g.beginPath();g.moveTo(L,y);g.lineTo(w-R,y);g.stroke()}const all=series.flatMap(s=>s.points.map(p=>p.x));const minX=all.length?Math.min(...all):0,maxX=all.length?Math.max(...all):1,dx=Math.max(1,maxX-minX),X=x=>L+pw*(x-minX)/dx;series.forEach((s,k)=>{const vals=s.points.map(p=>p.y);if(!vals.length)return;let lo=Math.min(...vals),hi=Math.max(...vals);const pad=Math.max(k===0?12:3,(hi-lo)*.3);lo-=pad;hi+=pad;const band=k===0?[T+4,T+ph*.55]:[T+ph*.57,T+ph-5],Y=y=>band[1]-(y-lo)/(hi-lo)*(band[1]-band[0]);g.strokeStyle=s.color;g.lineWidth=1.8;g.beginPath();s.points.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.stroke();s.points.forEach(p=>{g.fillStyle=s.color;g.beginPath();g.arc(X(p.x),Y(p.y),2.6,0,7);g.fill()});g.fillStyle='#7a7268';g.fillText(s.label,L+5,band[0]+10)});if(cursor!=null){const x=X(cursor);g.strokeStyle='#1f1b16';g.setLineDash([3,4]);g.beginPath();g.moveTo(x,T);g.lineTo(x,h-B);g.stroke();g.setLineDash([]);g.fillStyle='#1f1b16';g.beginPath();g.arc(x,T,3,0,7);g.fill()}}
+function renderStages(){const box=$('#stages');box.replaceChildren(...scenario.map((s,i)=>{const b=document.createElement('button');b.type='button';b.className='stage'+(i===step?' active':'');b.innerHTML='<span class="step-time"></span><span class="step-name"></span>';b.querySelector('.step-time').textContent=s.t;b.querySelector('.step-name').textContent=s.title;b.onclick=()=>{step=i;renderDemo()};return b}))}
+function renderDemo(){const s=scenario[step];$('#emptyState').classList.add('hidden');$('#flow').innerHTML='<span class=step><strong>Scripted example</strong></span><span class=arrow>→</span><span class=step>Choose a moment</span><span class=arrow>→</span><span class=step>Compare readings</span><span class=source-chip>SIMULATED DATA</span>';$('#sourceTag').textContent='SYNTHETIC DEMO';$('#sourceTag').className='badge';$('#focusValue').textContent=s.hr;$('#selectedTime').textContent=s.t;$('#time').textContent=s.t;$('#scrub').value=step;$('#readingMeta').textContent='SCRIPTED VALUES';readings([['Heart rate',s.hr,'bpm',s.t],['Respiratory rate',s.rr,'breaths/min',s.t],['Blood oxygen',s.oxygen,'%','SCRIPTED'],['Sleeping wrist temp',s.temp,'°C','SCRIPTED']]);$('#headline').textContent=s.title;$('#explanation').textContent=s.detail+($('#cough').checked?' Cough was reported by the person, not sensed by the watch.':'');$('#source').textContent='Scripted example';$('#missing').textContent='None in script';$('#obsStatus').textContent='OBSERVATION · DEMO';$('#chartStart').textContent='00:00';$('#chartEnd').textContent='00:45';plot([{label:'HR / BPM',color:'#8c2f2f',points:scenario.map((v,i)=>({x:i,y:v.hr}))},{label:'RR / MIN',color:'#c9962b',points:scenario.map((v,i)=>({x:i,y:v.rr}))}],step);renderStages()}
+function renderReal(){const latest={};real.forEach(s=>{if(!latest[s.metric]||s.time>latest[s.metric].time)latest[s.metric]=s});$('#emptyState').classList.toggle('hidden',!!real.length);$('#flow').innerHTML='<span class=step><strong>Apple Watch</strong></span><span class=arrow>→</span><span class=step>Health on iPhone</span><span class=arrow>→</span><span class=step>Import export.xml</span><span class=arrow>→</span><span class=step>View readings</span><span class=source-chip>LOCAL IMPORT</span>';$('#sourceTag').textContent=real.length?'APPLE HEALTH / LOCAL':'WAITING FOR DATA';$('#sourceTag').className='badge real';$('#focusValue').textContent=latest.heart_rate?.value??'—';$('#selectedTime').textContent=latest.heart_rate?new Date(latest.heart_rate.time).toLocaleString():'NO SAMPLE';$('#readingMeta').textContent='LATEST AVAILABLE PER METRIC';readings(Object.entries(labels).map(([key,[name,unit]])=>{const s=latest[key];return[name,s?.value,unit,s?new Date(s.time).toLocaleString():'NOT PRESENT']}));$('#headline').textContent=real.length?'Readings available for review':'Waiting for Watch data';$('#explanation').textContent=real.length?'The display shows available measurements and timestamps. It cannot determine a cause or diagnose a condition.':'Import export.xml, or send data from an iPhone Shortcut on the local network.';$('#source').textContent=real.length?'Apple Health / local input':'No samples';$('#missing').textContent=Object.keys(labels).filter(k=>!latest[k]).length+' metrics';$('#obsStatus').textContent='OBSERVATION · IMPORTED';const hr=real.filter(s=>s.metric==='heart_rate'),rr=real.filter(s=>s.metric==='respiratory_rate');const all=[...hr,...rr].map(s=>Date.parse(s.time)),max=all.length?Math.max(...all):null;$('#chartStart').textContent=all.length?new Date(Math.min(...all)).toLocaleTimeString():'NO DATA';$('#chartEnd').textContent=all.length?new Date(Math.max(...all)).toLocaleTimeString():'NO DATA';plot([{label:'HR / BPM',color:'#8c2f2f',points:hr.map(s=>({x:Date.parse(s.time),y:s.value}))},{label:'RR / MIN',color:'#c9962b',points:rr.map(s=>({x:Date.parse(s.time),y:s.value}))}],all.length?max:null)}
+function render(){const demo=mode==='demo';$('#demoTab').classList.toggle('active',demo);$('#watchTab').classList.toggle('active',!demo);$('#demoTab').setAttribute('aria-pressed',String(demo));$('#watchTab').setAttribute('aria-pressed',String(!demo));$('#transport').classList.toggle('hidden',!demo);$('#scenario').classList.toggle('hidden',!demo);$('#symptomControl').classList.toggle('hidden',!demo);demo?renderDemo():renderReal()}
+function setMode(next){stop();mode=next;const url=new URL(location.href);if(next==='real')url.searchParams.set('mode','watch');else url.searchParams.delete('mode');history.replaceState(null,'',url);render();if(next==='real')refresh()}
+$('#demoTab').onclick=()=>setMode('demo');$('#watchTab').onclick=()=>setMode('real');$('#scrub').oninput=e=>{step=+e.target.value;renderDemo()};$('#cough').onchange=renderDemo;$('#play').onclick=()=>{if(timer){stop();return}step=0;renderDemo();$('#play').textContent='Ⅱ PAUSE';timer=setInterval(()=>{step++;if(step>=scenario.length){step=scenario.length-1;stop()}renderDemo()},1600)};
+async function refresh(){try{const res=await fetch('/api/watch/latest');if(!res.ok)return;const data=await res.json();real=data.samples||[];if(mode==='real')renderReal()}catch{}}
+setInterval(refresh,5000);$('#healthFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;setMode('real');$('#importStatus').textContent='Reading local export…';try{const res=await fetch('/api/watch/import',{method:'POST',headers:{'Content-Type':'application/xml'},body:file});const data=await res.json();if(!res.ok)throw Error(data.detail||'Import failed');real=data.samples||[];render();$('#importStatus').textContent=`Read ${data.imported_samples} supported samples; recent values remain in memory.`;$('#importStatus').classList.remove('error')}catch(error){$('#importStatus').textContent=error.message;$('#importStatus').classList.add('error')}};
+window.addEventListener('resize',()=>mode==='demo'?renderDemo():renderReal());render();if(mode==='real')refresh();
+</script></body></html>
