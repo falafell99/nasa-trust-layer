@@ -46,6 +46,8 @@ def load_record(dataset: str, record: str, root: Path = DATA_ROOT) -> SignalReco
     path = root / dataset / record
     header = wfdb.rdheader(str(path))
     raw = wfdb.rdrecord(str(path), physical=True)
+    if not np.isclose(float(header.fs), float(raw.fs)):
+        raise ValueError(f"WFDB header/data sampling-rate mismatch for {dataset}/{record}: {header.fs} vs {raw.fs}")
     source_fs = int(round(float(raw.fs)))
     signal = np.asarray(raw.p_signal[:, 0], dtype=np.float64)
     signal = np.nan_to_num(signal, nan=0.0, posinf=0.0, neginf=0.0)
