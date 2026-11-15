@@ -102,8 +102,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .bottom a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-weight:400}
 @media(max-width:1000px){.board{grid-template-columns:1fr;gap:18px}.sidecol{grid-template-columns:1fr}.main{padding-inline:20px}.rail{padding-inline:20px}}
 @media(max-width:680px){.main{padding:6px 16px 24px}.rail{padding:14px 16px 0}.heading{display:block}.mode-switch{margin-top:10px}.flow .source-chip{margin-left:0}.readings{grid-template-columns:1fr 1fr}.reading:nth-child(3){padding-left:0;border-left:0}.focus-value{font-size:38px}.observation h2{font-size:20px}.bottom{display:block}.bottom span{display:block;margin-bottom:6px}}
-/* static build: Apple Health import needs the local app */
-.import,#watchTab{display:none!important}
+
 </style>
 </head>
 <body>
@@ -116,7 +115,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
   </aside>
   <main class="main">
     <div class="topline"><span class="breadcrumb">MISSION HEALTH <span>/</span> <b>WEARABLE TELEMETRY</b></span><span class="topstatus"><i></i>LOCAL PROCESSING</span></div>
-    <header class="heading"><div><span class="eyebrow">Your health data, in context</span><h1>Health at a glance</h1><p>Follow a clearly labelled demo with scripted values. Earth data, not astronauts.</p></div><div class="mode-switch"><button id="demoTab" type="button">Scripted demo</button><button id="watchTab" type="button">Apple Health data</button></div></header>
+    <header class="heading"><div><span class="eyebrow">Your health data, in context</span><h1>Health at a glance</h1><p>Follow a clearly labelled demo, or view your own Apple Watch readings from Health. Earth data, not astronauts.</p></div><div class="mode-switch"><button id="demoTab" type="button">Scripted demo</button><button id="watchTab" type="button">Apple Health data</button></div></header>
     <div id="flow" class="flow"></div>
     <div class="board"><div class="maincol">
       <section class="panel"><div class="panel-head"><span class="panel-title">Heart rate and breathing</span><span id="sourceTag" class="badge">SYNTHETIC DEMO</span></div><div class="monitor-inner"><div class="focus"><div id="focusValue" class="focus-value">—</div><div class="focus-unit">BPM<br>HEART RATE</div><div class="focus-note">SELECTED TIME<b id="selectedTime">—</b></div></div><div class="plot-shell"><div class="plot-head"><span>Readings over time</span><span class="legend"><span><i></i>HEART</span><span><i class="rr"></i>BREATHS</span></span></div><canvas id="plot" aria-label="Heart rate and breathing rate timeline"></canvas><div id="emptyState" class="emptyState hidden">Choose an Apple Health export to see your readings here.</div><div class="plot-foot"><span id="chartStart">START</span><span id="chartEnd">END</span></div></div><div id="transport" class="transport"><button id="play" class="control" type="button">▶ PLAY REPLAY</button><input id="scrub" type="range" min="0" max="3" step="1" value="0" aria-label="Replay position"><span id="time" class="t">00:00</span></div></div></section>
@@ -124,7 +123,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
     </div><div class="sidecol">
       <section id="scenario" class="panel scenario"><h2>Choose a moment</h2><div id="stages" class="stages"></div></section>
       <section class="panel observation"><div id="obsStatus" class="obs-status">OBSERVATION</div><h2 id="headline">Baseline readings</h2><p id="explanation">Start replay to see the change.</p><div class="obs-rule"></div><div class="meta"><span>Source</span><b id="source">Scripted example</b><span>ECG V5 model</span><b>ECG alarm cases only</b><span>Missing</span><b id="missing">None in script</b></div><div class="smallnote">This panel describes measurements. It cannot identify a medical cause or clear an alarm.</div><label id="symptomControl" class="manual"><input id="cough" type="checkbox"> Cough reported by person</label></section>
-      <section class="panel import"><h2>Bring in your Watch data</h2><p>On iPhone: Health → Summary → profile photo → Export All Health Data. Save the ZIP to Files, unzip it, then select <code>export.xml</code> here (up to 200 MB).</p><label class="file">SELECT EXPORT.XML<input id="healthFile" type="file" accept=".xml,text/xml,application/xml"></label><div id="importStatus" class="import-status" role="status"></div><p style="margin-top:13px">Supported: heart rate, respiratory rate, oxygen saturation and sleeping wrist temperature. iPhone Shortcut can send new samples to the local endpoint described in README.</p></section>
+      <section class="panel import"><h2>Bring in your Watch data</h2><p>On iPhone: Health → Summary → profile photo → Export All Health Data. Save the ZIP to Files, unzip it, then select <code>export.xml</code> here (up to 200 MB).</p><label class="file">SELECT EXPORT.XML<input id="healthFile" type="file" accept=".xml,text/xml,application/xml"></label><div id="importStatus" class="import-status" role="status"></div><p style="margin-top:13px">Supported: heart rate, respiratory rate, oxygen saturation and sleeping wrist temperature. The file is read inside this browser tab and is not uploaded anywhere.</p></section>
     </div></div>
     <footer class="bottom"><span>PROTOTYPE · SYNTHETIC SCENARIO OR PERSONAL HEALTH EXPORT · NO CLINICAL VALIDATION</span><span><a href="cases.html">OPEN ECG ALARM CASES →</a></span></footer>
   </main>
@@ -150,6 +149,37 @@ function render(){const demo=mode==='demo';$('#demoTab').classList.toggle('activ
 function setMode(next){stop();mode=next;const url=new URL(location.href);if(next==='real')url.searchParams.set('mode','watch');else url.searchParams.delete('mode');history.replaceState(null,'',url);render();if(next==='real')refresh()}
 $('#demoTab').onclick=()=>setMode('demo');$('#watchTab').onclick=()=>setMode('real');$('#scrub').oninput=e=>{step=+e.target.value;renderDemo()};$('#cough').onchange=renderDemo;$('#play').onclick=()=>{if(timer){stop();return}step=0;renderDemo();$('#play').textContent='Ⅱ PAUSE';timer=setInterval(()=>{step++;if(step>=scenario.length){step=scenario.length-1;stop()}renderDemo()},1600)};
 async function refresh(){try{const res=await fetch('/api/watch/latest');if(!res.ok)return;const data=await res.json();real=data.samples||[];if(mode==='real')renderReal()}catch{}}
-setInterval(refresh,5000);$('#healthFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;setMode('real');$('#importStatus').textContent='Reading local export…';try{const res=await fetch('/api/watch/import',{method:'POST',headers:{'Content-Type':'application/xml'},body:file});const data=await res.json();if(!res.ok)throw Error(data.detail||'Import failed');real=data.samples||[];render();$('#importStatus').textContent=`Read ${data.imported_samples} supported samples; recent values remain in memory.`;$('#importStatus').classList.remove('error')}catch(error){$('#importStatus').textContent=error.message;$('#importStatus').classList.add('error')}};
+
+/* static build: the export.xml is read inside this browser tab and never uploaded */
+const HK={HKQuantityTypeIdentifierHeartRate:['heart_rate','bpm',25,240],HKQuantityTypeIdentifierRespiratoryRate:['respiratory_rate','breaths/min',4,60],HKQuantityTypeIdentifierOxygenSaturation:['oxygen_saturation','%',0,100],HKQuantityTypeIdentifierAppleSleepingWristTemperature:['wrist_temperature','\u00b0C',15,45]};
+function hkDate(s){const m=/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) ([+-]\d{2})(\d{2})$/.exec(s||'');if(!m)return null;const d=new Date(m[1]+'T'+m[2]+m[3]+':'+m[4]);return isNaN(d)?null:d.toISOString()}
+async function parseHealth(file){
+  if(file.size>200*1024*1024)throw Error('XML export exceeds 200 MB.');
+  const dec=new TextDecoder(),reader=file.stream().getReader(),tag=/<Record\s([^>]*?)\/?>/g,att=/(\w+)="([^"]*)"/g;
+  let buf='',seen=false,count=0,found=[];
+  for(;;){
+    const {done,value}=await reader.read();
+    buf+=dec.decode(value||new Uint8Array(),{stream:!done});
+    if(!seen&&buf.length>2000&&!/<HealthData/.test(buf))throw Error('Expected Apple Health export.xml');
+    if(/<HealthData/.test(buf))seen=true;
+    let last=0,m;tag.lastIndex=0;
+    while((m=tag.exec(buf))){
+      last=tag.lastIndex;const a={};let k;att.lastIndex=0;while((k=att.exec(m[1])))a[k[1]]=k[2];
+      const spec=HK[a.type];if(!spec||!/apple watch/i.test((a.sourceName||'')+' '+(a.device||'')))continue;
+      let v=parseFloat(a.value);if(!isFinite(v))continue;
+      if(spec[0]==='oxygen_saturation'&&v<=1)v*=100;
+      if(spec[0]==='wrist_temperature'&&a.unit==='degF')v=(v-32)*5/9;
+      const time=hkDate(a.startDate);if(!time||v<spec[2]||v>spec[3])continue;
+      found.push({metric:spec[0],value:Math.round(v*1000)/1000,unit:spec[1],time,source:'Apple Watch / Health export'});count++;
+      if(found.length>500){found.sort((x,y)=>x.time<y.time?-1:1);found=found.slice(-240)}
+    }
+    const lt=buf.lastIndexOf('<Record');buf=buf.slice(Math.max(last,lt>last?lt:buf.length-1));
+    if(done)break;
+  }
+  if(!found.length)throw Error('No supported Apple Watch samples found in this XML');
+  found.sort((x,y)=>x.time<y.time?-1:1);
+  return {samples:found.slice(-240),imported_samples:count};
+}
+setInterval(refresh,5000);$('#healthFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;setMode('real');$('#importStatus').textContent='Reading local export…';try{const data=await parseHealth(file);real=data.samples||[];render();$('#importStatus').textContent=`Read ${data.imported_samples} supported samples; recent values remain in memory.`;$('#importStatus').classList.remove('error')}catch(error){$('#importStatus').textContent=error.message;$('#importStatus').classList.add('error')}};
 window.addEventListener('resize',()=>mode==='demo'?renderDemo():renderReal());render();if(mode==='real')refresh();
 </script></body></html>
