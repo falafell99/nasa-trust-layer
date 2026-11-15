@@ -17,7 +17,6 @@ TYPE_RU = {"Asystole": "Asystole", "Bradycardia": "Bradycardia", "Tachycardia": 
 ACTION = {
     "red": "Looks real. Check the person now",
     "yellow": "Event not excluded. Check",
-    "gray": "Not confirmed by available channels",
 }
 
 
@@ -27,7 +26,7 @@ def _r(x, n=4):
 
 def pick_scene_b():
     """Правило выбора (фиксировано, без просмотра сигналов): validation, есть PLETH, первая по отсортированным ID запись
-    для каждого сценария: (1) метка true и решение red; (2) метка false, жёлтый и q<0.3; (3) метка false и серый."""
+    для каждого сценария: (1) метка true и решение red; (2) метка false, жёлтый и q<0.3; (3) метка false, жёлтый, q>=0.6 (правило условие не подтвердило)."""
     sp = json.load(open(SPLIT))
     al = read_alarms()
     want = {"true_red": None, "false_bad": None, "false_good": None}
@@ -43,7 +42,7 @@ def pick_scene_b():
             want["true_red"] = r
         elif want["false_bad"] is None and y == 0 and o["state"] == "yellow" and o["q"] < 0.3:
             want["false_bad"] = r
-        elif want["false_good"] is None and y == 0 and o["state"] == "gray":
+        elif want["false_good"] is None and y == 0 and o["state"] == "yellow" and o["q"] >= Q_GOOD:
             want["false_good"] = r
     return want
 
@@ -70,13 +69,16 @@ def build_b():
                      "condition \"%s\" %s." % (info["hr"], info["n_beats"], info["cond"], "met" if info["met"] else "not met"))
             if info.get("ppg_hr"):
                 check += " PPG pulse %.0f bpm (shown for reference, not used)." % info["ppg_hr"]
-            if o["state"] == "yellow":
+            if o["reason_code"] == "signal_quality_low":
                 check += " ECG quality is low, so the rule result is not used to set the alarm aside."
+            elif o["state"] == "yellow":
+                check += " The rule did not confirm the event, but it cannot rule it out, so the alarm stays open."
         scenes.append({
             "id": key, "title": titles[key], "record": rec, "alarm_type": TYPE_RU[t], "t_alarm": 300,
             "state": o["state"], "action": ACTION[o["state"]], "reason_code": o["reason_code"],
-            "quality_line": "ECG (%s) quality score %.2f of 1 (heuristic score, not a probability; sufficient from %.2f). Flat seconds in last 10 s: %s"
-                            % ("/".join(d["ecg_names"][:2]), o["q"], Q_GOOD, ", ".join("%s %.0f%%" % (k, 100 * v) for k, v in flats.items())),
+            "quality_line": ("ECG (%s) quality score %.2f of 1 (experimental score, not a probability; sufficient from %.2f). Flat seconds in last 10 s: %s."
+                             % ("/".join(d["ecg_names"][:2]), o["q"], Q_GOOD, ", ".join("%s %.0f%%" % (k, 100 * v) for k, v in flats.items()))
+                             + (" Signal quality low. Check the sensor." if o["q"] < Q_GOOD else "")),
             "check_line": check, "channels": ch, "fs": FS, "highlight_s": Q_WIN,
             "label_reveal": "CinC 2015 expert label: alarm %s." % ("confirmed" if y == 1 else "not confirmed"),
         })

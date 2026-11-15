@@ -1,15 +1,17 @@
 """Контракт интерфейсов (docs/03 §6). verify сейчас = базовая линия V0 (ECG-only правило), не модель.
 Константы заданы ДО просмотра демо-данных; q это эвристический балл качества, не вероятность и не обучен."""
+import json, os
 import numpy as np
 from .signal import FS, beats, hr_from_peaks, flat_frac, band_frac, ppg_peaks
+from .qual import window_features
 
 SUPPORTED = {"Asystole", "Bradycardia", "Tachycardia", "Ventricular_Tachycardia", "Ventricular_Flutter_Fib"}
 Q_GOOD = 0.6   # ниже: жёлтый (качество недостаточно для серого/красного)
 Q_WIN = 10     # с, окно качества и проверки
 
 
-def quality(window, accel=None):
-    """window: ndarray[ch, n] (ЭКГ, 250 Гц). 0..1, лучший канал. accel пока не используется (док. v1: отдельный эксперимент)."""
+def quality_v1(window, accel=None):
+    """Старая эвристика (оставлена для сравнения). Не использовать в продукте: см. progress/logs/Rafael.md."""
     w = np.atleast_2d(window)
     best = 0.0
     for x in w:
@@ -19,6 +21,29 @@ def quality(window, accel=None):
         q = (1 - flat) * (1 - min(lf / 0.9, 1.0)) * (1 - min(hf / 0.3, 1.0))
         best = max(best, q)
     return float(best)
+
+
+_QP = {}
+
+
+def _qparams():
+    if not _QP:
+        _QP.update(json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "models", "quality_v2.json"))))
+    return _QP
+
+
+def quality(window, accel=None):
+    """window: ndarray[ch, n] (ЭКГ, 250 Гц, 10 с). 0..1, лучший канал. q = 1 - P(класс 2 или 3 BUT QDB) по 9 безразмерным признакам;
+    логистическая регрессия обучена на BUT 100001+105001 (models/quality_v2.json). Это оценка качества, не вероятность аритмии.
+    accel пока не используется (док. v1: отдельный эксперимент). Перенос на CinC не проверен."""
+    P = _qparams()
+    best = 0.0
+    for x in np.atleast_2d(window):
+        f = window_features(x)
+        z = (np.array([f[k] for k in P["features"]]) - np.array(P["mean"])) / np.array(P["scale"])
+        q = 1.0 - 1.0 / (1.0 + np.exp(-(z @ np.array(P["coef"]) + P["intercept"])))
+        best = max(best, float(q))
+    return best
 
 
 def verify_detail(segment):
@@ -61,13 +86,14 @@ def verify(segment):
 
 
 def decide(q, p_true, alarm_type):
+    """Два статуса (серый отключён, решение лида): red только при q>=Q_GOOD и p>=0.5; иначе yellow (при сомнении жёлтый)."""
     if p_true is None:
         return {"state": "yellow", "reason_code": "no_ecg_or_unsupported_type"}
     if q < Q_GOOD:
         return {"state": "yellow", "reason_code": "signal_quality_low"}
     if p_true >= 0.5:
         return {"state": "red", "reason_code": "condition_met_good_signal"}
-    return {"state": "gray", "reason_code": "condition_not_met_good_signal"}
+    return {"state": "yellow", "reason_code": "condition_not_met_good_signal"}
 
 
 class VirtualSensor:
