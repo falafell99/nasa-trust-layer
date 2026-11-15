@@ -11,9 +11,11 @@ Trust Layer
 Zakaz Konina
 
 ## Team members
-- [__ real name, as on the Space Apps registration] — [__ what they did in these 2 days]
-- [__] — [__]
-- [__] — [__]
+- Rafael — [__ confirm] concept and product design, data and evaluation protocol, modelling (V5 LightGBM), offline demo screen
+- Javidan — [__ confirm] offline demo packaging and clean-clone check, jury Q&A, VT/VF detector experiment (negative result)
+- Daniyar — [__ confirm] submission page, backup demo videos, slides and publishing
+
+Built with the help of AI coding agents.
 
 ## Challenge
 Create Health Monitoring Software for Astronauts on Space Missions
@@ -61,7 +63,7 @@ Python, LightGBM, NeuroKit2, SciPy, FastAPI, one offline HTML page. Code: [__ re
 
 ## Open items (not part of the page)
 
-1. Team members and roles: need real names from the team (task C in `progress/handoffs/2026-11-15-team-tasks-v2.md`). Not invented here.
+1. Team members: first names Rafael, Javidan, Daniyar are given by the team. Role lines are my guess from commits and logs (Rafael's log, Javidan's branch commits, Daniyar's submission-page work), each must be confirmed. Surnames as on the Space Apps registration are still missing.
 2. Numbers come from `results/v5_vtac_test.json` (V5, commit `c4cd79d`), not from `docs/11-technical-status-1145.md`: that file was written at 11:45 and still shows the V3 numbers, which V5 replaced. The "88.8% of 12,671 alerts" figure (Drew et al. 2014) is left out of the page because the description is capped at 150 words; it is in `docs/02-problem-evidence.md` if needed.
 3. Latency (30.2 ms median, 45.9 ms p95 on an Apple M5 Pro laptop, `results/latency.json`) appears in the description as "about 30 ms on a laptop".
 4. The challenge asks for a tool where astronauts assess their own health indicators; our project verifies a heart-monitor alert. Judges on Relevance may notice. The page leads with the "crew judges alone" angle on purpose.
