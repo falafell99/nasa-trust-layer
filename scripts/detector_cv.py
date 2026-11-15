@@ -118,7 +118,12 @@ def bootstrap_summary(rows, seed=SEED):
             if value is not None: vals.append(value)
         ci[key] = [float(x) for x in np.percentile(vals, [2.5, 97.5])] if vals else None
     point["ci95_record_bootstrap"] = ci
-    point["records_with_metrics"] = len(rows)
+    point["metric_record_denominators"] = {
+        "auroc": sum(r["auroc"] is not None for r in rows),
+        "sensitivity": sum(r["sensitivity"] is not None for r in rows),
+        "specificity": sum(r["specificity"] is not None for r in rows),
+    }
+    point["records_in_dataset"] = len(rows)
     return point
 
 
