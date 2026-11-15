@@ -12,7 +12,8 @@ On a Mars mission the crew cannot wait up to 24 minutes for ground support to sa
 Slides (7 slides, public link): <PASTE LINK>
 
 ## Link to Final Project
-Code, results and an offline demo (docs/demo.html): <PASTE GITHUB LINK, repository must be public>
+Live demo (no install, runs in the browser): https://falafell99.github.io/nasa-trust-layer/
+Code, results and an offline demo: https://github.com/falafell99/nasa-trust-layer
 
 ## Detailed Project Description
 
