@@ -3,9 +3,23 @@
 **Демо (3 строки):**
 1. Установка: `python3 -m venv .venv && .venv/bin/pip install -r requirements-demo.txt`.
 2. Запуск: `./run_demo.sh` — после установки зависимостей сеть не нужна; демо использует только `demo_data/` и модели из `models/`.
-3. Открой http://127.0.0.1:8000: B1 — подтверждённая VT-тревога, B2 — жёлтая неподтверждённая тревога, B3 — настоящая тревога остаётся активной, A — запись BUT QDB.
+3. Открой http://127.0.0.1:8000: главный экран показывает wearable-сценарий. Исходные ECG-кейсы B1/B2/B3 и BUT QDB A доступны по http://127.0.0.1:8000/cases.
 
 В репозитории лежит только нужный небольшой набор сцен (примерно 2,75 MB), не полные VTaC и BUT QDB. Атрибуция, состав и лицензии: [`demo_data/ATTRIBUTION.md`](demo_data/ATTRIBUTION.md). Модель V5 и параметры V5/Q-gate находятся в git: `models/v5_lgbm.txt`, `models/v5_config.json`, `models/quality_v2.json`.
+
+## Apple Watch / wearable-демо
+
+- **Demo scenario** — явно подписанные синтетические показания пульса, дыхания, SpO₂ и температуры запястья. Кашель добавляется только вручную как сообщение человека.
+- **Свои данные** — iPhone → Health → профиль → **Export All Health Data**; распакуй ZIP и выбери `export.xml` на главном экране. Импортируются только записи с источником Apple Watch: HeartRate, RespiratoryRate, OxygenSaturation, AppleSleepingWristTemperature. Сырые данные не сохраняются; последние 240 показаний остаются в памяти процесса до перезапуска. Импорт принимает XML до 200 MB.
+- **Передача из iPhone Shortcuts по локальной сети:** задай секрет и LAN-host при запуске: `WATCH_DEMO_TOKEN=<секрет> WATCH_DEMO_HOST=0.0.0.0 ./run_demo.sh`. В Shortcuts используй **Find Health Samples** → извлеки значение и время → **Get Contents of URL** (`POST`, JSON) по адресу `http://<IP-ноутбука>:8000/api/watch/samples`, заголовок `X-Watch-Demo-Token: <секрет>`. Тело запроса:
+
+```json
+{"samples":[{"metric":"heart_rate","value":78,"time":"2026-11-15T14:00:00+01:00"}]}
+```
+
+Поддерживаются `heart_rate` (bpm), `respiratory_rate` (breaths/min), `oxygen_saturation` (%) и `wrist_temperature` (°C). `GET /api/watch/latest` возвращает последние показания; страница обновляется каждые 5 секунд. Ноутбук и iPhone должны находиться в одной сети; без `WATCH_DEMO_TOKEN` приём POST выключен. Для живой передачи нужна настройка Shortcut на iPhone, приложение watchOS в репозитории отсутствует.
+
+Показатели Apple Watch отображаются отдельно. V5 обучена на ECG+PPG тревогах и не вызывается на Health-показаниях. Экран описывает изменения и отсутствие данных, не ставит диагноз. Apple Watch ECG записывается отдельным действием владельца; обычный экспорт показателей не создаёт непрерывную ECG-кривую для V5.
 
 ## Detector attempt 2: frozen exploratory protocol
 
