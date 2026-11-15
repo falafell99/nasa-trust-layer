@@ -21,3 +21,7 @@ No NASA or astronaut data is used. All data below are open datasets on PhysioNet
 ## Software
 
 Python, NumPy, SciPy, pandas, scikit-learn, LightGBM, PyTorch (earlier model), WFDB, NeuroKit2, FastAPI.
+
+## AI assistance
+
+The code, analysis scripts, documentation and slides in this project were produced with AI assistants (Claude and Codex) directed by the team. No images or videos are AI-generated: screenshots come from our own demo screen. Results come from running the code in this repository on the public datasets above.
