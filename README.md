@@ -7,11 +7,12 @@
 
 ## Detector attempt 2: frozen exploratory protocol
 
-- [Точно] Scope: record-level nested cross-validation only; records used as hold-out in the first detector run are excluded before signal loading. Every input sampling rate is checked against the WFDB header, then signals are anti-aliased and resampled to 250 Hz.
+- [Точно] Scope: record-level nested cross-validation only; records used as hold-out in the first detector run are excluded before signal loading. Every input sampling rate is checked against the WFDB header, then signals are anti-aliased and resampled to 250 Hz. MIT-BIH annotations are restricted to VT.
 - [Точно] Window task: 8 s windows with 4 s stride. Positive means VT, VF or VFIB annotation overlaps at least 4 s; boundary windows with shorter nonzero overlap are ignored. Ventricular flutter is excluded from the positive class.
-- [Точно] Features: RR rate/regularity, spectral concentration, threshold-crossing interval proxy (positive crossings of 10% peak amplitude), VF-filter leakage (half-period cancellation residual), sample entropy (m=2, r=0.2 SD), and median QRS-width proxy. Logistic regression, CPU.
+- [Точно] Features: RR rate/regularity, spectral concentration, threshold-crossing interval proxy (positive crossings of 10% peak amplitude), VF-filter leakage (half-period cancellation residual), sample entropy (m=2, r=0.2 SD, computed after 2x downsampling), and median QRS-width proxy. Logistic regression, CPU.
 - [Точно] Outer evaluation uses 5 folds of whole records; an inner 4-fold CV on outer-training records selects one threshold per outer fold by mean record-level Youden J. Threshold selection never uses the evaluated outer fold.
 - [Точно] Episode rule: consecutive predicted-positive windows stay in one alarm until 30 consecutive seconds without a positive window; the alarm timestamp is the end of the first positive 8 s window. Episode matching requires alarm time inside an annotated VT/VF interval.
+- [Точно] Contiguous target annotations are merged across VT/VF class changes into one dangerous-rhythm episode; an intervening non-target gap starts a new episode.
 - [Точно] Result label: **exploratory, cross-validated, not held-out**. Window metrics are macro-averaged by record; uncertainty is bootstrap by record.
 
 Feature names follow common VT/VF signal-processing families; VF leakage is the residual after half-period cancellation, and sample entropy/thresholded binary complexity are established candidate features. This is not a reproduction of any published detector: [Zhang et al., 1999](https://pubmed.ncbi.nlm.nih.gov/10230133/); [Teixeira de Barros Moraes et al., 2003](https://doi.org/10.1109/CIC.2002.1166745).

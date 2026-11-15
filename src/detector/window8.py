@@ -1,12 +1,9 @@
 """Classical 8 s VT/VF features for the exploratory record-level CV."""
 from __future__ import annotations
 
-from math import gcd
-
 import numpy as np
-from scipy.signal import butter, find_peaks, peak_widths, resample_poly, sosfilt
+from scipy.signal import butter, find_peaks, peak_widths, sosfilt
 from scipy.spatial import cKDTree
-from scipy.stats import kurtosis
 
 from src.detector.data import SignalRecord, label_windows
 from src.detector.features import WindowFeatures

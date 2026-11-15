@@ -53,6 +53,8 @@ def load_record(dataset: str, record: str, root: Path = DATA_ROOT) -> SignalReco
     signal = np.nan_to_num(signal, nan=0.0, posinf=0.0, neginf=0.0)
 
     episodes: list[Episode] = read_episodes(path, record)
+    if dataset == "mitdb":
+        episodes = [episode for episode in episodes if episode.rhythm == "VT"]
     events = tuple(
         EventSeconds(
             rhythm=episode.rhythm,
@@ -61,6 +63,16 @@ def load_record(dataset: str, record: str, root: Path = DATA_ROOT) -> SignalReco
         )
         for episode in episodes
     )
+    # The detector target is dangerous rhythm vs other, so adjacent VT/VF
+    # annotation changes are one episode when there is no intervening gap.
+    merged_events = []
+    for event in sorted(events, key=lambda item: (item.start, item.end)):
+        if merged_events and event.start <= merged_events[-1].end:
+            previous = merged_events[-1]
+            merged_events[-1] = EventSeconds("VT/VF", previous.start, max(previous.end, event.end))
+        else:
+            merged_events.append(event)
+    events = tuple(merged_events)
 
     if source_fs != TARGET_FS:
         common = gcd(source_fs, TARGET_FS)
