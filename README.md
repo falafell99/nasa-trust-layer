@@ -1,54 +1,66 @@
-# NASA Space Apps 2026, Budapest: Trust Layer (команда «Zakaz Konina»)
+# Trust Layer
 
-**Демо (3 строки):**
-1. Установка: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` (данные в `data/` скачать по `docs/04-data-plan.md`, в git их нет).
-2. Запуск: `./run_demo.sh` (интернет не нужен: шрифты и скрипты локальные, внешних URL в коде нет).
-3. Адрес: http://127.0.0.1:8000 (сцены `?scene=true_red`, `false_bad`, `false_good`, `a`).
+**NASA Space Apps Challenge 2026, Budapest. Team Zakaz Konina.**
+Challenge: *Create Health Monitoring Software for Astronauts on Space Missions.*
 
-Общая память проекта для людей и их агентов. Снимок состояния: **2026-11-15, около 03:00 по Будапешту**. Подача до **16:00**, питчи в **17:00** (3 минуты).
+> A monitor raised an alarm. Can the crew trust it?
+> Trust Layer is an offline layer that re-checks an alarm that is already raised, using ECG and PPG (pulse), and shows a verdict with a reason. The original alarm is never hidden. No link to Earth is needed.
 
-Челлендж: «Create Health Monitoring Software for Astronauts on Space Missions». Фокус: Луна/Марс (не МКС). Цель: локальный приз, настоящий работающий прототип, а не красивый дашборд.
+## Try the demo (no install)
 
-## Где мы сейчас (коротко)
+Open [`docs/demo.html`](docs/demo.html) in a browser. It works offline and replays three real recordings: a real alarm that is supported, a false alarm that is not confirmed, and a real alarm that is not confirmed (an honest miss). The recordings come from the PhysioNet VTaC validation set.
 
-- **Идея (одобрена лидом, вариант B-lite):** офлайн-слой «Trust Layer» между датчиком и экипажем. Простое правило поднимает тревогу по ЭКГ, наш слой отвечает: (1) можно ли верить сигналу (шлюз качества), (2) настоящее ли событие (проверка по двум отведениям ЭКГ и PPG). Исходная тревога никогда не скрывается.
-- **Дизайн-документ:** `docs/03-product-design.md`. Лид сказал «ок, фиксируем» про вариант B, но **слово «одобряю» про сам документ ещё не сказано**. Пока этого нет: код продукта не пишем. Скачивание данных, чтение файлов, подсчёт меток, проверки доступности делать можно и нужно.
-- **Данные:** план в `docs/04-data-plan.md`. Три основных набора: CinC 2015 (тревоги), BUT QDB (качество ЭКГ + акселерометр), MIT-BIH NST (контролируемый шум). Запасной второй набор тревог: VTaC v1.1. Никто из нас и никто из внешних моделей **не скачал бинарные файлы**, поэтому «качается за 2 минуты» не проверено. Первые 30 минут команды: go/no-go по данным (раздел 5 в `docs/04-data-plan.md`).
-- **Главный риск:** шлюз качества учится на BUT QDB (носимый датчик, здоровые, нет тревог), а применяется к CinC 2015 (реанимация, нет меток качества и движения). Это перенос между доменами, выигрыша может не быть. Честный негативный результат допустим.
-- **Чего у нас нет и не будет:** открытых сырых ЭКГ астронавтов. Всё, что мы показываем, это земные прокси. Так и говорим.
+## What it does
 
-## Порядок чтения для нового человека или агента
+1. An existing monitor raises an alarm (in our tests: ventricular tachycardia).
+2. Trust Layer looks at the last 10 seconds of ECG and PPG and gives a score from 0 to 1 (LightGBM model, 520 KB).
+3. Score at or above the threshold (0.7155): **red**, "Available signals support the monitor alert."
+4. Below the threshold: **yellow**, "Verification inconclusive. The original alert remains active."
 
-1. `AGENTS.md`: правила работы (метки уверенности, честность чисел, как писать прогресс).
-2. `docs/01-situation-and-goals.md`: ситуация, сроки, критерии жюри.
-3. `docs/03-product-design.md`: что строим (контракт интерфейсов в разделе 6).
-4. `docs/04-data-plan.md`: какие данные, что скачать, ловушки.
-5. `docs/05-evaluation-protocol.md`: как считаем результат и что можно заявлять.
-6. `docs/11-roles-and-timeline.md`: кто что делает и когда.
-7. По необходимости: `docs/02-problem-evidence.md` (числа о проблеме), `docs/06-claims-and-prior-art.md` (что можно говорить жюри), `docs/07-external-model-feedback.md` (что сказали GPT/Perplexity/Gemini и где они расходятся), `docs/08-pitch-and-demo.md`, `docs/09-open-questions-and-risks.md`, `docs/10-decision-log.md`, `docs/12-sources.md`, `docs/13-glossary.md`.
+Yellow does not mean safe. In our test, 58 of the 396 yellow alarms were real, so yellow alarms stay on screen and the crew still checks them.
 
-## Структура репозитория
+## Result (VTaC test set, 482 ICU alarms the model never saw)
+
+| Method | Real among marked red | Share real |
+|---|---|---|
+| Keep every alarm | 137 / 482 | 28% |
+| ECG-only rule | 84 / 269 | 31% |
+| Our earlier model | 63 / 111 | 57% |
+| **Trust Layer (V5)** | **79 / 86** | **92%** (95% interval 84-98%) |
+
+Red holds 79 of the 137 real alarms (58%). The other 58 real alarms stay yellow and visible. Details, intervals and commit hashes: [`docs/RESULTS.md`](docs/RESULTS.md).
+
+Speed, measured on a laptop (Apple M5 Pro, 1 thread, 100 alarms): median 30 ms per alarm, 381 MB peak memory, model file 520 KB. This is a laptop, not flight hardware.
+
+## What we do not claim
+
+- No astronaut data. Everything here is Earth ICU data used as a proxy.
+- Not clinical, not validated for medical use.
+- Main result is on ventricular tachycardia alarms only.
+- The test set was opened twice (an earlier model first, then V5). The threshold was chosen on a separate validation set before the test was read. Patient overlap between splits cannot be ruled out.
+- The continuous event detector is future work: our detector experiments were too weak to show.
+
+## Run the full app (needs the datasets)
 
 ```
-README.md                      этот файл (состояние и навигация)
-AGENTS.md                      правила для агентов и людей
-docs/                          канонические документы (меняются только с записью в decision-log)
-docs/raw/                      сырые тексты внешних моделей и документов без правок (источник правды для деталей)
-prompts/                       промпты для внешних моделей и контекст-пакет
-progress/STATUS.md             чек-лист этапов (правит лид)
-progress/logs/<имя>.md         личный журнал каждого человека/агента (только дописывать)
-progress/handoffs/TEMPLATE.md  шаблон передачи работы между людьми
-src/                           код (пока пусто: ждём одобрения дизайна)
-data/                          данные (в git не кладём, см. .gitignore)
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+# download the datasets listed in ATTRIBUTION.md into data/ (not in git)
+./run_demo.sh        # http://127.0.0.1:8000, no internet needed
 ```
 
-## Как делиться прогрессом между людьми и агентами
+## Data and sources
 
-- Каждый пишет **только в свой** `progress/logs/<имя>.md` (дописывать вниз, не править старое). Так не бывает конфликтов слияния.
-- Перед началом работы: `git pull --rebase`. После: небольшой коммит и `git push`.
-- Любое решение, меняющее дизайн, данные или метрики, добавляется в `docs/10-decision-log.md` отдельным коммитом.
-- Числа результатов: только с пометкой «наше измерение», датой, версией кода и командой, которой получены (см. `AGENTS.md`).
+All data are open PhysioNet datasets. See [`ATTRIBUTION.md`](ATTRIBUTION.md). Data files are not stored in this repository.
 
-## Что показывать жюри и как не навредить себе
+## Repository
 
-Читать `docs/06-claims-and-prior-art.md` до написания слайдов. Коротко: не говорим «первые в мире», не называем результат валидацией для космоса, не смешиваем знаменатели (ложные среди тревог, артефакты среди записей, забракованные окна).
+- `src/trust/` pipeline, model loading, demo app
+- `scripts/` training and evaluation scripts
+- `models/` frozen V5 model
+- `results/` result files (VTaC test, latency, learning curve)
+- `docs/` design notes, evaluation protocol, decision log (some notes are in Russian)
+- `progress/` team logs
+
+## Team and tools
+
+Rafael Ibayev (product, pitch), Javidan Bandaliyev (detector experiments, demo reliability), Daniyar Iskakov (submission, video, publishing). Built with AI coding assistants (Claude Code and Codex) that the team directed.

@@ -1,72 +1,48 @@
 # Submission page text (NASA Space Apps 2026, Budapest)
 
-Draft for the project page. Written 2026-11-15. Language: English (the page is in English). Placeholders `[__]` must be filled by a person before submission, see "Open items" at the bottom (not part of the page).
-
----
+Replace the three links at the bottom before sending.
 
 ## Project name
 Trust Layer
 
 ## Team
-Zakaz Konina
-
-## Team members
-- Rafael — [__ confirm] concept and product design, data and evaluation protocol, modelling (V5 LightGBM), offline demo screen
-- Javidan — [__ confirm] offline demo packaging and clean-clone check, jury Q&A, VT/VF detector experiment (negative result)
-- Daniyar — [__ confirm] submission page, backup demo videos, slides and publishing
-
-Built with the help of AI coding agents.
+Zakaz Konina: Rafael Ibayev, Javidan Bandaliyev, Daniyar Iskakov
 
 ## Challenge
 Create Health Monitoring Software for Astronauts on Space Missions
 
-## One-line summary (24 words)
-An offline layer that sits between a heart monitor and the crew. It keeps the monitor's alert visible and adds a status and a reason.
+## Short summary (about 100 words)
+On a Mars mission, a crew cannot wait up to 24 minutes for ground support to tell them whether an alarm is real. Hospital studies show that most monitor alarms are false. Trust Layer is an offline layer that sits on top of an existing monitor. When the monitor raises an alarm, Trust Layer re-checks it using ECG and pulse (PPG) and shows a verdict and a reason. The original alarm is never hidden. On 482 ICU alarms the model had never seen, 92% of Trust Layer's red alarms were real, against 28% if every alarm is trusted. It runs in about 30 milliseconds on a laptop, with no cloud.
 
-## Description (about 140 words)
-On a long mission the crew may have to judge heart-monitor alerts alone, and most alerts in intensive-care studies turn out not to be real. Trust Layer is an offline layer between the sensor and the crew. The monitor's own alert is always shown and never replaced. For each alert we add one status, red ("Available signals support the monitor alert") or yellow ("Verification inconclusive. The original alert remains active"), plus one line of reason. A small LightGBM model reads ECG and PPG features; it runs in about 30 ms per alert on a laptop, with no cloud and no LLM. The demo replays recorded Earth ICU alerts through a virtual sensor. This is not a diagnosis tool and not a medical device. It was not tested on astronauts, and it is not clinically validated.
+## What we built
+- An alarm-checking model (LightGBM, 520 KB) that scores an alarm from the last 10 seconds of ECG and PPG.
+- A verdict screen: red "Available signals support the monitor alert", or yellow "Verification inconclusive. The original alert remains active."
+- An offline replay demo with three real recordings.
 
-## Results (our measurement, 2026-11-15)
-Held-out VTaC test split: 482 alerts, 137 confirmed by annotators, 226 patients/records. Model frozen at commit `c4cd79d`; command `python scripts/v5.py test`; file `results/v5_vtac_test.json`.
+## Results
+- VTaC test set: 482 ICU ventricular tachycardia alarms, 137 real.
+- Trust Layer marked 86 alarms red, 79 of them real: 92% (95% interval 84-98%). Keeping every alarm gives 28%.
+- Red holds 58% of the real alarms. The rest stay yellow and visible, so no alarm is hidden.
+- Median 30 ms per alarm, 381 MB peak memory, on one laptop thread.
 
-| | Red group | Share confirmed inside red group (95% CI) | Confirmed alerts that are red (95% CI) | Red group as share of all alerts |
-|---|---|---|---|---|
-| Keep everything red | 482 | 0.284 [0.218, 0.348] | 1.000 | 1.000 |
-| Trust Layer (V5) | 86 (79 confirmed, 7 not) | 0.919 [0.843, 0.977] | 0.577 [0.457, 0.687] | 0.178 |
-
-Intervals: bootstrap by patient/record, B=2000. The other 58 of 137 confirmed alerts stay yellow, still visible, nothing is hidden.
-Limits: this test split was opened once before for an earlier model, so it is not a clean one-shot test; the threshold was chosen on the validation split; VTaC holds only ventricular tachycardia alerts; Earth ICU data only.
-
-What did not work: we also tried a continuous VT/VF detector on VFDB, CUDB and MIT-BIH. On its one-shot held-out run the logistic model found 0 of 28 episodes (a simple rule found 7 of 28 at 157.3 false alarms per hour; 10.35 h of background). So we do not claim event detection: Trust Layer only checks an alert the monitor has already raised. Source: `results/detector_holdout.json`, branch `feature/event-detector`.
+## Honest limits
+- Earth ICU data, not astronauts. Not clinical, not validated for medical use.
+- Ventricular tachycardia alarms only.
+- The test set was opened twice (an earlier model first, then the final one). The threshold was set on separate validation data first. Patient overlap between splits cannot be ruled out.
+- The continuous event detector is future work.
 
 ## How open data made this possible
-We did not use any NASA dataset. We checked the Resources tab of our challenge page on 2026-11-15: it lists NASA Human Research Program web pages (hazards, risks, ongoing research) and a Canadian Space Agency article on radiation monitoring, and no datasets. We used the NASA Human Research Program material only as background to frame the problem (distance from Earth, crew judging health on its own). That is context, not validation.
+NASA does not publish raw astronaut ECG with labelled alarms. The project exists because researchers have opened ICU data: PhysioNet VTaC (labelled ventricular tachycardia alarms with ECG and PPG), the PhysioNet/CinC 2015 alarm challenge, and BUT QDB (wearable ECG quality). We used them as an Earth proxy. All sources are listed in ATTRIBUTION.md.
 
-What made the work possible is open data from PhysioNet, all with open licences:
-- **VTaC v1.1** (ICU ventricular tachycardia alerts, ECG + PPG, 5,037 labelled events): training and the held-out test above.
-- **PhysioNet/CinC Challenge 2015** (750 ICU alerts, ECG + PPG): training and a second look.
-- **BUT QDB** (wearable ECG with expert signal-quality labels): the signal-quality demo scene.
+## Use of AI tools
+We built Trust Layer with AI coding assistants (Claude Code and Codex) that the team directed. The team chose the problem, designed the evaluation protocol, froze the model and threshold before reading the test set, and wrote down every result, including the ones that did not work.
 
-The demo bundles small excerpts of VTaC (CC BY-SA 4.0) and BUT QDB (CC BY 4.0) so it runs offline; sources, authors and licences are in `demo_data/ATTRIBUTION.md` (branch `feature/event-detector`, not yet on `main`).
+## Next steps
+1. Record real crew data with space labs and analog-mission crews.
+2. Build a continuous detector that watches the signal all the time.
+3. Test how a crew reacts to the verdict, then run it on an on-board device.
 
-No data from astronauts is openly available for this task, as far as we found. Every number on this page comes from Earth hospital data.
-
-## Built with
-Python, LightGBM, NeuroKit2, SciPy, FastAPI, one offline HTML page. Code: [__ repository link, or "available on request" if private].
-
-## Links
-- Slides (PDF): [__]
-- Demo video: [__]
-- Code: [__]
-
----
-
-## Open items (not part of the page)
-
-1. Team members: first names Rafael, Javidan, Daniyar are given by the team. Role lines are my guess from commits and logs (Rafael's log, Javidan's branch commits, Daniyar's submission-page work), each must be confirmed. Surnames as on the Space Apps registration are still missing.
-2. Numbers come from `results/v5_vtac_test.json` (V5, commit `c4cd79d`), not from `docs/11-technical-status-1145.md`: that file was written at 11:45 and still shows the V3 numbers, which V5 replaced. The "88.8% of 12,671 alerts" figure (Drew et al. 2014) is left out of the page because the description is capped at 150 words; it is in `docs/02-problem-evidence.md` if needed.
-3. Latency (30.2 ms median, 45.9 ms p95 on an Apple M5 Pro laptop, `results/latency.json`) appears in the description as "about 30 ms on a laptop".
-4. The challenge asks for a tool where astronauts assess their own health indicators; our project verifies a heart-monitor alert. Judges on Relevance may notice. The page leads with the "crew judges alone" angle on purpose.
-5. Repository public or private is not decided (Q9 in `docs/09`). As of 13:50 it is `falafell99/nasa-trust-layer` and private (the clean-clone report says access had to be authorised). Judges cannot open a private link, so either make it public or write "available on request".
-6. Branch `feature/event-detector` (Javidan) is not merged into `main`. It holds `demo_data/`, `requirements-demo.txt`, the failed detector experiment, `docs/qa.md` and `docs/clean-clone-report.md`. On `main` a clean clone shows no alert screen (needs `data/`), per its own report. Merge before the repo link goes on the page.
-7. `docs/qa.md` on that branch quotes the V3 numbers from `docs/11-technical-status-1145.md` (11 of 14 red on CinC), which V5 replaced. Update before rehearsal.
+## Links (fill in)
+- Slides: <PASTE LINK>
+- Demo video: <PASTE LINK>
+- Repository: <PASTE LINK>
