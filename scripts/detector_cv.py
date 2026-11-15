@@ -76,16 +76,23 @@ def detections(win, prob, threshold):
 
 def episode_stats(signal, win, prob, threshold):
     alarms = detections(win, prob, threshold)
-    used, delays = set(), []
+    used, delays, false_alarms, duplicate_event_alarms = set(), [], 0, 0
     for alarm in alarms:
-        matches = [(j, e) for j, e in enumerate(signal.events) if j not in used and e.start <= alarm["alarm_time"] < e.end]
-        if matches:
-            j, e = min(matches, key=lambda x: x[1].start)
-            used.add(j); delays.append(alarm["alarm_time"] - e.start)
+        in_event = [(j,e) for j,e in enumerate(signal.events) if e.start <= alarm["alarm_time"] < e.end]
+        if not in_event:
+            false_alarms += 1
+        else:
+            unmatched = [(j,e) for j,e in in_event if j not in used]
+            if unmatched:
+                j,e = min(unmatched,key=lambda x:x[1].start)
+                used.add(j); delays.append(alarm["alarm_time"]-e.start)
+            else:
+                duplicate_event_alarms += 1
     event_seconds = sum(max(0.0, e.end-e.start) for e in signal.events)
     hours = max(0.0, signal.duration-event_seconds)/3600
     return {"record": signal.key, "episodes": len(signal.events), "hits": len(used),
-            "false_alarms": len(alarms)-len(used), "background_hours": hours, "delays": delays}
+            "false_alarms": false_alarms, "duplicate_event_alarms": duplicate_event_alarms,
+            "background_hours": hours, "delays": delays}
 
 
 def bootstrap_summary(rows, seed=SEED):
@@ -124,6 +131,7 @@ def episode_summary(rows):
         return {"episodes": episodes, "detected": hits, "missed": episodes-hits,
                 "sensitivity": hits/episodes if episodes else None,
                 "false_alarms": fp, "background_hours": hours,
+                "duplicate_alarms_during_events_ignored": sum(r["duplicate_event_alarms"] for r in sample),
                 "false_alarms_per_hour": fp/hours if hours else None,
                 "median_delay_seconds": float(np.median(delays)) if delays else None,
                 "delay_hits_denominator": len(delays)}
