@@ -17,46 +17,17 @@ def score(y, p):
     return tp, fn, tn, fp, 100 * (tp + tn) / (tp + tn + fp + 5 * fn)
 
 
-def beats(x):
-    x = np.nan_to_num(x)
-    b, a = butter(2, [5 / (FS / 2), 15 / (FS / 2)], "band")
-    e = np.diff(filtfilt(b, a, x)) ** 2
-    e = np.convolve(e, np.ones(int(0.12 * FS)) / int(0.12 * FS), "same")
-    thr = 0.3 * np.percentile(e, 99.5) if e.max() > 0 else 1
-    pk, _ = find_peaks(e, height=thr, distance=int(0.25 * FS))
-    return pk
-
-
-def flat_frac(x, sec=1):
-    n = len(x) // (sec * FS)
-    w = np.nan_to_num(x[: n * sec * FS]).reshape(n, -1).std(axis=1)
-    ref = np.median(w) if np.median(w) > 0 else 1.0
-    return float((w < 0.05 * ref).mean())
+import sys
+sys.path.insert(0, ".")
+from src.trust.pipeline import verify as _verify
 
 
 def rule(rec, typ):
-    """ЭКГ-only, последние 10 с до тревоги, лучшая из двух ЭКГ по числу найденных ударов (без меток)."""
+    """V0 из src/trust/pipeline.py (то же правило, что на экране демо)."""
     d = load(rec)
-    best = None
-    for x in d["ecg"]:
-        seg = x[-10 * FS:]
-        pk = beats(seg)
-        if best is None or len(pk) > len(best[1]):
-            best = (seg, pk)
-    seg, pk = best
-    n = len(pk)
-    hr = 60 * FS / np.median(np.diff(pk)) if n >= 3 else (0.0 if n < 2 else 60 * FS / np.diff(pk)[0])
-    ff = flat_frac(seg)
-    # пороги по определениям CinC 2015 (заданы заранее)
-    if typ == "Asystole":
-        return int(n <= 2 or ff > 0.5)
-    if typ == "Bradycardia":
-        return int(hr < 40)
-    if typ == "Tachycardia":
-        return int(hr > 140)
-    if typ == "Ventricular_Tachycardia":
-        return int(hr > 100)
-    return int(hr > 150)  # VF/Flutter: простое правило по частоте
+    seg = {"ecg1": d["ecg"][0], "ecg2": d["ecg"][1] if len(d["ecg"]) > 1 else None,
+           "ppg": None, "alarm_type": typ, "fs": FS}
+    return int(_verify(seg))
 
 
 y_tr = [alarms[r][1] for r in TRAIN]
