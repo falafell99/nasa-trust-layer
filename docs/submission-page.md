@@ -35,6 +35,8 @@ Held-out VTaC test split: 482 alerts, 137 confirmed by annotators, 226 patients/
 Intervals: bootstrap by patient/record, B=2000. The other 58 of 137 confirmed alerts stay yellow, still visible, nothing is hidden.
 Limits: this test split was opened once before for an earlier model, so it is not a clean one-shot test; the threshold was chosen on the validation split; VTaC holds only ventricular tachycardia alerts; Earth ICU data only.
 
+What did not work: we also tried a continuous VT/VF detector on VFDB, CUDB and MIT-BIH. On its one-shot held-out run the logistic model found 0 of 28 episodes (a simple rule found 7 of 28 at 157.3 false alarms per hour; 10.35 h of background). So we do not claim event detection: Trust Layer only checks an alert the monitor has already raised. Source: `results/detector_holdout.json`, branch `feature/event-detector`.
+
 ## How open data made this possible
 We did not use any NASA dataset. We checked the Resources tab of our challenge page on 2026-11-15: it lists NASA Human Research Program web pages (hazards, risks, ongoing research) and a Canadian Space Agency article on radiation monitoring, and no datasets. We used the NASA Human Research Program material only as background to frame the problem (distance from Earth, crew judging health on its own). That is context, not validation.
 
@@ -42,6 +44,8 @@ What made the work possible is open data from PhysioNet, all with open licences:
 - **VTaC v1.1** (ICU ventricular tachycardia alerts, ECG + PPG, 5,037 labelled events): training and the held-out test above.
 - **PhysioNet/CinC Challenge 2015** (750 ICU alerts, ECG + PPG): training and a second look.
 - **BUT QDB** (wearable ECG with expert signal-quality labels): the signal-quality demo scene.
+
+The demo bundles small excerpts of VTaC (CC BY-SA 4.0) and BUT QDB (CC BY 4.0) so it runs offline; sources, authors and licences are in `demo_data/ATTRIBUTION.md` (branch `feature/event-detector`, not yet on `main`).
 
 No data from astronauts is openly available for this task, as far as we found. Every number on this page comes from Earth hospital data.
 
@@ -61,4 +65,6 @@ Python, LightGBM, NeuroKit2, SciPy, FastAPI, one offline HTML page. Code: [__ re
 2. Numbers come from `results/v5_vtac_test.json` (V5, commit `c4cd79d`), not from `docs/11-technical-status-1145.md`: that file was written at 11:45 and still shows the V3 numbers, which V5 replaced. The "88.8% of 12,671 alerts" figure (Drew et al. 2014) is left out of the page because the description is capped at 150 words; it is in `docs/02-problem-evidence.md` if needed.
 3. Latency (30.2 ms median, 45.9 ms p95 on an Apple M5 Pro laptop, `results/latency.json`) appears in the description as "about 30 ms on a laptop".
 4. The challenge asks for a tool where astronauts assess their own health indicators; our project verifies a heart-monitor alert. Judges on Relevance may notice. The page leads with the "crew judges alone" angle on purpose.
-5. Repository public or private is not decided (Q9 in `docs/09`).
+5. Repository public or private is not decided (Q9 in `docs/09`). As of 13:50 it is `falafell99/nasa-trust-layer` and private (the clean-clone report says access had to be authorised). Judges cannot open a private link, so either make it public or write "available on request".
+6. Branch `feature/event-detector` (Javidan) is not merged into `main`. It holds `demo_data/`, `requirements-demo.txt`, the failed detector experiment, `docs/qa.md` and `docs/clean-clone-report.md`. On `main` a clean clone shows no alert screen (needs `data/`), per its own report. Merge before the repo link goes on the page.
+7. `docs/qa.md` on that branch quotes the V3 numbers from `docs/11-technical-status-1145.md` (11 of 14 red on CinC), which V5 replaced. Update before rehearsal.
