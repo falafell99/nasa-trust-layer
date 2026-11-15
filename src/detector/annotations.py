@@ -36,12 +36,11 @@ def normalize_rhythm(aux_note: str) -> str | None:
     return None
 
 
-def read_episodes(record_path: str | Path, record: str, merge_gap_seconds: float = 1.0) -> list[Episode]:
+def read_episodes(record_path: str | Path, record: str, merge_gap_seconds: float = 0.0) -> list[Episode]:
     """Extract target rhythm intervals, closing each at the next rhythm change.
 
-    Repeated same-class annotations separated by at most one second are merged;
-    this handles burst-like repeated VT/VF rhythm tags without counting every
-    tag as an independent episode.
+    Consecutive same-class annotations are merged. Any intervening non-target
+    rhythm remains a real gap and is never bridged.
     """
     record_path = str(record_path)
     header = wfdb.rdheader(record_path)
@@ -66,12 +65,12 @@ def read_episodes(record_path: str | Path, record: str, merge_gap_seconds: float
         if end > start:
             episodes.append(Episode(record, rhythm, start, end))
 
-    # Merge only adjacent annotations of the same rhythm; intervening non-target
-    # rhythms already terminate an episode and are not bridged.
+    # Merge touching same-class intervals only. A positive gap may represent a
+    # non-target rhythm (for example a short return to normal rhythm).
     max_gap = int(round(merge_gap_seconds * float(header.fs)))
     merged: list[Episode] = []
     for episode in episodes:
-        if merged and merged[-1].rhythm == episode.rhythm and episode.start - merged[-1].end <= max_gap:
+        if merged and merged[-1].rhythm == episode.rhythm and 0 <= episode.start - merged[-1].end <= max_gap:
             previous = merged[-1]
             merged[-1] = Episode(record, previous.rhythm, previous.start, episode.end)
         else:

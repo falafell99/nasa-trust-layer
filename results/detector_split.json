@@ -7,7 +7,7 @@
     "holdout": 0.25
   },
   "holdout_policy": "Do not compute or inspect holdout predictions until model and threshold are frozen from training/validation.",
-  "annotation_merge_gap_seconds": 1.0,
+  "annotation_merge_gap_seconds": 0.0,
   "datasets": {
     "vfdb": {
       "train": [
@@ -154,11 +154,11 @@
         "VF": 0
       },
       "421": {
-        "VT": 45,
+        "VT": 50,
         "VF": 0
       },
       "422": {
-        "VT": 1,
+        "VT": 2,
         "VF": 3
       },
       "423": {
@@ -236,7 +236,7 @@
         "VF": 1
       },
       "cu02": {
-        "VT": 3,
+        "VT": 5,
         "VF": 0
       },
       "cu03": {
@@ -478,11 +478,11 @@
         "VF": 0
       },
       "203": {
-        "VT": 20,
+        "VT": 21,
         "VF": 0
       },
       "205": {
-        "VT": 5,
+        "VT": 6,
         "VF": 0
       },
       "207": {
