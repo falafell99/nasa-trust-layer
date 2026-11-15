@@ -1,0 +1,786 @@
+I’m building a prototype for the NASA Space Apps Challenge 2026: “Create Health Monitoring Software for Astronauts on Space Missions” (radiation, isolation, altered gravity, closed environment; immune changes, bone loss, cardiovascular events, behavioral health; astronauts must evaluate and act on their own health status). I need a broad, source-backed briefing, not product ideas.
+Cover: (1) how astronaut health is monitored today on ISS and what changes for Moon and Mars missions, (2) NASA’s Earth-Independent Medical Operations and clinical decision support research and what it says is still unsolved, (3) the main failure modes of onboard health monitoring: comms delay, limited compute, small sample size, personal baselines, false alarms, alert fatigue, crew cognitive load, trust in AI, data privacy, (4) behavioral and mental health monitoring in analog missions, (5) what real astronauts, flight surgeons and space medicine researchers say they actually need, from interviews, talks, papers and forums, (6) commercial and startup efforts (wearables, space-grade sensors, AI medical assistants) and where they fall short.
+For each section give the key facts, the strongest sources, disagreements between sources, and open questions. Use recent sources (2023-2026) first. Cite everything and flag low-confidence claims.
+Astronaut health monitoring: evidence briefing
+The central transition is from ground-supported care on the ISS to crew-managed care supported by delayed consultation on exploration missions. NASA’s research treats this as a medical-system problem—not simply a need for more sensors or an onboard chatbot. Monitoring must connect observations to diagnosis, feasible treatment, reassessment, medical records, available supplies, and crew workload. The published evidence supports that direction strongly; it does not yet establish that a comprehensive autonomous medical system is clinically reliable in deep space.[nature +2]
+This briefing prioritizes 2023–2026 sources available as of November 14, 2026. I distinguish operational practice, research measurements, prototypes, and proposed capabilities. “Open question” means unresolved in the sources reviewed, not necessarily unknown to NASA internally. I have not independently verified the wording or official status of the Space Apps challenge itself.
+1. What happens on the ISS today—and what changes beyond Earth orbit
+Current practice: a distributed medical team
+ISS health care combines onboard equipment and trained astronauts with substantial ground expertise:
+Layer
+What happens today
+Important qualification
+Clinical oversight
+Mission-assigned flight surgeons conduct weekly private medical conferences and oversee examinations, investigations, and treatment.
+These are whole-person check-ins covering sleep, eating, symptoms, and well-being—not just vital-sign reviews. [nature +1]
+Onboard care
+Crew medical officers perform medical tasks using onboard equipment, procedures, and ground guidance. They are not necessarily physicians.
+A physician astronaut increases capability but cannot provide every specialty, and the medical officer can also become the patient. [nature +1]
+Periodic investigations
+ECG/EKG, ultrasound, eye examinations including optical coherence tomography, and blood work supplement clinical assessment.
+These are intermittent assessments, not continuous surveillance of every organ system. [nasa]
+Daily health maintenance
+Teams review exercise, nutrition, medication use, fatigue, and schedules; countermeasures are individualized.
+Exercise equipment condition and maintenance are themselves health dependencies. [nasa +1]
+Behavioral support
+Private psychological conferences, cognitive assessments, family communication, and individually tailored support.
+Operational psychological care is distinct from research participation. [nasa +1]
+Environmental protection
+Ground teams monitor atmosphere, water systems, contaminants, radiation, and equipment affecting habitability.
+A health anomaly may originate in the habitat rather than the individual. [nasa]
+Research
+Wearables, biological samples, cognition tests, surveys, and standardized longitudinal measurements.
+A research measurement is not necessarily available onboard in time to guide care. [nasa +1]
+A particularly important distinction: Spaceflight Standard Measures collects in-flight blood samples that are frozen and returned for batch analysis. Its immune investigations include blood and saliva assays, viral shedding, immune-cell characterization, and functional testing. This is valuable evidence about astronaut physiology, but much of it is not an onboard real-time diagnostic service.[nature]
+What is actually measured for the challenge’s health domains?
+•	Radiation: instruments measure exposure and the radiation environment; specialist teams interpret conditions and support protective actions such as sheltering. Exposure monitoring should not be confused with directly measuring radiation-induced disease.[nasa +1]
+•	Bone and muscle: bone-density information, biochemical markers, exercise records, strength measurements, and individualized countermeasures contribute different kinds of evidence. A wearable’s activity signal is not a direct measurement of bone loss.[nasa +1]
+•	Cardiovascular health: ECG, ultrasound, blood pressure, clinical symptoms, biochemical information, and functional responses are relevant. NASA also monitors risks such as jugular venous thrombosis; “cardiovascular monitoring” is broader than heart-rate tracking.[nasa +1]
+•	Immune health: blood and saliva reveal immune dysregulation and latent-virus reactivation. These measurements involve laboratory methods and interpretation; there is no demonstrated general-purpose “immune status” reading from a wrist sensor in the sources reviewed.[nature]
+•	Behavioral health: clinical conversations, self-reports, cognition testing, sleep/activity data, and team-function measures provide complementary views. None alone constitutes a comprehensive mental-health diagnosis.[nasa +1]
+Moon versus Mars
+Dimension
+Lunar missions
+Mars missions
+Ground support
+Still potentially useful for interactive support when connectivity permits; autonomy requirements depend on mission location, infrastructure, and outages.
+Communication delays can exceed 20 minutes one way, making ground-led management of rapidly evolving emergencies impractical. [nasa +1]
+Evacuation and resupply
+More constrained than ISS and dependent on mission architecture.
+Routine resupply and rapid medical evacuation cannot be assumed. [nature +1]
+Health environment
+Greater radiation concern outside Earth’s protective environment; surface operations introduce another gravity transition.
+Long transit, prolonged isolation, radiation, resource depletion, and arrival after deconditioning compound one another. [nature +1]
+Medical workflow
+Increasing onboard capability with continued ground involvement.
+Immediate local assessment and action, with asynchronous expert consultation and longer-term management. [nature +1]
+NASA’s medical standards explicitly require mission-specific preventive and treatment capabilities and, for planetary landings, surface rehabilitation resources. A crew arriving at a destination may need to function before it has fully adapted to gravity.[nature +1]
+Disagreements, limitations, and open questions
+•	Training figures differ. The 2023 CDSS paper describes approximately 40 hours for a nonphysician ISS medical officer; NASA chief health and medical officer J. D. Polk’s 2025 interview describes a 16–20-hour range in discussing training. These may describe different portions of training; they should not be presented as a single settled total.[nature +1]
+•	Some papers describe ISS communication as “constant” or “instantaneous.” That is a contrast with deep-space delay, not evidence that links never fail or ground help is always immediately available.[nature +1]
+•	Open questions: Which investigations will be clinically available onboard each exploration vehicle? Which currently ground-analyzed biomarkers justify onboard laboratory capability? What functional readiness is required immediately after landing?[pubmed.ncbi.nlm.nih +2]
+Strongest starting sources: NASA’s 2025 medical-care standards, the January 2025 Polk interview, the March 2025 crew-health-console interview, and the November 2025 Standard Measures review, updated following a March 2026 correction.[nasa +3]
+2. NASA’s Earth-Independent Medical Operations and decision-support research
+What EIMO means
+EIMO is progressively autonomous medical operational support—not the abandonment of Earth-based clinicians. NASA’s technical-interchange work preserves ground expertise for planning and consultation while moving time-critical decisions and capabilities onboard. Its scope includes training, data architecture, supplies, resource management, and balancing medical work against other tasks.[pubmed.ncbi.nlm.nih +1]
+A 2025 paper reports five technical interchange meetings held in 2023–2024 with NASA, academic, industry, health-technology, and austere-medicine experts. It identifies probabilistic risk tools, extended reality, and clinical AI as promising contributors—not a completed solution.[pubmed.ncbi.nlm.nih]
+What a clinical decision-support system is expected to do
+NASA-associated research describes a system that would:
+1.	Gather active and passive observations and retrieve the patient’s history.
+2.	Ask focused questions and support differential diagnosis.
+3.	Recommend available investigations and feasible treatments.
+4.	Adapt guidance to the operator’s skill and the urgency of the situation.
+5.	Provide procedural guidance and just-in-time training.
+6.	Check allergies, medications, supplies, and their locations.
+7.	Schedule reassessment, document care, and communicate with ground teams.
+8.	Filter noncritical alerts rather than transferring every anomaly to the crew.[nature +1]
+The 2023 paper’s key finding is frequently overstated. Its risk reductions come from preliminary probabilistic modeling of increased crew capability, not a clinical trial showing an AI system saved astronauts. The authors explicitly state that the clinical and operational validity of their proposed analytical approach had not yet been peer reviewed.[nature]
+Concrete research efforts and their maturity
+Effort
+What the evidence establishes
+What it does not establish
+NASA ExMC CDSS concept, 2023–2024
+A detailed rationale, workflow, illustrative emergency scenario, and preliminary risk modeling.
+Validated autonomous diagnosis or demonstrated patient-outcome improvement in space. [nature +1]
+NASA-associated AI/CDSS evaluation, February 2025
+Workshop slides report OSCE scores of 75% for Gemma 2 and 78.5% for Llama 3.1; hardware constraints affected model selection.
+These are not general diagnostic-accuracy rates or evidence of flight readiness. The presentation does not provide enough detail to treat them as comprehensive clinical validation. [nasa]
+Google/NASA CMO Digital Assistant, August 2025
+A multimodal proof of concept evaluated using the Objective Structured Clinical Examination framework, with further physician testing planned.
+The announcement does not demonstrate an operational, certified, offline flight system. [google]
+Space Medicine GPT, IMCA, and VULCAN, August 2025
+A published development description covering offline dialogue, adaptive procedural guidance, and ultrasound assistance.
+Comprehensive validation across clinical emergencies; the authors explicitly acknowledge immature hardware/software and the need for rigorous analog testing. [nature]
+NASA AI medical-support vision, 2024
+Explicit research requirements for sparse-data learning, sensor integration, adaptation, and low-power computing.
+A working end-to-end implementation; much of the document is a development agenda. [nasa]
+What remains unsolved
+The recurrent gaps are:
+•	Ground-to-space generalization under altered physiology.
+•	Integration of sparse, inconsistent, multimodal observations.
+•	Reliable offline reasoning within power and computing limits.
+•	Recognition of emergencies before the diagnosis is complete.
+•	Safe performance when the medical officer is incapacitated.
+•	Resource-aware care over the remaining mission.
+•	Validation of the combined human–software workflow, not just the model’s answers.[nature +3]
+Disagreements and open questions
+An important tension concerns adaptation. NASA’s 2024 AI vision proposes continual refinement using onboard data and crew feedback; the 2025 agent paper emphasizes preventing models from departing from accepted practice. Neither establishes a validated governance mechanism for changing a safety-critical clinical model mid-mission.[nature +1]
+The SGPT paper’s target of fewer than 50 billion parameters is an architectural aspiration, not a measured guarantee of practical smartphone operation. Memory, quantization, context length, inference hardware, and energy consumption still matter; the paper does not report the complete deployment benchmark needed to settle feasibility.[nature]
+Open questions include what the system must refuse to answer, how uncertainty triggers fallback procedures, who authorizes model updates, and what prospective evaluation would demonstrate a net reduction in mission risk. A 2026 narrative review identifies uncertainty thresholds, human override, and predefined safe fallback procedures as priorities, but it is a synthesis rather than operational validation.[frontiersin]
+3. Main failure modes of onboard health monitoring
+The table separates documented concerns from analytical consequences. Quantitative astronaut-specific rates of false alarms, alert fatigue, and AI overreliance were not established in the reviewed sources.
+Failure mode
+Evidence and likely consequence
+Unresolved issue
+Communication delay and outage
+A request–response exchange can consume tens of minutes before clinical assessment time is added. Ground instructions may arrive after the patient’s state has changed. [nature +1]
+How to reconcile delayed advice with newer onboard findings and actions.
+Limited compute, energy, storage, and hardware resilience
+NASA identifies small-footprint computing and testing under radiation, vibration, and temperature stresses as development requirements. [nasa]
+Sustained performance of the complete clinical stack, including failure recovery—not merely whether a model fits in memory.
+Small sample size
+Astronaut data are limited, highly selected, heterogeneous, and costly to obtain; standardized repeated measurements improve yield but do not create large independent populations. [nih +1]
+How to validate rare-event predictions without enough actual positive cases.
+Personal baselines and physiological drift
+Preflight measurements and repeated in-flight assessments are central to current research. Terrestrial models may become invalid after space-induced physiological changes. [nih +1]
+How to distinguish adaptation, illness, and sensor drift without normalizing away deterioration.
+Poor sensor quality
+NASA’s evaluation of a prototype wireless patch found poor reliability/validity and low acceptability; investigators recommended against further evaluation in its then-current configuration. This was older work, closed in 2019, not a verdict on present-day wearables. [nasa]
+Long-duration signal quality during exercise, sweat, changing fit, and practical use.
+False alarms
+NASA’s CDSS concept explicitly calls for filtering noncritical events. Analytical implication: large volumes of repeated observations can generate burdensome anomalies even when individual measurements perform reasonably. [nature]
+Useful operating points expressed as missed events and false alerts per crew-day, rather than isolated model accuracy.
+Alert fatigue
+Alert management is a stated requirement, but the sources reviewed do not establish an astronaut-specific clinical alert-fatigue rate. [nature]
+Whether alerts remain actionable over months and whether suppression hides deterioration.
+Crew cognitive load
+Clinical work competes with tightly scheduled mission tasks. Guidance must adapt to urgency, operator expertise, and the possibility of a novice caregiver. [nasa +1]
+Whether interacting with the system actually reduces workload in realistic emergencies.
+Trust and automation bias
+Researchers call for understandable reasoning, uncertainty management, override, and safe fallback. Plausible explanations are not themselves proof of correctness. [nature +1]
+Calibrated reliance: when crew should accept, challenge, or disregard advice.
+Privacy and confidentiality
+Clinical records and consented research data follow different access and sharing arrangements. Standard Measures uses coded, encrypted storage and crewmember-reviewed sharing plans. [nature +1]
+Who can see inferred behavioral states onboard, what commanders need to know, and what happens during emergencies.
+The most consequential disagreements
+“More continuous data” is not equivalent to “more clinical value.” NASA and CSA demonstrate useful wearable acquisition, but the Standard Measures workflow shows that interpretation often still relies on context, specialized assays, and longitudinal review. The failed wireless-patch evaluation also demonstrates that a promising form factor can fail basic measurement requirements.[nature +2]
+Likewise, personalization and standardization are complementary but sometimes competing goals. Standardization enables comparison across missions; personalization addresses individual variation. The unresolved methodological issue is how to combine them while preserving clinically meaningful thresholds.[nature +1]
+4. Behavioral and mental-health monitoring in analog missions
+What is being monitored
+NASA’s behavioral research uses multiple evidence streams:
+•	Self-reported mood, affect, depression-related symptoms, stress, sleep, and fatigue.
+•	Cognitive performance and operational-task performance.
+•	Team cohesion, psychological safety, social support, coordination, and group living.
+•	Sleep/activity and physiological observations.
+•	Experimental speech-based acoustic and linguistic measures intended to predict declining team function.[ntrs.nasa +2]
+The last category is research, not evidence that passive speech analysis can reliably diagnose an astronaut’s psychiatric condition. The NASA roadmap task describes developing and selecting predictive measures; that is different from an operationally validated screening service.[humanresearchroadmap.nasa]
+What the major analogs contribute
+Analog
+What it can reveal
+Principal limitation
+HERA
+Controlled studies of isolation, confinement, sleep restriction, privacy/habitable-volume changes, and communication delay; recent campaigns typically involve four-person crews and 45-day missions. [nasa +2]
+Shorter and physically safer than a multiyear interplanetary mission; no actual microgravity or deep-space radiation.
+CHAPEA
+Year-scale study of four-person crews under simulated Mars constraints, including resource restrictions, delayed communication, equipment problems, and simulated surface tasks. [nasa +1]
+Earth-based isolation cannot reproduce the full physiological or existential conditions of Mars.
+Antarctic environments
+Prolonged isolation and environmental stress, useful for behavioral and technology research. [nasa]
+Different work cultures, environments, medical contingencies, and crew selection from spaceflight.
+These are limitations of transfer, not reasons to dismiss analogs. NASA explicitly uses multiple environments because each reproduces only parts of the exploration problem.[nasa +1]
+Findings worth carrying forward
+A 2024 study summarized by NASA examined 64 participants isolated for 45–240 days. Perceived social support declined over time, especially support from outside the isolated group. Overall support was not associated with stress over time, while greater crewmate support was associated with lower evening stress. That is more specific—and less sweeping—than “social support prevents stress.”[ntrs.nasa]
+The 2025 Standard Measures review reports that research on 25 ISS astronauts found no systematic decline in overall cognitive function, while detecting reductions in particular measures of processing speed, working memory, and sustained attention. Global claims that astronauts inevitably become cognitively impaired obscure this distinction.[nature]
+Disagreements and open questions
+•	Passive monitoring promises lower reporting burden, while clinical practice still depends heavily on confidential conversations, self-report, and context. These approaches have not been shown to be interchangeable.[nasa +2]
+•	Privacy is itself an experimental variable in analog research. A method that acquires rich behavioral data may also change how people behave; the size and operational importance of that effect remain unresolved here.[ntrs.nasa +1]
+•	Open questions: Can models generalize across crews, languages, personalities, and mission phases? Can they distinguish sleep deprivation from interpersonal conflict or emerging illness? What intervention follows an alert, and does it help?[nasa +2]
+5. What astronauts, flight surgeons, and researchers say they need
+The strongest material located was named operational interviews and practitioner-authored papers. I did not find a sufficiently attributable forum discussion to treat as representative astronaut evidence; anonymous commentary should not be used to manufacture consensus.
+Person/source
+What they actually emphasize
+Evidence status
+Will Fernandez, ISS flight surgeon, March 2025 interview
+Care is “not just…checking vital signs.” Sleep, food, overall well-being, fatigue, and time allocation matter. He describes the dependence on biomedical, environmental, nutrition, psychological, and other specialists. [nasa]
+Direct operational interview, recorded December 2024.
+Nancy Bansbach, biomedical engineering flight controller, same interview
+Hardware maintenance, usable procedures, spare locations, family/psychological communications, and coordination are routine health-support work. Crew ask why hardware or a procedure differs from expectations. [nasa]
+Direct operational interview.
+J. D. Polk, NASA chief health and medical officer, January 2025
+Intermittent investigations must be combined with medication, exercise, nutritional, and psychological information. Countermeasures vary by individual. [nasa]
+Direct medical-leadership interview.
+William Buras and David Hilmers, August 2025 paper
+Concise symptom-led questioning; immediate recognition of emergencies; offline availability; hands-free interaction; guidance appropriate to novices; medical-history and inventory awareness. [nature]
+Practitioner/developer-authored requirements, not a representative user survey.
+Kris Lehnhardt, April 2025 symposium account
+A shift toward self-sufficient care supported by measurements of the individual’s biology, rather than constant dependence on doctor visits. [uth]
+Named quotation in an institutional event report.
+Astronaut participants in cognition research
+Five studies involving 87 astronauts and semi-structured debriefs found high acceptability of the Cognition Test Battery. [nature]
+Aggregated astronaut feedback, reported in a review.
+David Saint-Jacques, CSA Bio-Monitor demonstrations
+Demonstrates wearable physiological acquisition integrated with everyday ISS activities. [gc]
+First-person astronaut demonstration; not independent evidence of improved clinical outcomes.
+What these accounts collectively support
+The need is for help completing medical work under mission constraints: knowing what to do next, obtaining a usable measurement, finding equipment, remembering relevant history, maintaining the record, and reassessing without consuming the entire crew’s attention. That synthesis is consistent across the operational interview and CDSS requirements, but should not be presented as a verbatim astronaut consensus statement.[nature +2]
+Tensions and unanswered questions
+•	Developers emphasize “always-on” assistance; operators describe scarce time and many competing responsibilities. Whether persistent assistance feels helpful or intrusive requires actual crew evaluation.[nature +1]
+•	A hands-free interface is desirable during procedures, but its reliability in a noisy habitat, privacy during sensitive conversations, and behavior under stress are not settled by a requirement statement.[nature +1]
+•	Published requirements substantially outnumber published observations of astronauts using these systems during real clinical events. That limits confidence about preferences, trust, and sustained adoption.[nature +2]
+6. Commercial, startup, and industry-linked efforts—and their limits
+These efforts occupy different layers. A flown sensor, an FDA-cleared terrestrial platform, and an experimental clinical AI should not be treated as equivalent competitors or equivalent levels of medical readiness.
+Effort
+Credible evidence
+Where the evidence stops
+Carré Technologies/Hexoskin, Astroskin/Bio-Monitor
+CSA documents an ISS smart-shirt/headband/tablet system measuring several physiological signals, usable during sleep and exercise, launched in December 2018. [gc]
+Demonstrates acquisition and research utility—not autonomous detection of bone loss, immune dysfunction, or impending cardiovascular events.
+Empatica EmbracePlus
+NASA’s January 2024 account documents TRISH-supported development, multiple sensors, commercial availability, and FDA clearance as part of the Empatica Health Monitoring Platform. It reports onboard memory for up to 55 days under low connectivity. [nasa]
+Terrestrial regulatory clearance does not establish spaceflight clinical validity. The described workflow streams through an app to the cloud; local storage is not the same as offline clinical interpretation.
+BioIntelliSense BioSticker
+NASA’s 2024 annual report describes wearable-biosensor testing with the Australian Antarctic Division and TRISH, including temperature, heart rate, and respiration. [nasa]
+The report does not establish validated autonomous diagnosis, flight qualification, or improved exploration-mission outcomes.
+Tietronix-linked SGPT, IMCA, VULCAN
+The 2025 paper describes NASA SBIR-supported work on offline medical dialogue, augmented-reality procedures, and corrective ultrasound guidance. [nature]
+Early development; code is proprietary and accessible only through proposed collaboration/NDA arrangements, limiting independent reproducibility. No comprehensive clinical performance benchmark is reported.
+Google/NASA CMO-DA
+The August 2025 announcement documents a multimodal clinical-assistant proof of concept and OSCE-based testing. [google]
+No demonstrated end-to-end, flight-qualified medical autonomy. Vendor language about promise should not be converted into clinical-performance claims.
+SigmaLabs/CERN Scalable Radiation Monitor
+CERN reports installation on ISS in June 2025 and continuing radiation-sensing/data-analysis work. [cern]
+Its stated primary objective concerns radiation effects on electronics. It is not an individual biological-injury monitor or medical diagnostic system.
+Google/NASA robotic medical-logistics work, October 2026
+Google reports a laboratory proof of concept involving locating/moving a medical bag and local execution of fine-tuned models on edge devices. [google]
+The reported 85% baseline pick-and-place success is a robotics task metric—not medical-care success. Routine vitals and ultrasound assistance remain future objectives in that account.
+Where sources appear to disagree
+NASA’s wearable coverage is generally optimistic about signal quality and practical research use; its older wireless-patch evaluation reports a clear failure. These are different devices and evaluations, not a contradiction. The lesson is that each signal, form factor, activity condition, and intended use needs its own evidence.[nasa +1]
+There is also a deployment mismatch between cloud-centered commercial platforms and offline exploration requirements. Cloud development can contribute to an onboard system, but neither cloud availability nor edge-model execution alone proves that the full clinical workflow functions safely during communication loss.[nature +3]
+Open questions across the sector include sustained wearability, calibration, synchronization, missing-data handling, cybersecurity, offline clinical functionality, resource-aware recommendations, and prospective mission-relevant validation. A recent 2026 review concludes that most AI applications discussed for autonomous space care remain terrestrial demonstrations rather than operational spaceflight capabilities. That review is explicitly narrative and hypothesis-generating, so it is useful as a map of gaps, not a definitive effectiveness assessment.[frontiersin]
+Evidence boundaries to preserve in your briefing
+The most defensible account keeps four distinctions visible:
+1.	Monitoring versus diagnosis. Measuring heart rate, movement, exposure, or viral shedding does not automatically establish what condition the astronaut has or what action is warranted. Current care combines measurements with clinical assessment and context.[nasa +1]
+2.	Research versus actionable care. Some of the richest astronaut measurements are analyzed after return to Earth; they cannot simply be assumed to exist as live onboard inputs.[nature]
+3.	Demonstration versus validation. An OSCE score, a simulated emergency, a good-quality signal, or a successful robotic maneuver measures a particular capability—not the safety of the integrated medical system.[nature +2]
+4.	Autonomy versus isolation from Earth. NASA’s direction is local capability plus continuing, sometimes delayed, expert support—not replacing every clinician with AI.[pubmed.ncbi.nlm.nih +1]
+Low-confidence or unverified claims to exclude unless stronger evidence emerges: general diagnostic-accuracy percentages for “space medical AI”; astronaut-specific rates of clinical alert fatigue; passive detection of psychiatric illness from speech; continuous wearable detection of immune dysfunction or bone loss; and claims that a comprehensive autonomous AI physician is already operational on exploration missions. The sources reviewed establish research activity and partial capabilities, not those broader conclusions.[nature +4]
+Research whether any system exists that does ON-BOARD, OFFLINE, sensor-driven critical-event detection for astronauts on Moon/Mars missions (not symptom-chat tools like CMO-DA). For each item found give: name, org, stage (concept/lab/analog/flown), what sensors, what it detects, whether it handles signal artifacts/unreliable data explicitly, validation evidence (dataset, metrics), and URL. Cover: NASA HRP/EMC CDSS, TRISH HERMES/Ejenta/TrialX, ESA, DLR SpacePatch, CSA Bio-Monitor/Astroskin analytics, Axiom/Voyager/commercial, academic edge-ECG papers, Space Apps past winners. Then answer: (1) is any of this operational on a real mission? (2) which sub-problems have NO published validated solution (e.g. rejecting artifact vs real arrhythmia under motion/radiation)? Mark every claim “sourced” or “unverified”. No invented numbers.
+Bottom line
+[SOURCED] There are credible systems and prototypes for offline sensor analysis, including a published smartphone-based arrhythmia classifier, TRISH-funded edge health platforms, and SpacePatch’s autonomous cardiac-sensing architecture. These are not merely symptom-chat tools.[nature +2]
+[UNVERIFIED] I found no public evidence establishing that any reviewed system is operational on a Moon/Mars mission as an end-to-end, offline physiological critical-event detector with validated rejection of unreliable signals and an actionable onboard alarm.
+[SOURCED] Some components have flown: Bio-Monitor collects physiological signals on ISS; ESA’s EchoFinder-2 assists ultrasound acquisition on ISS; ANITA-2 autonomously analyzes cabin air. Flight use of these components does not establish flight validation of autonomous medical-event detection.[gc +2]
+How to read the labels
+•	SOURCED: supported by the cited document. For vendor material, this means the vendor makes the claim—not that independent validation exists.
+•	UNVERIFIED: not established in the public evidence located. It does not mean disproven or nonexistent.
+•	“No published validated solution found” is a bounded search conclusion, not proof that nobody has solved the problem.
+For this review, a qualifying system must acquire physiological or environmental sensor data, analyze it locally without Earth/cloud dependence, identify a specified dangerous event, and deliver a usable onboard indication. Sensor recording, retrospective analysis, procedural guidance, and symptom chat do not by themselves qualify.
+1. NASA HRP / Exploration Medical Capability CDSS
+ExMC Clinical Decision Support System
+Field
+Finding
+Organization / stage
+[SOURCED] NASA HRP’s Exploration Medical Capability—usually abbreviated ExMC, rather than EMC. Requirements development and laboratory/testbed demonstrations are documented. [nasa +1]
+Sensors / inputs
+[SOURCED] The architecture anticipates wearable physiological monitoring, clinical instruments, medical records, and vehicle/environmental data. Demonstrated use cases include heart-rate and CO₂ threshold alerts; however, those demonstrations use canned CSV data. [nasa]
+What it detects
+[SOURCED] Envisioned capabilities include physiological/environmental anomalies and recognition of emergencies. The cardiac-arrest narrative involves a medical officer becoming unconscious while exercising in Mars orbit. [nasa]
+Offline operation
+[SOURCED] Earth-independent operation is an explicit architectural objective. [nasa] [UNVERIFIED] Deployment of that complete capability on an exploration mission.
+Artifact / unreliable-data handling
+[SOURCED] The use-case document includes configurable thresholds and reducing false alerts through operational context. [nasa] [UNVERIFIED] A validated waveform-quality classifier, artifact-versus-arrhythmia discriminator, or automated “signal unusable” fallback in the demonstrated system.
+Validation
+[SOURCED] The March 2023 use-case document explicitly states that instruments in the cardiac-arrest demonstration are simulated with preloaded data; initiating diagnosis/treatment from alerts is identified as future work. [nasa] [UNVERIFIED] Prospective critical-event sensitivity, false alarms per crew-day, or validation on astronaut emergency recordings.
+Assessment
+[SOURCED] This is genuine sensor-driven autonomy research, but the cited demonstration is not evidence of a validated live critical-event detector. [nasa +1]
+[SOURCED] Source locator: NASA NTRS record  20220017856 , Clinical Decision Support System Concept of Operations, and record  20220017885 , Use Cases, HRP-48069 Revision B. The citations open the corresponding source pages/documents.[ntrs.nasa +1]
+[SOURCED] Important correction to the earlier briefing: a vivid simulated cardiac-emergency workflow should not be counted as successful automatic recognition of an actual arrhythmia. The implementation document makes that distinction explicit.[ntrs.nasa]
+2. TRISH HERMES, Ejenta, and TrialX
+HERMES architecture and Ejenta implementation
+Field
+Finding
+Organization / stage
+[SOURCED] TRISH at Baylor selected Ejenta and TrialX in November 2023 to independently develop HERMES-related systems. The current TRISH page describes continuing work toward readiness and implementation on spaceflight missions. [bcm +1]
+Sensors / inputs
+[SOURCED] Medical devices, wearables, environmental sensors, health records, and mission data; the platform is designed to be interoperable rather than tied to one sensor package. [bcm +1]
+What it detects
+[SOURCED—program announcement] Ejenta’s proposed system provides individual AI agents and alerts about changes in astronaut health or the vehicle environment. [bcm] [UNVERIFIED] A published, enumerated list of validated critical-event detectors.
+Offline operation
+[SOURCED] The award announcement explicitly states that services run on HERMES Edge Computers without cloud connection and automatically collect and analyze astronaut data. [bcm]
+Artifact / unreliable-data handling
+[UNVERIFIED] Publicly specified signal-quality indices, lead-off detection, motion-artifact rejection, abstention rules, or their validation.
+Validation
+[SOURCED] The reviewed sources establish an architecture and development program. [bcm +1] [UNVERIFIED] Named validation datasets, event-level sensitivity/specificity, false-alert burden, or mission demonstrations of critical-event detection.
+Assessment
+[SOURCED] One of the clearest matches to the offline, sensor-driven architecture. [bcm] [UNVERIFIED] Clinical critical-event performance and operational flight deployment.
+[SOURCED] Source locators: Baylor/TRISH, TRISH selects healthcare and data management projects for spaceflights, November 1, 2023; TRISH’s Hermes program page.[bcm +1]
+TrialX Expand Lite / TrialX GO
+Field
+Finding
+Organization / stage
+[SOURCED] TrialX, supported by TRISH; development and vendor-described platform capability. [bcm +1]
+Sensors / inputs
+[SOURCED—vendor] Garmin, Samsung Watch and PineTime wearables; ultrasound and blood-pressure devices; environmental inputs; electronic records and self-reports. These are claimed integrations, not evidence that every combination was flight-validated. [trialx]
+What it detects
+[SOURCED—vendor] TrialX GO advertises local biometric monitoring, AI analysis, and alerts for emerging issues. [trialx] [UNVERIFIED] Specific emergency classes and their diagnostic performance.
+Offline operation
+[SOURCED] Offline access, storage, and later synchronization are explicit in the original award; TrialX additionally claims offline analysis on edge hardware. [bcm +1]
+Artifact / unreliable-data handling
+[UNVERIFIED] Published artifact-versus-pathology methods or rejection/abstention metrics.
+Validation
+[SOURCED—vendor] TrialX documents EXPAND-supported collection of surveys and wearable data on Ax-4. [trialx] [UNVERIFIED] That this demonstrates TrialX GO/HERMES executing validated offline emergency detection in flight.
+Assessment
+[SOURCED] Offline data infrastructure is substantiated. [bcm] [UNVERIFIED] A validated autonomous critical-event detection layer.
+[SOURCED] Source locators: TrialX, A Key Innovation in Space Health Research & Remote Data Collection, May 13, 2025; Telemetric Health AI Study…Ax-4, September 18, 2025.[trialx +1]
+Do not conflate these with Ejenta’s CMO-DA integration
+[SOURCED] Ejenta’s October 2025 account says its CMO-DA integration was demonstrated using a simulated flank-pain/ultrasound scenario. It explicitly states that CMO-DA was a prototype, was not used for operational decisions, and that extending it to passive medical-data monitoring remained an objective.[ejenta]
+[SOURCED] Also, the 2026 academic framework titled HERMES: A Unified Open-Source Framework… is a separate physiological edge-computing project. Its name is not evidence of a relationship to TRISH HERMES.[bcm +1]
+3. DLR-supported SpacePatch
+Field
+Finding
+Organization / stage
+[SOURCED] Supported by the German Space Agency at DLR; research includes Hamburg University of Technology and Bielefeld University. Laboratory, parabolic-flight, and proton-beam testing are documented. [dlr +2]
+Sensors
+[SOURCED] Mechanical cardiac sensing—seismocardiography/cardioballistic signals. Related ARTiFACTS measurements use six-degree-of-freedom sensors measuring linear acceleration and angular velocity at the chest, with an aircraft reference sensor. [uni-bielefeld +1]
+What it detects
+[SOURCED] DLR describes cardiac-health monitoring with onboard signal processing and AI-assisted analytics. [dlr] [UNVERIFIED] A validated list of automatically detected emergencies, such as ventricular fibrillation, cardiac arrest, or hemodynamic collapse.
+Offline operation
+[SOURCED] DLR explicitly describes independence from internet and cloud connectivity. [dlr +1]
+Artifact / unreliable-data handling
+[SOURCED] Explicit research on gravity-related mechanical-signal artifacts, sensor orientation, compensation, reference-system uncertainties, latency, jitter, and drift. [uni-bielefeld +1]
+Validation
+[SOURCED] June 2025 parabolic-flight measurements; a further parabolic campaign reported in October 2025; proton-beam radiation-resilience testing reported October 5, 2025. [tuhh] [UNVERIFIED] Published clinical event-detection sensitivity, artifact-rejection confusion matrices, or false alarms under exercise and irradiation.
+Assessment
+[SOURCED] A particularly relevant offline sensing effort that explicitly investigates artifacts and hardware radiation resilience. [dlr +1] [UNVERIFIED] Operational critical-event detection on a crewed space mission.
+[SOURCED] Source locators: DLR’s ILA 2026 SpacePatch page; Bielefeld’s June 25, 2025 ARTiFACTS report; TU Hamburg Smart Sensors Group project/news page.[event.dlr +2]
+[SOURCED] Radiation testing and physiological artifact testing are separate experiments in the published accounts.  [UNVERIFIED] That passing a hardware radiation test establishes correct medical classification during radiation-induced faults.[tuhh]
+4. CSA Bio-Monitor / Astroskin analytics
+Field
+Finding
+Organization / stage
+[SOURCED] CSA and Carré Technologies/Hexoskin, with engineering partners. Flown on ISS since its December 2018 launch; also used in Axiom mission research. [gc +1]
+Sensors
+[SOURCED] ECG, heart/pulse signals, respiration, oxygen saturation, skin temperature, physical activity, and blood-pressure-related measurements are listed by CSA for the integrated system. [gc]
+What it detects
+[SOURCED] Operationally documented function: acquisition, recording, display, and transmission of physiological measurements. [gc] [SOURCED] A 2025 single-astronaut case report used Bio-Monitor recordings to assess sleep apnea and cardiac electrophysiological abnormalities, including complete heart block. [nih]
+Offline operation
+[SOURCED] The tablet can display measurements during exercise; recordings are subsequently downloaded through a base and sent to Earth. [gc] [UNVERIFIED] A locally running, clinically validated critical-event alarm algorithm in the flown configuration.
+Artifact / unreliable-data handling
+[SOURCED] CSA describes adjustable garment straps to maintain electrode contact and obtain good readings. [gc] [UNVERIFIED] Flight-validated automated discrimination between contact/motion artifacts and dangerous rhythms.
+Validation
+[SOURCED] Actual astronaut physiological recordings; the cited clinical paper is a case report involving one astronaut measured before, twice during, and after a six-month ISS mission. [nih] [UNVERIFIED] Detector sensitivity/specificity or onboard event-alert validation from that case.
+Assessment
+[SOURCED] Strong evidence of a flown acquisition platform and clinically informative recordings. [gc +1] [UNVERIFIED] Autonomous onboard critical-event detection.
+[SOURCED] Source locators: CSA’s Bio-Monitor: Keeping an eye on astronauts’ vital signs, updated February 26, 2026; DOI  10.3357/AMHP.6694.2025  is not verified here, so use the confirmed PubMed record  41360141  for the case report rather than relying on an inferred DOI.[gc +1]
+[SOURCED] Name collision: Biotronik’s implantable BIOMONITOR is a different device. Its terrestrial automatic arrhythmia-detection capabilities must not be attributed to CSA’s garment.[gc +1]
+5. ESA: three distinct classes of capability
+System
+Stage, sensors, and detection
+Offline / unreliable data / validation
+Everywear — CNES/MEDES/ESA
+[SOURCED] Flown during Proxima. Smartshirt ECG/activity, e-Tact temperature/orientation/activity patch, and tonometry-related cardiovascular measurements; stores/transfers data for specialist review. [esa]
+[UNVERIFIED] Validated autonomous critical-event alarms or artifact-rejection performance. [SOURCED] ESA’s account describes specialist interpretation rather than autonomous clinical detection. [esa]
+EchoFinder-2 — ESA
+[SOURCED] Flown on ISS by June 2026. Ultrasound, camera tracking, tablet-based augmented reality, and AI organ recognition assist probe positioning and image acquisition. [nasa]
+[SOURCED] NASA’s documented session still included ground-doctor guidance. [nasa] [UNVERIFIED] Continuous unattended emergency detection, offline clinical-event classification, or artifact-versus-pathology alarm metrics.
+ANITA-2 — ESA
+[SOURCED] Flown technology demonstrator. FTIR spectroscopy automatically identifies/quantifies cabin-air contaminants and flags unknown substances for subsequent evaluation. [esa +1]
+[SOURCED] Local automatic analysis is documented. [esa] [UNVERIFIED] A complete ground-independent crew alarm/medical response pathway and its false-alarm performance. This is environmental hazard monitoring, not physiological diagnosis.
+[SOURCED] Source locators: ESA’s A patch of health; NASA ISS operations report, June 17, 2026; ESA’s Unboxing ANITA-2, March 3, 2022, and 2026 experiment overview.[nasa +3]
+[SOURCED] ANITA documentation itself differs on the number of compounds and sampling cadence across mission summaries. These differences do not change its relevance as local sensor analytics, but they are a reason not to merge specifications from different versions.[esa +1]
+6. Axiom, Voyager, and commercial mission research
+Item
+What is established
+What is not established
+Axiom Ax-1 Bio-Monitor
+[SOURCED] Flown acquisition during daily activities, rest, and exercise. Axiom describes autonomous Artemis monitoring as a potential future adaptation. [axiomspace]
+[UNVERIFIED] Validated offline emergency detection on Ax-1.
+Axiom/HUNOR TESH, Ax-4
+[SOURCED] Cardiovascular/balance research integrating measurements and mission data; TrialX describes ECG shirts, blood-pressure monitoring, ultrasound, motion/balance assessment, and related measurements. [axiomspace +1]
+[UNVERIFIED] A prospectively evaluated onboard critical-event detector; public sensitivity, false-alert, or artifact-rejection metrics.
+Axiom Ax-4 MXene sensors
+[SOURCED] In-flight testing of biometric-sensor materials/devices for functionality, durability, and environmental stability. [axiomspace]
+[UNVERIFIED] A validated clinical alerting algorithm.
+Voyager–Geisinger / VISTA
+[SOURCED] July 2026 memorandum establishing joint research interests, including remote monitoring and telehealth. [voyagertechnologies]
+[UNVERIFIED] A named deployed physiological critical-event detector, sensor specification, dataset, or validation metrics.
+[SOURCED] Source locators: Axiom’s research database and TESH project page; Ax-4 flight-day-10 report; Voyager investor announcement, July 16, 2026.[axiomspace +3]
+[SOURCED] “Voyager Displays” on Ax-4 is an eye-movement/gaze/pointing study; it should not be counted as an autonomous emergency detector.  [SOURCED] Voyager’s “structural health monitoring” language concerns infrastructure, not astronaut physiology.[axiomspace +1]
+7. Academic edge-ECG work: the strongest concrete detection evidence
+A. Space-targeted ONNX arrhythmia pipeline — Mani and colleagues, 2024
+Field
+Finding
+Organization / stage
+[SOURCED] Academic team led by Cyril Mani, with Tanya Paul, Patrick Archambault, and Alexandre Marois; laboratory research with Android edge deployment, published in npj Microgravity. [nature]
+Sensors / event classes
+[SOURCED] ECG inputs; classifies normal sinus rhythm, atrial fibrillation, and atrial flutter. It does not demonstrate a general cardiac-arrest or all-arrhythmia detector. [nature]
+Offline
+[SOURCED] ONNX-translated inference demonstrated on an Android device. [nature]
+Artifact handling
+[SOURCED] Explicit noise detection, variational-mode denoising, invalid-value handling, and feature extraction. Noise-development sources include MIT-BIH Noise Stress Test, MIT-BIH ST Change, and EPHNOGRAM. [nature]
+Dataset
+[SOURCED] 742 hours of terrestrial ECG, processed into 30-second samples, using multiple annotated ECG databases. The authors describe patient/recording separation to reduce leakage. [nature]
+Metrics
+[SOURCED] Macro F1: 0.899; normal sinus rhythm: 0.993; AF: 0.938; atrial flutter: 0.767. Reported processing: 9.2 seconds per sample. [nature]
+Limits
+[UNVERIFIED] Prospective astronaut testing, exercise/EVA field performance, radiation-fault testing, continuous-alarm burden, or a validated “cannot interpret” output. [SOURCED] Other tachycardia classes were excluded from the study’s selected dataset. [nature]
+[SOURCED] Source locator: DOI  10.1038/s41526-024-00409-0 , published June 22, 2024.[nature]
+[SOURCED] This is the clearest located peer-reviewed example of actual edge rhythm detection explicitly motivated by exploration missions.  [UNVERIFIED] Calling it an operational astronaut emergency monitor.[nature]
+B. Robust ECG abnormality detection on STM32 — Huang and colleagues, 2024
+Field
+Finding
+Organization / stage
+[SOURCED] University of Sydney-led team; terrestrial laboratory deployment on STM32F746G. [nih]
+Sensors / event classes
+[SOURCED] Twelve-lead ECG; AF, first-degree AV block, bundle-branch blocks, sinus bradycardia, and sinus tachycardia. [nih]
+Offline
+[SOURCED] Local inference on preprocessed recordings stored on the microcontroller. [nih]
+Artifact handling
+[SOURCED] Explicit band-pass preprocessing, white-noise stress tests, and systematic removal of ECG channels. This addresses unreliable inputs, but not the full motion-artifact problem. [nih]
+Dataset
+[SOURCED] Training/validation on a 21,000-record TNMG subset; external evaluation on CPSC recordings. [nih]
+Metrics
+[SOURCED] Validation F1: 0.827 and 0.828 for the two models; external-dataset average F1 approximately 0.70 and 0.72. Reported inference approximately one second for ten seconds of preprocessed ECG. [nih]
+Limits
+[SOURCED] On-chip tests use preprocessed data, not a demonstrated complete live wearable-acquisition pipeline. [nih] [UNVERIFIED] Spaceflight, radiation qualification, and operational critical-event alerting.
+[SOURCED] Source locator: DOI  10.1007/s12265-024-10504-y ; PMC record  PMC11371854 .[nih]
+C. ArrythML — 2026 preprint
+Field
+Finding
+Organization / stage
+[SOURCED] Academic preprint describing laboratory ESP32-S3/TensorFlow Lite Micro deployment. [arxiv] [UNVERIFIED] Institutional affiliations were not established from the retrieved material.
+Sensors / detection
+[SOURCED] ECG-segment anomaly/arrhythmia detection using autoencoders and thresholds. [arxiv]
+Dataset / metrics
+[SOURCED—preprint] Approximately 95,000 MIT-BIH-derived segments; reported F1 79%, approximately 180 KB model, and 9 ms on-device inference. These are authors’ reported results, not astronaut-validation metrics. [arxiv]
+Artifact handling / limits
+[UNVERIFIED] Validated rejection of motion artifact, prospective live-sensor performance, radiation resilience, or flight use.
+[SOURCED] Source locator: arXiv  2606.02256v1 .[arxiv]
+D. Important near-miss: Fukuda Denshi edge AF-risk model
+[SOURCED] A 2024 Fukuda Denshi-led study deployed a model on an ECG device, reporting external-test AUC 0.80 on 440 ECGs and approximately two-second processing. It predicts AF-related risk/history signatures while the patient is in sinus rhythm; it is not an acute AF episode alarm. Poor recordings and misplaced electrodes were excluded.[nih]
+[SOURCED] Source locator: DOI  10.3390/jcm13082218 ; PMC  PMC11051059 .[nih]
+[UNVERIFIED] That its performance transfers to healthy astronauts, motion-corrupted wearable ECG, or deep-space emergencies.
+8. Space Apps past winners and prototypes
+Item
+Stage / sensors / detection
+Evidence assessment
+Drift Off — Dublin, 2016
+[SOURCED] Local-winning smart sleeping-bag/headband concept for astronaut sleep and physiological/emotional monitoring. [siliconrepublic]
+[UNVERIFIED] Offline emergency detection, artifact handling, validation dataset/metrics, or flight deployment.
+Microgravity Wellness Retreat — Cleveland, 2024
+[SOURCED—participant account] Claimed local first place; VR wellness activities with existing health-sensor integration. [linkedin]
+[UNVERIFIED] Independent award confirmation in the reviewed sources; critical-event detection or validation.
+SpaceGenes+ — global science award, 2025
+[SOURCED] NASA-confirmed winner: dashboard examining molecular effects of radiation/microgravity. [nasa]
+[SOURCED] Its published description concerns research-data exploration, not live onboard sensor-event detection. [nasa]
+Recent AstroCare / NOVA-type prototypes
+[SOURCED—project pages] Public pages advertise astronaut monitoring, and NOVA specifically advertises onboard/offline operation. [vercel +1]
+[UNVERIFIED] Past-winner status, independently verified sensor integration, artifact rejection, clinical metrics, or mission use.
+[SOURCED] NASA’s complete 2024 global-winner announcement does not identify a physiological critical-event detector among its winners.[nasa]
+[UNVERIFIED] I did not locate a past Space Apps winner meeting all the requested criteria. Local awards, global awards, participant prototypes, and deployed medical systems should remain separate categories.
+9. Is any of this operational on a real mission?
+Question
+Answer
+Have relevant sensors flown?
+[SOURCED] Yes: Bio-Monitor, Everywear, ultrasound-assistance hardware, and autonomous cabin-air analysis. [gc +3]
+Has local automated sensor interpretation flown?
+[SOURCED] Yes, for examples such as ANITA-2 contaminant analysis and EchoFinder organ-recognition/acquisition assistance. [esa +1]
+Has a reviewed system demonstrated a validated onboard physiological emergency alarm in actual mission operations?
+[UNVERIFIED] Not established by the located evidence.
+Has the complete offline, artifact-aware critical-event detector been validated operationally for Moon/Mars missions?
+[UNVERIFIED] Not established by the located evidence.
+Does that mean spacecraft have no onboard safety monitoring?
+[SOURCED] No. Automatic environmental monitoring exists; the narrower missing evidence concerns integrated physiological diagnosis and dependable clinical alerting. [esa +1]
+10. Which sub-problems have no published validated solution located?
+[UNVERIFIED] For every gap below, the claim is “not found in this review for the specified space-mission use,” not “unsolved everywhere.”
+Sub-problem
+What is already sourced
+What remains unverified
+Artifact versus dangerous arrhythmia during exercise/EVA
+[SOURCED] Space-targeted ECG denoising and terrestrial noise datasets; separate SpacePatch gravity-artifact investigations. [nature +1]
+A prospectively validated onboard detector distinguishing dangerous rhythms from motion/contact artifacts under realistic crew operations.
+Artifact handling during radiation-induced hardware faults
+[SOURCED] SpacePatch proton-beam resilience testing. [tuhh]
+Joint testing of fault detection, corrupted-signal rejection, clinical classification, and alarm behavior during irradiation.
+Safe abstention when data are unusable
+[SOURCED] Denoising, missing-channel robustness tests, and preprocessing exist. [nature +1]
+A space-validated policy that says “cannot assess,” requests reacquisition, and prevents both false reassurance and indefinite alarm suppression.
+Rare lethal rhythms and arrest under realistic prevalence
+[SOURCED] NASA simulated emergency workflows; the space-targeted edge paper classifies AF/flutter/normal rhythm. [nasa +1]
+Prospective sensitivity and false-alert burden for ventricular fibrillation, ventricular tachycardia, asystole, or collapse in an astronaut-use system.
+Missing/stale/disagreeing sensors
+[SOURCED] HERMES targets heterogeneous integration; terrestrial work tests missing ECG channels. [bcm +1]
+Validated cross-sensor reconciliation, timestamp errors, stale values, sensor removal, and safe degraded operation in flight.
+Personalization across gravity transitions
+[SOURCED] Gravity-related mechanical-signal changes are actively investigated. [uni-bielefeld +1]
+A validated detector separating normal adaptation from disease across transit, lunar/Martian gravity, exercise, and individual baseline drift.
+Long-duration actionable alerting
+[SOURCED] NASA demonstrates configurable alert thresholds using simulated data. [nasa]
+Months-long prospective reporting of false alerts per crew-day, missed events, detection delay, and crew response burden.
+End-to-end medical benefit
+[SOURCED] Platforms, classifiers, sensors, and response workflows have separate evidence. [bcm +2]
+A validated chain from raw signal through quality control, detection, prioritization, crew action, and improved mission-relevant clinical outcome.
+The defensible research conclusion
+[SOURCED] The field is not empty: offline architecture, edge inference, explicit denoising, mechanical-signal artifact research, and flown physiological acquisition all exist.[nature +3]
+[UNVERIFIED] The stronger proposition—that these have already been integrated into a published, prospectively validated, artifact-aware physiological critical-event detector operating autonomously on an actual Moon/Mars mission—is not supported by the evidence located.
+Research whether any system exists that does ON-BOARD, OFFLINE, sensor-driven critical-event detection for astronauts on Moon/Mars missions (not symptom-chat tools like CMO-DA). For each item found give: name, org, stage (concept/lab/analog/flown), what sensors, what it detects, whether it handles signal artifacts/unreliable data explicitly, validation evidence (dataset, metrics), and URL. Cover: NASA HRP/EMC CDSS, TRISH HERMES/Ejenta/TrialX, ESA, DLR SpacePatch, CSA Bio-Monitor/Astroskin analytics, Axiom/Voyager/commercial, academic edge-ECG papers, Space Apps past winners. Then answer: (1) is any of this operational on a real mission? (2) which sub-problems have NO published validated solution (e.g. rejecting artifact vs real arrhythmia under motion/radiation)? Mark every claim “sourced” or “unverified”. No invented numbers.
+Findings
+[SOURCED] Systems exist that perform offline, sensor-driven physiological classification, and spacecraft already carry narrower forms of automated critical-event analysis. An important example missing from my previous answer is the ISS automated external defibrillator: its onboard software classifies shockable versus nonshockable ECG rhythms and explicitly handles motion interference. NASA’s hardware catalog identifies a modified LIFEPAK 1000 for this role.[nasa +2]
+[UNVERIFIED] I found no public validation establishing an operational Moon/Mars system that continuously monitors astronauts, distinguishes dangerous physiological events from unreliable sensor data during normal activity, and issues clinically validated onboard alarms without ground/cloud dependence.
+[SOURCED] The strongest relevant evidence falls into different categories:
+Category
+Strongest located example
+Flown, offline emergency rhythm analysis
+Modified LIFEPAK 1000 AED in ISS medical-hardware documentation; applies after a suspected arrest, not unattended continuous surveillance. [nasa +1]
+Exploration-targeted edge ECG classification
+Mani et al., 2024: normal sinus rhythm, atrial fibrillation, and atrial flutter classification, with explicit denoising and Android-edge deployment. [nature]
+Offline integrated medical-data architecture
+TRISH HERMES implementations from Ejenta and TrialX. Their architecture is documented; clinical detector validation is not established by the program announcements. [bcm +1]
+Space-specific artifact and radiation engineering
+SpacePatch: parabolic-flight signal investigations and separate proton-beam hardware testing. [tuhh]
+Flown physiological acquisition
+CSA Bio-Monitor/Astroskin. Published recordings have clinical value, but that is not evidence of onboard automatic alarms. [gc +1]
+Flown autonomous environmental analysis
+ESA/OHB ANITA-2 cabin-air analysis. This is not physiological diagnosis. [esa]
+Evidence labels and scope
+•	SOURCED means the cited source supports the statement. “SOURCED—vendor” identifies a company claim, not independent verification.
+•	UNVERIFIED means not established in the public evidence located—not necessarily false.
+•	“No published validated solution located” is a bounded literature-search conclusion, not proof of worldwide nonexistence.
+•	Stage refers to the capability actually demonstrated: a flown recorder does not make its proposed diagnostic analytics “flown.”
+The citations are clickable source URLs. Short URL locators are also provided where practical; long institutional URLs are available directly through the citations.
+1. NASA HRP / Exploration Medical Capability CDSS
+ExMC Clinical Decision Support System
+Requested field
+Evidence
+Name / organization
+[SOURCED] Exploration Medical Capability Clinical Decision Support System, NASA Human Research Program; the usual abbreviation is ExMC. [nasa]
+Stage
+[SOURCED] Concept, requirements development, and implemented software-testbed demonstrations. [nasa] [UNVERIFIED] An operational flight medical-event detector.
+Sensors / inputs
+[SOURCED] Intended interfaces include physiological monitors, imaging, medical records, and spacecraft environmental systems. Implemented alert demonstrations use preloaded CSV data representing heart rate, cognition, and environmental measurements. [nasa]
+What it detects
+[SOURCED] Demonstrated configurable threshold alerts; envisioned recognition of emergencies and context-aware response. Cardiac arrest and pneumothorax are use cases, not evidence of independently validated automatic detection. [nasa]
+Onboard / offline
+[SOURCED] Designed for in-vehicle medical support under delayed/constrained communications. [nasa] [UNVERIFIED] End-to-end operational deployment.
+Artifacts / unreliable data
+[SOURCED] The demonstration includes adjustment of thresholds to reduce false alerts and operational constraints on threshold changes. [nasa] [UNVERIFIED] Validated waveform-quality assessment, motion-artifact discrimination, or an automated “cannot interpret” policy.
+Validation dataset / metrics
+[SOURCED] The routine-monitoring demonstration explicitly uses “canned data”; the cardiac-arrest section states, “Instruments are simulated with pre-loaded data.” [nasa] [UNVERIFIED] Prospective event sensitivity, false alarms per crew-day, or performance on actual astronaut emergencies.
+URL
+NASA NTRS record  20220017885 , Use Cases for CDS System, HRP-48069 Rev. B, March 2023. [nasa]
+[SOURCED] The distinction is unusually clear in NASA’s own document: automatic alerts initiating a diagnosis/treatment session are described as future work in the cardiac-arrest implementation. The dramatic Mars-orbit scenario is therefore not validation of a working emergency detector.[nasa]
+2. TRISH HERMES / Ejenta / TrialX
+HERMES and Ejenta’s edge platform
+Requested field
+Evidence
+Name / organization
+[SOURCED] Human and Environmental Research Matrix for Exploration of Space—HERMES; TRISH/Baylor, with independently developed implementations from Ejenta and TrialX. [bcm +1]
+Stage
+[SOURCED] Funded platform development beginning in 2023; a 2026 TRISH document reports developed interoperable network platforms while describing fuller autonomous medical systems as future capabilities. [bcm +1]
+Sensors / inputs
+[SOURCED] Connected medical devices, wearables, environmental data, and medical/research records. The architecture is not limited to one sensor suite. [bcm +1]
+What it detects
+[SOURCED—program announcement] Ejenta’s implementation automatically collects/analyzes data and provides alerts about astronaut-health or vehicle-environment changes. [bcm] [UNVERIFIED] Specific validated critical-event classes.
+Onboard / offline
+[SOURCED] HERMES Edge Computers explicitly function without cloud connectivity. [bcm]
+Artifacts / unreliable data
+[UNVERIFIED] Published signal-quality indices, artifact-versus-pathology classifiers, confidence/abstention thresholds, or missing-data safety rules for a clinical detector.
+Validation dataset / metrics
+[UNVERIFIED] Published event-level datasets, sensitivity/specificity, detection latency, false-alert burden, or flight clinical validation of those alerts.
+URL
+Baylor announcement, November 1, 2023; TRISH’s 2026 HERMES description. [bcm +1]
+[SOURCED] HERMES is a strong architectural match to your question, but a weaker match to “published validated detector.” TRISH’s 2026 description explicitly presents proximity and availability of integrated data as enabling development and testing of future autonomous medical systems.[bcm]
+TrialX Expand Lite / TrialX GO
+Requested field
+Evidence
+Name / organization / stage
+[SOURCED] TrialX Expand Lite, subsequently described by TrialX as the engine for TrialX GO; development/vendor-described platform capability. [bcm +1]
+Sensors / inputs
+[SOURCED—vendor] Garmin, Samsung Watch and PineTime wearables; ultrasound and blood-pressure devices; environmental inputs; clinical records and self-reports. These are advertised integrations, not a jointly flight-validated sensor suite. [trialx]
+What it detects
+[SOURCED—vendor] Emerging-health-issue alerts and AI-supported diagnostics. [trialx] [UNVERIFIED] A specified, validated emergency-detection algorithm.
+Onboard / offline
+[SOURCED] Offline access/storage/synchronization are documented by TRISH. [bcm] [SOURCED—vendor] TrialX additionally advertises local analysis and diagnostics. [trialx]
+Artifacts / unreliable data
+[UNVERIFIED] Published methods or validation for motion artifact, unreliable oxygen readings, detached sensors, or corrupted waveforms.
+Validation dataset / metrics
+[SOURCED—vendor] TrialX documents EXPAND survey/wearable-data collection on Ax-4. [trialx] [UNVERIFIED] That this demonstrates TrialX GO/HERMES executing validated offline emergency detection in flight.
+URL
+TrialX, TrialX GO: A Key Innovation in Space Health Research & Remote Data Collection, May 13, 2025. [trialx]
+Ejenta’s CMO-DA integration: excluded from the detector category
+[SOURCED—vendor] Ejenta reports a September 2025 laboratory demonstration integrating ultrasound acquisition with CMO-DA for simulated flank pain. Its October account says the tool was a prototype, was not making operational decisions, and that passive medical-data monitoring remained an objective. This does not qualify as demonstrated unattended critical-event detection.[ejenta]
+3. DLR-supported SpacePatch
+Requested field
+Evidence
+Name / organization
+[SOURCED] SpacePatch, supported by the German Space Agency at DLR; Hamburg University of Technology’s Smart Sensors Group documents sensor development/testing. [dlr +1]
+Stage
+[SOURCED] Lab and parabolic-flight testing, plus separate proton-beam testing. [tuhh] [UNVERIFIED] Orbital flight deployment of the critical-event-detection capability.
+Sensors
+[SOURCED] Wearable cardiac-mechanical sensing: DLR describes cardioballistic sensing; the research group describes seismocardiography, or SCG. [dlr +1]
+What it detects
+[SOURCED] Cardiac-health monitoring with onboard processing and AI-assisted analytics. [dlr] [UNVERIFIED] Validated automatic detection of named emergencies such as VF, cardiac arrest, or hemodynamic collapse.
+Onboard / offline
+[SOURCED] Explicitly designed to operate independently of internet/cloud connectivity. [dlr]
+Artifacts / unreliable data
+[SOURCED] The 2025 parabolic-flight campaign collected zero-/hypergravity SCG to investigate gravity-dependent artifact formation and derive signal processing. [tuhh]
+Validation dataset / metrics
+[SOURCED] Flight-campaign measurements and proton-beam experiments are reported. [tuhh] [UNVERIFIED] Published clinical-event sensitivity, artifact-rejection confusion matrices, or continuous false-alert metrics.
+URL
+ https://event.dlr.de/en/ila2026/spacepatch-ila2026/ ; research-group testing details in the linked news archive. [dlr +1]
+[SOURCED] The proton-beam report distinguishes testing SpacePatch radiation resilience from testing FPGA single-event-upset detection.  [UNVERIFIED] Successful end-to-end discrimination of genuine cardiac events from radiation-corrupted sensor/computation outputs.[tuhh]
+4. CSA Bio-Monitor / Astroskin
+Requested field
+Evidence
+Name / organization
+[SOURCED] Bio-Monitor, developed by Carré Technologies/Hexoskin for CSA with Canadian engineering partners. [gc]
+Stage
+[SOURCED] Flown ISS acquisition platform; launched December 2018. [gc]
+Sensors
+[SOURCED] Smart shirt, headband and tablet; CSA lists heart electrical activity/pulse, blood pressure, breathing, skin temperature, oxygen saturation and activity. These are system-level advertised measurements, not equivalent evidence for every derived variable. [gc]
+What it detects
+[SOURCED] Records/displays physiological signals. A published single-astronaut case report assessed sleep apnea, desaturation and electrophysiological abnormalities, including complete heart block, using Bio-Monitor recordings. [gc +1]
+Onboard / offline
+[SOURCED] Onboard tablet display and recording are documented; data are transferred to Earth for scientific analysis. [gc] [UNVERIFIED] Validated local emergency alarms in the flown configuration.
+Artifacts / unreliable data
+[SOURCED] Adjustable straps maintain sensor–skin contact. [gc] [UNVERIFIED] Published flight-validated automatic artifact-versus-arrhythmia discrimination.
+Validation dataset / metrics
+[SOURCED] The case report involves one astronaut measured before, twice during, and after a six-month mission. [nih] [UNVERIFIED] Alarm sensitivity/specificity, detection latency, or prospective onboard detector performance.
+URL
+ https://www.asc-csa.gc.ca/eng/sciences/bio-monitor.asp ; clinical paper DOI  10.3357/AMHP.6745.2025 . [gc +1]
+[SOURCED] The clinical paper’s title says “Detects,” but its abstract establishes clinically informative measurements—not that an onboard autonomous algorithm raised the diagnosis or alarm.[nih]
+5. ESA systems
+Item / organization / stage
+Sensors and detected target
+Offline, artifacts, validation
+EveryWear — CNES/MEDES/ESA; flown
+[SOURCED] Integrates physiological measurements and research/medical records; documented examples include ECG shirt, temperature patch, tonometry and dosimetry interfaces. [esa +2]
+[SOURCED] Onboard application/server and synchronization architecture. [iafastro] [UNVERIFIED] A validated automatic critical-event classifier or artifact-rejection metrics.
+EchoFinder-2 — ESA-provided; flown ISS
+[SOURCED] Ultrasound, camera tracking and tablet AR; AI identifies organs and assists acquisition. [nasa]
+[SOURCED] NASA’s June 2026 session used ground-doctor guidance. [nasa] [UNVERIFIED] Fully offline emergency diagnosis, unattended detection, or artifact-versus-disease validation.
+ANITA-2 — ESA/OHB; flown technology demonstrator
+[SOURCED] Spectroscopy-based cabin-air analysis; automatically quantifies trace contaminants and flags unknown substances for subsequent assessment. [esa]
+[SOURCED] Runs automatically in the background onboard. [esa] [UNVERIFIED] Published complete ground-independent crew alarm/response validation or clinical-event metrics.
+[SOURCED] Source URLs: EveryWear’s architecture is documented in its IAC paper; EchoFinder-2’s flight activity in NASA’s June 17, 2026 operations report; ANITA-2 in ESA’s March 2022 flight description.[esa +2]
+[SOURCED] EveryWear has also been described by ESA in an Artemis II operational-support context, but the description emphasizes records, questionnaires, sensor interfaces and flight-surgeon support—not validated autonomous physiological emergency detection.[esa]
+6. Axiom / Voyager / commercial efforts
+Item
+Stage, sensors, detection
+Artifact handling and validation
+TESH / Telemetric Health AI — HUNOR, Semmelweis University; Ax-4 research
+[SOURCED] Axiom names Klaudia Vivien Nagy and Béla Merkely at Semmelweis. [axiomspace] [SOURCED—TrialX] Sensors include ECG/respiration shirts, blood-pressure monitors, ultrasound, motion/balance assessment and fundus imaging. [trialx]
+[SOURCED—vendor] TrialX claims AI-assisted predictive alerts. [trialx] [UNVERIFIED] Whether those alerts ran onboard/offline, specific event classes, artifact rules, dataset size or validation metrics.
+Bio-Monitor on Axiom research missions
+[SOURCED] Axiom documents physiological acquisition and future autonomy relevance. [axiomspace]
+[UNVERIFIED] Flight validation of a local emergency detector rather than signal collection.
+Voyager–Geisinger / VISTA
+[SOURCED] July 2026 research MOU includes remote monitoring and telehealth. [voyagertechnologies]
+[UNVERIFIED] A named astronaut critical-event detector, defined sensors, offline implementation, or clinical dataset/metrics. Stage for the requested capability: concept/research agenda.
+TrialX/Ejenta commercial platforms
+[SOURCED] Relevant offline architecture is documented above. [bcm +1]
+[UNVERIFIED] Public clinical validation sufficient to count them as operational exploration emergency monitors.
+[SOURCED] URLs:  https://www.axiomspace.com/research/telemetric-health-ai ; TrialX’s Ax-4 report and Voyager’s July 16, 2026 investor announcement are linked here.[trialx +2]
+7. Academic edge-ECG papers
+A. Mani et al., 2024: exploration-targeted arrhythmia pipeline
+Requested field
+Evidence
+Organization / stage
+[SOURCED] Academic collaboration: Cyril Mani, Tanya S. Paul, Patrick M. Archambault and Alexandre Marois; lab/edge-deployment study in npj Microgravity. [nature]
+Sensors / targets
+[SOURCED] ECG; classifies normal sinus rhythm, atrial fibrillation and atrial flutter. It is not an all-arrhythmia or cardiac-arrest detector. [nature]
+Offline
+[SOURCED] ONNX pipeline and Android-edge inference/deployment are documented. [nature]
+Artifacts
+[SOURCED] Explicit noise detection and variational-mode denoising; development uses MIT-BIH Noise Stress Test, ST Change and EPHNOGRAM recordings, including exercise/noise contexts. Invalid values are handled in preprocessing. [nature]
+Dataset
+[SOURCED] 742 hours of ECG, processed into 30-second samples; cardiologist-derived rhythm labels; subject-independent/nested evaluation and holdout testing described. [nature]
+Metrics
+[SOURCED] Macro F1 0.899; normal sinus rhythm 0.993; AF 0.938; flutter 0.767. Reported pipeline processing time: 9.2 seconds/sample. [nature]
+Limitations
+[SOURCED] Other tachycardia classes and conflicting selected arrhythmia labels are discarded during dataset preparation. [nature] [UNVERIFIED] Prospective astronaut data, continuous alarm performance, radiation-fault tests, or validated abstention on irrecoverably noisy data.
+URL
+ https://www.nature.com/articles/s41526-024-00409-0  [nature]
+[SOURCED] This paper prevents the claim “nobody has addressed artifacts.” It explicitly does.  [UNVERIFIED] That its denoising establishes safe rejection of artifact versus lethal arrhythmia throughout real spacecraft activity.[nature]
+B. Huang et al., 2024: robust microcontroller ECG classification
+Requested field
+Evidence
+Organization / stage
+[SOURCED] University of Sydney-led team; lab deployment on STM32F746G. [nih]
+Sensors / targets
+[SOURCED] Twelve-lead ECG; AF, first-degree AV block, left/right bundle-branch block, sinus bradycardia and sinus tachycardia. [nih]
+Offline
+[SOURCED] On-device inference from preprocessed ECG stored on the microcontroller. [nih]
+Artifacts
+[SOURCED] Band-pass filtering, white-noise stress tests, and deliberate removal of ECG channels. [nih]
+Dataset
+[SOURCED] Training/validation on a 21,000-record TNMG subset; external testing on CPSC data. [nih]
+Metrics
+[SOURCED] Validation F1 0.827/0.828 for the two models; external average F1 approximately 0.70/0.72. A small on-chip batch reported F1 approximately 0.79/0.76. Inference took approximately one second per ten seconds of preprocessed ECG. These are separate evaluations, not interchangeable scores. [nih]
+Limitations
+[UNVERIFIED] Spaceflight qualification, live end-to-end acquisition/preprocessing on that board, realistic motion-artifact discrimination, or emergency alarm validation.
+URL
+ https://pmc.ncbi.nlm.nih.gov/articles/PMC11371854/  [nih]
+C. AF-risk inference on an edge ECG device — Fukuda Denshi-led study, 2024
+[SOURCED] This lab/device study uses ECG acquired during sinus rhythm to infer AF-related risk/history signatures. Its external evaluation reports AUC 0.80 on 440 ECGs and approximately two-second processing; poor recordings and misplaced electrodes were excluded. It is not detection of an ongoing critical episode.[nih]
+[UNVERIFIED] Astronaut applicability, motion-artifact rejection, radiation testing or flight deployment.
+[SOURCED] URL:  https://pmc.ncbi.nlm.nih.gov/articles/PMC11051059/ .[nih]
+8. Operational counterexample: ISS AED
+Modified LIFEPAK 1000 / Shock Advisory System
+Requested field
+Evidence
+Organization / stage
+[SOURCED] Physio-Control/Medtronic platform, later Stryker; NASA’s ISS hardware catalog describes a modified commercial LIFEPAK 1000 and onboard stowage. This establishes historical flown/operational provision, not the exact November 2026 inventory. [nasa]
+Sensors
+[SOURCED] ECG through therapy electrodes; transthoracic impedance for independent motion detection. [fda +1]
+What it detects
+[SOURCED] Shockable versus nonshockable rhythms, including VF and rapid VT in its intended resuscitation context. It does not independently establish that a conscious person has become pulseless. [fda]
+Offline
+[SOURCED] Embedded, local analysis; no ground/cloud processing is required for shock advice. [fda +1]
+Artifacts
+[SOURCED] Motion is explicitly detected; ECG analysis is temporarily inhibited and the operator prompted. The manual warns that residual motion can still produce incorrect advice. [stryker]
+Dataset / metrics
+[SOURCED] FDA’s 2018 adult LIFEPAK 1000 table reports coarse-VF sensitivity 98.5% on 206 examples; rapid pulseless-VT sensitivity 76.9% on 65; normal-sinus specificity 100% on 509; other-QRS specificity 99.2% on 749; asystole specificity 100% on 124. These are commercial-platform test results, not astronaut-specific validation. [fda]
+Limits
+[SOURCED] AED mode is intended after a responder identifies an unresponsive patient without normal breathing/signs of circulation. [fda] [UNVERIFIED] Continuous wearable surveillance, Moon/Mars deployment, radiation-specific diagnostic validation, or an actual in-flight clinical resuscitation using this system.
+URL
+FDA SSED:  https://www.accessdata.fda.gov/cdrh_docs/pdf16/P160026B.pdf ; NASA hardware catalog linked here. [fda +1]
+[SOURCED] This materially qualifies my previous answer: offline physiological emergency classification with explicit motion handling is not merely a future research concept.  [UNVERIFIED] The broader unattended exploration-monitoring capability remains unestablished.[fda +1]
+9. Space Apps past winners
+Item
+Documented capability and stage
+Missing evidence
+Drift Off, 2016
+[SOURCED] Official archive identifies a Global Nominee; a contemporary report identifies a Dublin local winner. Proposed Raspberry Pi-like controller, EEG, cardiovascular/respiration/EDA sensors, sleep diary and personalized sleep support. Concept/hackathon stage. [spaceappschallenge +1]
+[UNVERIFIED] Implemented sensor accuracy, emergency detection, artifact rejection, clinical dataset/metrics, or flight use.
+Microgravity Wellness Retreat, 2024
+[SOURCED—participant account] Claimed local first place; wellness/VR concept with sensor integration. [linkedin]
+[UNVERIFIED] Independent award confirmation in the reviewed material, offline critical-event detection, validation metrics or flight use.
+SpaceGenes+, 2025
+[SOURCED] NASA-confirmed global Best Use of Science winner; molecular-health research dashboard examining radiation and microgravity. [nasa]
+[UNVERIFIED] Any live physiological sensor detector; NASA’s description is research-data exploration, not emergency monitoring.
+[SOURCED] URLs: official Drift Off archive and NASA’s 2025 winner announcement are linked here.[spaceappschallenge +1]
+[UNVERIFIED] No located past winner met all of the requested criteria. A local win, global nomination, global award and clinical validation are different evidence categories.
+10. Direct answers
+(1) Is any of this operational on a real mission?
+Interpretation
+Answer
+Offline automated physiological emergency analysis in spaceflight medical equipment
+[SOURCED] Yes, historically documented in the ISS AED configuration. It is responder-initiated rhythm analysis, not continuous screening. [nasa +1]
+Automatic onboard environmental hazard analysis
+[SOURCED] Yes: ANITA-2 on ISS. ESA calls it a technology demonstration; it analyzes cabin air locally. [esa]
+Physiological acquisition with meaningful clinical findings
+[SOURCED] Yes: Bio-Monitor recordings, including the published astronaut case. [gc +1]
+Continuous, unattended, offline, artifact-aware physiological critical-event detection operationally validated for Moon/Mars
+[UNVERIFIED] Not established by the located public evidence.
+Published in-flight proof that HERMES, SpacePatch or the academic classifiers reliably raised critical-event alarms
+[UNVERIFIED] Not established.
+(2) Which sub-problems have no published validated solution located?
+Precisely scoped gap
+Existing evidence
+Unverified remainder
+Continuous arrhythmia discrimination during exercise/EVA
+[SOURCED] Terrestrial ECG denoising and exercise-noise development; separate gravity-related SCG research. [nature +1]
+[UNVERIFIED] Prospective spacecraft validation separating actual dangerous rhythms from motion/contact artifacts during ordinary crew activity.
+Radiation corruption versus real pathology
+[SOURCED] SpacePatch hardware proton-beam testing. [tuhh]
+[UNVERIFIED] Joint testing of radiation-induced faults, waveform corruption, diagnostic decisions and alarms.
+Safe “cannot assess” behavior
+[SOURCED] Filtering, denoising, missing-channel robustness and AED motion prompts exist. [nature +2]
+[UNVERIFIED] Space-validated continuous-monitoring abstention/reacquisition rules that avoid both false reassurance and prolonged suppression.
+Lethal-event recognition before a responder intervenes
+[SOURCED] AED shock analysis and NASA simulated emergency workflows. [fda +1]
+[UNVERIFIED] Validated unattended detection of collapse/VF/VT/asystole in an astronaut wearable with actionable mission alarms.
+Missing, stale or contradictory sensors
+[SOURCED] HERMES integration architecture and terrestrial missing-channel tests. [bcm +1]
+[UNVERIFIED] Flight-validated reconciliation of timing errors, stale readings, sensor detachment and degraded operation.
+Baseline drift across gravity transitions
+[SOURCED] Gravity-dependent signal investigations. [tuhh]
+[UNVERIFIED] Validated separation of adaptation, disease and measurement drift across transit and surface operations.
+Sustainable alarm burden
+[SOURCED] Configurable-alert demonstrations and retrospective classifier metrics. [nasa +1]
+[UNVERIFIED] Prospective months-long false alerts per crew-day, missed events, alarm latency and crew-response outcomes for an integrated system.
+End-to-end clinical benefit
+[SOURCED] Individual sensors, platforms, classifiers and workflows have separate evidence. [gc +3]
+[UNVERIFIED] A validated chain from raw signal through quality control and detection to crew action and improved exploration-mission clinical outcomes.
+[SOURCED] The evidence rules out the broad claim that “offline detection or artifact handling does not exist”: both exist, including in commercial emergency equipment and exploration-targeted research.[stryker +2]
+[UNVERIFIED] The defensible missing-capability statement is narrower: no publicly established, continuously operating, mission-validated system was located that integrates these pieces for dependable physiological critical-event detection throughout Moon/Mars crew activity.

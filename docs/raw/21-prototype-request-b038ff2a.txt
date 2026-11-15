@@ -1,0 +1,246 @@
+I’m building a prototype for the NASA Space Apps Challenge 2026: “Create Health Monitoring Software for Astronauts on Space Missions” (radiation, isolation, altered gravity, closed environment; immune changes, bone loss, cardiovascular events, behavioral health; astronauts must evaluate and act on their own health status). I need a broad, source-backed briefing, not product ideas.
+Cover: (1) how astronaut health is monitored today on ISS and what changes for Moon and Mars missions, (2) NASA’s Earth-Independent Medical Operations and clinical decision support research and what it says is still unsolved, (3) the main failure modes of onboard health monitoring: comms delay, limited compute, small sample size, personal baselines, false alarms, alert fatigue, crew cognitive load, trust in AI, data privacy, (4) behavioral and mental health monitoring in analog missions, (5) what real astronauts, flight surgeons and space medicine researchers say they actually need, from interviews, talks, papers and forums, (6) commercial and startup efforts (wearables, space-grade sensors, AI medical assistants) and where they fall short.
+For each section give the key facts, the strongest sources, disagreements between sources, and open questions. Use recent sources (2023-2026) first. Cite everything and flag low-confidence claims.
+Astronaut health monitoring: evidence briefing
+The central transition is from ground-supported care on the ISS to crew-managed care supported by delayed consultation on exploration missions. NASA’s research treats this as a medical-system problem—not simply a need for more sensors or an onboard chatbot. Monitoring must connect observations to diagnosis, feasible treatment, reassessment, medical records, available supplies, and crew workload. The published evidence supports that direction strongly; it does not yet establish that a comprehensive autonomous medical system is clinically reliable in deep space.[nature +2]
+This briefing prioritizes 2023–2026 sources available as of November 14, 2026. I distinguish operational practice, research measurements, prototypes, and proposed capabilities. “Open question” means unresolved in the sources reviewed, not necessarily unknown to NASA internally. I have not independently verified the wording or official status of the Space Apps challenge itself.
+1. What happens on the ISS today—and what changes beyond Earth orbit
+Current practice: a distributed medical team
+ISS health care combines onboard equipment and trained astronauts with substantial ground expertise:
+Layer
+What happens today
+Important qualification
+Clinical oversight
+Mission-assigned flight surgeons conduct weekly private medical conferences and oversee examinations, investigations, and treatment.
+These are whole-person check-ins covering sleep, eating, symptoms, and well-being—not just vital-sign reviews. [nature +1]
+Onboard care
+Crew medical officers perform medical tasks using onboard equipment, procedures, and ground guidance. They are not necessarily physicians.
+A physician astronaut increases capability but cannot provide every specialty, and the medical officer can also become the patient. [nature +1]
+Periodic investigations
+ECG/EKG, ultrasound, eye examinations including optical coherence tomography, and blood work supplement clinical assessment.
+These are intermittent assessments, not continuous surveillance of every organ system. [nasa]
+Daily health maintenance
+Teams review exercise, nutrition, medication use, fatigue, and schedules; countermeasures are individualized.
+Exercise equipment condition and maintenance are themselves health dependencies. [nasa +1]
+Behavioral support
+Private psychological conferences, cognitive assessments, family communication, and individually tailored support.
+Operational psychological care is distinct from research participation. [nasa +1]
+Environmental protection
+Ground teams monitor atmosphere, water systems, contaminants, radiation, and equipment affecting habitability.
+A health anomaly may originate in the habitat rather than the individual. [nasa]
+Research
+Wearables, biological samples, cognition tests, surveys, and standardized longitudinal measurements.
+A research measurement is not necessarily available onboard in time to guide care. [nasa +1]
+A particularly important distinction: Spaceflight Standard Measures collects in-flight blood samples that are frozen and returned for batch analysis. Its immune investigations include blood and saliva assays, viral shedding, immune-cell characterization, and functional testing. This is valuable evidence about astronaut physiology, but much of it is not an onboard real-time diagnostic service.[nature]
+What is actually measured for the challenge’s health domains?
+•	Radiation: instruments measure exposure and the radiation environment; specialist teams interpret conditions and support protective actions such as sheltering. Exposure monitoring should not be confused with directly measuring radiation-induced disease.[nasa +1]
+•	Bone and muscle: bone-density information, biochemical markers, exercise records, strength measurements, and individualized countermeasures contribute different kinds of evidence. A wearable’s activity signal is not a direct measurement of bone loss.[nasa +1]
+•	Cardiovascular health: ECG, ultrasound, blood pressure, clinical symptoms, biochemical information, and functional responses are relevant. NASA also monitors risks such as jugular venous thrombosis; “cardiovascular monitoring” is broader than heart-rate tracking.[nasa +1]
+•	Immune health: blood and saliva reveal immune dysregulation and latent-virus reactivation. These measurements involve laboratory methods and interpretation; there is no demonstrated general-purpose “immune status” reading from a wrist sensor in the sources reviewed.[nature]
+•	Behavioral health: clinical conversations, self-reports, cognition testing, sleep/activity data, and team-function measures provide complementary views. None alone constitutes a comprehensive mental-health diagnosis.[nasa +1]
+Moon versus Mars
+Dimension
+Lunar missions
+Mars missions
+Ground support
+Still potentially useful for interactive support when connectivity permits; autonomy requirements depend on mission location, infrastructure, and outages.
+Communication delays can exceed 20 minutes one way, making ground-led management of rapidly evolving emergencies impractical. [nasa +1]
+Evacuation and resupply
+More constrained than ISS and dependent on mission architecture.
+Routine resupply and rapid medical evacuation cannot be assumed. [nature +1]
+Health environment
+Greater radiation concern outside Earth’s protective environment; surface operations introduce another gravity transition.
+Long transit, prolonged isolation, radiation, resource depletion, and arrival after deconditioning compound one another. [nature +1]
+Medical workflow
+Increasing onboard capability with continued ground involvement.
+Immediate local assessment and action, with asynchronous expert consultation and longer-term management. [nature +1]
+NASA’s medical standards explicitly require mission-specific preventive and treatment capabilities and, for planetary landings, surface rehabilitation resources. A crew arriving at a destination may need to function before it has fully adapted to gravity.[nature +1]
+Disagreements, limitations, and open questions
+•	Training figures differ. The 2023 CDSS paper describes approximately 40 hours for a nonphysician ISS medical officer; NASA chief health and medical officer J. D. Polk’s 2025 interview describes a 16–20-hour range in discussing training. These may describe different portions of training; they should not be presented as a single settled total.[nature +1]
+•	Some papers describe ISS communication as “constant” or “instantaneous.” That is a contrast with deep-space delay, not evidence that links never fail or ground help is always immediately available.[nature +1]
+•	Open questions: Which investigations will be clinically available onboard each exploration vehicle? Which currently ground-analyzed biomarkers justify onboard laboratory capability? What functional readiness is required immediately after landing?[nih +2]
+Strongest starting sources: NASA’s 2025 medical-care standards, the January 2025 Polk interview, the March 2025 crew-health-console interview, and the November 2025 Standard Measures review, updated following a March 2026 correction.[nasa +3]
+2. NASA’s Earth-Independent Medical Operations and decision-support research
+What EIMO means
+EIMO is progressively autonomous medical operational support—not the abandonment of Earth-based clinicians. NASA’s technical-interchange work preserves ground expertise for planning and consultation while moving time-critical decisions and capabilities onboard. Its scope includes training, data architecture, supplies, resource management, and balancing medical work against other tasks.[nih +1]
+A 2025 paper reports five technical interchange meetings held in 2023–2024 with NASA, academic, industry, health-technology, and austere-medicine experts. It identifies probabilistic risk tools, extended reality, and clinical AI as promising contributors—not a completed solution.[nih]
+What a clinical decision-support system is expected to do
+NASA-associated research describes a system that would:
+1.	Gather active and passive observations and retrieve the patient’s history.
+2.	Ask focused questions and support differential diagnosis.
+3.	Recommend available investigations and feasible treatments.
+4.	Adapt guidance to the operator’s skill and the urgency of the situation.
+5.	Provide procedural guidance and just-in-time training.
+6.	Check allergies, medications, supplies, and their locations.
+7.	Schedule reassessment, document care, and communicate with ground teams.
+8.	Filter noncritical alerts rather than transferring every anomaly to the crew.[nature +1]
+The 2023 paper’s key finding is frequently overstated. Its risk reductions come from preliminary probabilistic modeling of increased crew capability, not a clinical trial showing an AI system saved astronauts. The authors explicitly state that the clinical and operational validity of their proposed analytical approach had not yet been peer reviewed.[nature]
+Concrete research efforts and their maturity
+Effort
+What the evidence establishes
+What it does not establish
+NASA ExMC CDSS concept, 2023–2024
+A detailed rationale, workflow, illustrative emergency scenario, and preliminary risk modeling.
+Validated autonomous diagnosis or demonstrated patient-outcome improvement in space. [nature +1]
+NASA-associated AI/CDSS evaluation, February 2025
+Workshop slides report OSCE scores of 75% for Gemma 2 and 78.5% for Llama 3.1; hardware constraints affected model selection.
+These are not general diagnostic-accuracy rates or evidence of flight readiness. The presentation does not provide enough detail to treat them as comprehensive clinical validation. [nasa]
+Google/NASA CMO Digital Assistant, August 2025
+A multimodal proof of concept evaluated using the Objective Structured Clinical Examination framework, with further physician testing planned.
+The announcement does not demonstrate an operational, certified, offline flight system. [google]
+Space Medicine GPT, IMCA, and VULCAN, August 2025
+A published development description covering offline dialogue, adaptive procedural guidance, and ultrasound assistance.
+Comprehensive validation across clinical emergencies; the authors explicitly acknowledge immature hardware/software and the need for rigorous analog testing. [nature]
+NASA AI medical-support vision, 2024
+Explicit research requirements for sparse-data learning, sensor integration, adaptation, and low-power computing.
+A working end-to-end implementation; much of the document is a development agenda. [nasa]
+What remains unsolved
+The recurrent gaps are:
+•	Ground-to-space generalization under altered physiology.
+•	Integration of sparse, inconsistent, multimodal observations.
+•	Reliable offline reasoning within power and computing limits.
+•	Recognition of emergencies before the diagnosis is complete.
+•	Safe performance when the medical officer is incapacitated.
+•	Resource-aware care over the remaining mission.
+•	Validation of the combined human–software workflow, not just the model’s answers.[nature +3]
+Disagreements and open questions
+An important tension concerns adaptation. NASA’s 2024 AI vision proposes continual refinement using onboard data and crew feedback; the 2025 agent paper emphasizes preventing models from departing from accepted practice. Neither establishes a validated governance mechanism for changing a safety-critical clinical model mid-mission.[nature +1]
+The SGPT paper’s target of fewer than 50 billion parameters is an architectural aspiration, not a measured guarantee of practical smartphone operation. Memory, quantization, context length, inference hardware, and energy consumption still matter; the paper does not report the complete deployment benchmark needed to settle feasibility.[nature]
+Open questions include what the system must refuse to answer, how uncertainty triggers fallback procedures, who authorizes model updates, and what prospective evaluation would demonstrate a net reduction in mission risk. A 2026 narrative review identifies uncertainty thresholds, human override, and predefined safe fallback procedures as priorities, but it is a synthesis rather than operational validation.[frontiersin]
+3. Main failure modes of onboard health monitoring
+The table separates documented concerns from analytical consequences. Quantitative astronaut-specific rates of false alarms, alert fatigue, and AI overreliance were not established in the reviewed sources.
+Failure mode
+Evidence and likely consequence
+Unresolved issue
+Communication delay and outage
+A request–response exchange can consume tens of minutes before clinical assessment time is added. Ground instructions may arrive after the patient’s state has changed. [nature +1]
+How to reconcile delayed advice with newer onboard findings and actions.
+Limited compute, energy, storage, and hardware resilience
+NASA identifies small-footprint computing and testing under radiation, vibration, and temperature stresses as development requirements. [nasa]
+Sustained performance of the complete clinical stack, including failure recovery—not merely whether a model fits in memory.
+Small sample size
+Astronaut data are limited, highly selected, heterogeneous, and costly to obtain; standardized repeated measurements improve yield but do not create large independent populations. [nih +1]
+How to validate rare-event predictions without enough actual positive cases.
+Personal baselines and physiological drift
+Preflight measurements and repeated in-flight assessments are central to current research. Terrestrial models may become invalid after space-induced physiological changes. [nih +1]
+How to distinguish adaptation, illness, and sensor drift without normalizing away deterioration.
+Poor sensor quality
+NASA’s evaluation of a prototype wireless patch found poor reliability/validity and low acceptability; investigators recommended against further evaluation in its then-current configuration. This was older work, closed in 2019, not a verdict on present-day wearables. [nasa]
+Long-duration signal quality during exercise, sweat, changing fit, and practical use.
+False alarms
+NASA’s CDSS concept explicitly calls for filtering noncritical events. Analytical implication: large volumes of repeated observations can generate burdensome anomalies even when individual measurements perform reasonably. [nature]
+Useful operating points expressed as missed events and false alerts per crew-day, rather than isolated model accuracy.
+Alert fatigue
+Alert management is a stated requirement, but the sources reviewed do not establish an astronaut-specific clinical alert-fatigue rate. [nature]
+Whether alerts remain actionable over months and whether suppression hides deterioration.
+Crew cognitive load
+Clinical work competes with tightly scheduled mission tasks. Guidance must adapt to urgency, operator expertise, and the possibility of a novice caregiver. [nasa +1]
+Whether interacting with the system actually reduces workload in realistic emergencies.
+Trust and automation bias
+Researchers call for understandable reasoning, uncertainty management, override, and safe fallback. Plausible explanations are not themselves proof of correctness. [nature +1]
+Calibrated reliance: when crew should accept, challenge, or disregard advice.
+Privacy and confidentiality
+Clinical records and consented research data follow different access and sharing arrangements. Standard Measures uses coded, encrypted storage and crewmember-reviewed sharing plans. [nature +1]
+Who can see inferred behavioral states onboard, what commanders need to know, and what happens during emergencies.
+The most consequential disagreements
+“More continuous data” is not equivalent to “more clinical value.” NASA and CSA demonstrate useful wearable acquisition, but the Standard Measures workflow shows that interpretation often still relies on context, specialized assays, and longitudinal review. The failed wireless-patch evaluation also demonstrates that a promising form factor can fail basic measurement requirements.[nature +2]
+Likewise, personalization and standardization are complementary but sometimes competing goals. Standardization enables comparison across missions; personalization addresses individual variation. The unresolved methodological issue is how to combine them while preserving clinically meaningful thresholds.[nature +1]
+4. Behavioral and mental-health monitoring in analog missions
+What is being monitored
+NASA’s behavioral research uses multiple evidence streams:
+•	Self-reported mood, affect, depression-related symptoms, stress, sleep, and fatigue.
+•	Cognitive performance and operational-task performance.
+•	Team cohesion, psychological safety, social support, coordination, and group living.
+•	Sleep/activity and physiological observations.
+•	Experimental speech-based acoustic and linguistic measures intended to predict declining team function.[nasa +2]
+The last category is research, not evidence that passive speech analysis can reliably diagnose an astronaut’s psychiatric condition. The NASA roadmap task describes developing and selecting predictive measures; that is different from an operationally validated screening service.[nasa]
+What the major analogs contribute
+Analog
+What it can reveal
+Principal limitation
+HERA
+Controlled studies of isolation, confinement, sleep restriction, privacy/habitable-volume changes, and communication delay; recent campaigns typically involve four-person crews and 45-day missions. [nasa +2]
+Shorter and physically safer than a multiyear interplanetary mission; no actual microgravity or deep-space radiation.
+CHAPEA
+Year-scale study of four-person crews under simulated Mars constraints, including resource restrictions, delayed communication, equipment problems, and simulated surface tasks. [nasa +1]
+Earth-based isolation cannot reproduce the full physiological or existential conditions of Mars.
+Antarctic environments
+Prolonged isolation and environmental stress, useful for behavioral and technology research. [nasa]
+Different work cultures, environments, medical contingencies, and crew selection from spaceflight.
+These are limitations of transfer, not reasons to dismiss analogs. NASA explicitly uses multiple environments because each reproduces only parts of the exploration problem.[nasa +1]
+Findings worth carrying forward
+A 2024 study summarized by NASA examined 64 participants isolated for 45–240 days. Perceived social support declined over time, especially support from outside the isolated group. Overall support was not associated with stress over time, while greater crewmate support was associated with lower evening stress. That is more specific—and less sweeping—than “social support prevents stress.”[nasa]
+The 2025 Standard Measures review reports that research on 25 ISS astronauts found no systematic decline in overall cognitive function, while detecting reductions in particular measures of processing speed, working memory, and sustained attention. Global claims that astronauts inevitably become cognitively impaired obscure this distinction.[nature]
+Disagreements and open questions
+•	Passive monitoring promises lower reporting burden, while clinical practice still depends heavily on confidential conversations, self-report, and context. These approaches have not been shown to be interchangeable.[nasa +2]
+•	Privacy is itself an experimental variable in analog research. A method that acquires rich behavioral data may also change how people behave; the size and operational importance of that effect remain unresolved here.[nasa +1]
+•	Open questions: Can models generalize across crews, languages, personalities, and mission phases? Can they distinguish sleep deprivation from interpersonal conflict or emerging illness? What intervention follows an alert, and does it help?[nasa +2]
+5. What astronauts, flight surgeons, and researchers say they need
+The strongest material located was named operational interviews and practitioner-authored papers. I did not find a sufficiently attributable forum discussion to treat as representative astronaut evidence; anonymous commentary should not be used to manufacture consensus.
+Person/source
+What they actually emphasize
+Evidence status
+Will Fernandez, ISS flight surgeon, March 2025 interview
+Care is “not just…checking vital signs.” Sleep, food, overall well-being, fatigue, and time allocation matter. He describes the dependence on biomedical, environmental, nutrition, psychological, and other specialists. [nasa]
+Direct operational interview, recorded December 2024.
+Nancy Bansbach, biomedical engineering flight controller, same interview
+Hardware maintenance, usable procedures, spare locations, family/psychological communications, and coordination are routine health-support work. Crew ask why hardware or a procedure differs from expectations. [nasa]
+Direct operational interview.
+J. D. Polk, NASA chief health and medical officer, January 2025
+Intermittent investigations must be combined with medication, exercise, nutritional, and psychological information. Countermeasures vary by individual. [nasa]
+Direct medical-leadership interview.
+William Buras and David Hilmers, August 2025 paper
+Concise symptom-led questioning; immediate recognition of emergencies; offline availability; hands-free interaction; guidance appropriate to novices; medical-history and inventory awareness. [nature]
+Practitioner/developer-authored requirements, not a representative user survey.
+Kris Lehnhardt, April 2025 symposium account
+A shift toward self-sufficient care supported by measurements of the individual’s biology, rather than constant dependence on doctor visits. [uth]
+Named quotation in an institutional event report.
+Astronaut participants in cognition research
+Five studies involving 87 astronauts and semi-structured debriefs found high acceptability of the Cognition Test Battery. [nature]
+Aggregated astronaut feedback, reported in a review.
+David Saint-Jacques, CSA Bio-Monitor demonstrations
+Demonstrates wearable physiological acquisition integrated with everyday ISS activities. [gc]
+First-person astronaut demonstration; not independent evidence of improved clinical outcomes.
+What these accounts collectively support
+The need is for help completing medical work under mission constraints: knowing what to do next, obtaining a usable measurement, finding equipment, remembering relevant history, maintaining the record, and reassessing without consuming the entire crew’s attention. That synthesis is consistent across the operational interview and CDSS requirements, but should not be presented as a verbatim astronaut consensus statement.[nature +2]
+Tensions and unanswered questions
+•	Developers emphasize “always-on” assistance; operators describe scarce time and many competing responsibilities. Whether persistent assistance feels helpful or intrusive requires actual crew evaluation.[nature +1]
+•	A hands-free interface is desirable during procedures, but its reliability in a noisy habitat, privacy during sensitive conversations, and behavior under stress are not settled by a requirement statement.[nature +1]
+•	Published requirements substantially outnumber published observations of astronauts using these systems during real clinical events. That limits confidence about preferences, trust, and sustained adoption.[nature +2]
+6. Commercial, startup, and industry-linked efforts—and their limits
+These efforts occupy different layers. A flown sensor, an FDA-cleared terrestrial platform, and an experimental clinical AI should not be treated as equivalent competitors or equivalent levels of medical readiness.
+Effort
+Credible evidence
+Where the evidence stops
+Carré Technologies/Hexoskin, Astroskin/Bio-Monitor
+CSA documents an ISS smart-shirt/headband/tablet system measuring several physiological signals, usable during sleep and exercise, launched in December 2018. [gc]
+Demonstrates acquisition and research utility—not autonomous detection of bone loss, immune dysfunction, or impending cardiovascular events.
+Empatica EmbracePlus
+NASA’s January 2024 account documents TRISH-supported development, multiple sensors, commercial availability, and FDA clearance as part of the Empatica Health Monitoring Platform. It reports onboard memory for up to 55 days under low connectivity. [nasa]
+Terrestrial regulatory clearance does not establish spaceflight clinical validity. The described workflow streams through an app to the cloud; local storage is not the same as offline clinical interpretation.
+BioIntelliSense BioSticker
+NASA’s 2024 annual report describes wearable-biosensor testing with the Australian Antarctic Division and TRISH, including temperature, heart rate, and respiration. [nasa]
+The report does not establish validated autonomous diagnosis, flight qualification, or improved exploration-mission outcomes.
+Tietronix-linked SGPT, IMCA, VULCAN
+The 2025 paper describes NASA SBIR-supported work on offline medical dialogue, augmented-reality procedures, and corrective ultrasound guidance. [nature]
+Early development; code is proprietary and accessible only through proposed collaboration/NDA arrangements, limiting independent reproducibility. No comprehensive clinical performance benchmark is reported.
+Google/NASA CMO-DA
+The August 2025 announcement documents a multimodal clinical-assistant proof of concept and OSCE-based testing. [google]
+No demonstrated end-to-end, flight-qualified medical autonomy. Vendor language about promise should not be converted into clinical-performance claims.
+SigmaLabs/CERN Scalable Radiation Monitor
+CERN reports installation on ISS in June 2025 and continuing radiation-sensing/data-analysis work. [cern]
+Its stated primary objective concerns radiation effects on electronics. It is not an individual biological-injury monitor or medical diagnostic system.
+Google/NASA robotic medical-logistics work, October 2026
+Google reports a laboratory proof of concept involving locating/moving a medical bag and local execution of fine-tuned models on edge devices. [google]
+The reported 85% baseline pick-and-place success is a robotics task metric—not medical-care success. Routine vitals and ultrasound assistance remain future objectives in that account.
+Where sources appear to disagree
+NASA’s wearable coverage is generally optimistic about signal quality and practical research use; its older wireless-patch evaluation reports a clear failure. These are different devices and evaluations, not a contradiction. The lesson is that each signal, form factor, activity condition, and intended use needs its own evidence.[nasa +1]
+There is also a deployment mismatch between cloud-centered commercial platforms and offline exploration requirements. Cloud development can contribute to an onboard system, but neither cloud availability nor edge-model execution alone proves that the full clinical workflow functions safely during communication loss.[nature +3]
+Open questions across the sector include sustained wearability, calibration, synchronization, missing-data handling, cybersecurity, offline clinical functionality, resource-aware recommendations, and prospective mission-relevant validation. A recent 2026 review concludes that most AI applications discussed for autonomous space care remain terrestrial demonstrations rather than operational spaceflight capabilities. That review is explicitly narrative and hypothesis-generating, so it is useful as a map of gaps, not a definitive effectiveness assessment.[frontiersin]
+Evidence boundaries to preserve in your briefing
+The most defensible account keeps four distinctions visible:
+1.	Monitoring versus diagnosis. Measuring heart rate, movement, exposure, or viral shedding does not automatically establish what condition the astronaut has or what action is warranted. Current care combines measurements with clinical assessment and context.[nasa +1]
+2.	Research versus actionable care. Some of the richest astronaut measurements are analyzed after return to Earth; they cannot simply be assumed to exist as live onboard inputs.[nature]
+3.	Demonstration versus validation. An OSCE score, a simulated emergency, a good-quality signal, or a successful robotic maneuver measures a particular capability—not the safety of the integrated medical system.[nature +2]
+4.	Autonomy versus isolation from Earth. NASA’s direction is local capability plus continuing, sometimes delayed, expert support—not replacing every clinician with AI.[nih +1]
+Low-confidence or unverified claims to exclude unless stronger evidence emerges: general diagnostic-accuracy percentages for “space medical AI”; astronaut-specific rates of clinical alert fatigue; passive detection of psychiatric illness from speech; continuous wearable detection of immune dysfunction or bone loss; and claims that a comprehensive autonomous AI physician is already operational on exploration missions. The sources reviewed establish research activity and partial capabilities, not those broader conclusions.[nature +4]

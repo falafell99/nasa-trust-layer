@@ -1,0 +1,72 @@
+System Name
+Organization
+Stage
+Sensors Used
+What It Detects
+Explicit Artifact / Unreliable Data Handling
+Validation Evidence (Dataset & Metrics)
+URL
+ExMC CDSS & EIMO Datascope
+NASA HRP / ExMC / Ames
+Concept / SysML Model / Ground Testbed (MDA Test Bed 4) (sourced)
+Active and passive wearables, imaging, biofluids, cabin environment, EVA suits (sourced)
+Off-nominal physiological trends, acute/emergent triage under Level of Care IV/V (sourced)
+Flags poor data quality as an operability barrier and requires context-aware UI and interpretable ML (sourced), but no validated onboard waveform denoiser is published (unverified)
+Functional/architecture level (HRP-48032 Rev B); Datascope shows NASA's 100x faster HPSC chip still lags full AI CDSS needs (sourced)
+CDSS Rev B, Datascope
+TRISH HERMES (Ejenta & TrialX) & EXPAND
+NASA TRISH / Baylor / Ejenta / TrialX
+HERMES: Prototype / In-development; EXPAND: Flown on commercial missions (sourced)
+Garmin fēnix smartwatch, BioButton, ultrasound, glucometer, EHRs, radiation/env logs (sourced)
+Biometric aggregation, cross-mission analytics, and routing to algorithmic diagnostic agents & CMO assistant (sourced)
+Uses CCSDS Space Packet timestamp reconstruction and automatic retransmission on signal loss (sourced); onboard raw waveform artifact rejection is not published (unverified)
+TrialX EXPAND holds >1,000,000 data points across commercial flights since 2021 (sourced); autonomous edge-alert accuracy metrics are not published (unverified)
+TrialX Pipeline, TRISH HERMES
+ESA EveryWear, CHIMS, METIS & Axiom/Polaris Sensors
+ESA / CNES / MEDES / POLSA / BodyCap / Svantek
+EveryWear & ESA sensors: Flown (ISS, Axiom, Polaris Dawn); CHIMS & METIS: Lab Prototypes (sourced)
+Arterial tonometer, e-TACT patch, SV 104A acoustic dosimeter, 33-gas IR analyzer, 6x MXene wearables (sourced)
+Pulse wave, temp/sleep, 24h noise spikes, 33 trace gases, offline emergency triage (CHIMS/METIS) (sourced)
+Acoustic calibrator (SV 36) corrects temp/pressure/humidity drift; Axiom study tests MXene wearable environmental stability (sourced); automated biosignal artifact gating is not published (unverified)
+Flown on ISS, Polaris Dawn, and Axiom missions (sourced); no public clinical sensitivity/specificity metrics for autonomous critical-event detection (unverified)
+Axiom Research, EveryWear, CHIMS
+DLR SpacePatch (SArES)
+DLR / TU Hamburg / Bielefeld Univ.
+Lab / Clinical / Parabolic Flight (2024–2025); targeted for ISS & Artemis II (sourced)
+Wireless differential BCG/SCG accelerometric chest patch + reference ECG + UWB link (sourced)
+On-device beat-to-beat cardiac mechanics, J-peaks, I-K intervals, HR, and respiration (sourced)
+Yes: differential sensing cancels microgravity acceleration bias; adaptive J-peak interpolation bridges disturbed segments with 2s edge buffers (sourced)
+99.99995% test reliability; I-K interval Mean Absolute Error (MAE) of 1.48 ms (min 0.2 ms, max 6.27 ms; 0.2 ms and 2.15 ms in 2 CHD patients) (sourced)
+SArES Paper, DLR BCG
+CSA Bio-Monitor (Astroskin) & 6-Patch System
+CSA / Carré Tech (Hexoskin) / Xiphos / NASA Ames
+Astroskin: Flown on ISS (since 2018) & HERA; 6-Patch System: Ground Demo (sourced)
+3-lead ECG (250 Hz), 2x RIP bands (125 Hz), forehead PPG (75 Hz), SpO2 (1 Hz), 3-axis accel (50 Hz), temp (1 Hz), GSR (patches) (sourced)
+QRS, HR, HRV, breathing rate, tidal volume, minute ventilation, systolic BP estimate, sleep (sourced)
+No onboard artifact gating in HERA/ISS builds—"vital sign notification of signal loss, signal quality and anomalous events" was deferred to future versions (sourced)
+Vendor claims 97% ECG accuracy; 30-day HERA study showed acceptable exercise quality "in most cases", but required 24h offline batch download (sourced)
+CSA Bio-Monitor, HERA Study, Astroskin
+Voyager Technologies & Starlab Space
+Voyager Technologies / Starlab Space / Palantir / Auxilium
+ISS Remote Ops: Operational; Starlab Digital Twin & HUNCH ARED Monitor: In-development / Concept (sourced)
+Low-power non-invasive astronaut health sensors, remote IV/ER telemetry, ARED exercise monitors, Proton600K avionics (sourced)
+Remote ISS emergency room/IV monitoring; Starlab AI digital twin for predictive maintenance & operations; ARED exercise tracking (sourced)
+No published onboard physiological signal-artifact rejection algorithm (unverified)
+Over 1,000 ISS customer missions operated via Voyager's ground control center (sourced); no published onboard autonomous clinical validation metrics (unverified)
+Starlab Space, Voyager Solutions, HUNCH ARED
+Academic Edge-ECG (Mani et al.) & Space CDS Reviews
+Academic (PMC11193813 & Frontiers / PMC10395101)
+Edge-ECG: Lab / Android ONNX Hardware Validation; NIRS/Image CDS: Review / Concept (sourced)
+2-lead ECG (360 Hz, 30s windows); review covers ultrasound, retinal imaging, transcranial NIRS headbands, contactless RF/optical/acoustic sensors (sourced)
+Tachyarrhythmias (NSR, AFIB, AFL); review covers stroke, intracranial edema, renal stones, fatigue (sourced)
+Yes (Mani et al.): Variational Mode Decomposition (VMD, 4–60 Hz sub-bands 2–15), Gaussian peak convolution, and wavelet transforms purge muscle/electrical noise (sourced)
+Mani et al. validated on 742 hours across 5 MIT-BIH/EPHNOGRAM terrestrial datasets: >95% accuracy, 0.899–0.914 Macro F1 (0.993 NSR, 0.938 AFIB, 0.767 AFL), 9.2s latency per 30s window (sourced)
+Edge-ECG (PMC11193813), Frontiers CDS (PMC10395101)
+SpaceGenes+ & PureFlow (Space Apps 2025)
+NASA Space Apps Global Winners
+48-hour Hackathon Prototypes (sourced)
+NASA open omics/molecular repositories and habitat life-support models (sourced)
+Combined radiation/microgravity molecular shifts (SpaceGenes+); closed-loop habitat resource trade-offs (PureFlow) (sourced)
+Not applicable—neither project processed live physiological sensor waveforms or rejected motion artifacts (sourced)
+Judged Global Winners from >11,500 entries by NASA SMEs; no real-time clinical sensor validation (sourced)
+NASA 2025 Winners

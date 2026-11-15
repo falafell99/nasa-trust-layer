@@ -1,0 +1,117 @@
+Dataset
+What It Contains
+Size
+Format
+Access Link
+License
+Real In-Flight Data or Proxy
+Main Limitation
+Suitability for a 48-Hour Prototype
+NASA OSDR Inspiration4 Serum & Cytokine Panels (OSD-575) and Plasma/Blood (OSD-569, OSD-570, OSD-571)
+Longitudinal blood serum comprehensive metabolic panels, immune/cardiac cytokine arrays, whole blood, PBMCs, and plasma across 10 timepoints (L-92, L-44, L-3, FD1-FD3, R+1, R+45, R+82, R+194) for 4 crewmembers
+4 crew, 2,911 total mission aliquots across 289 days (tabular CSVs in KB to MB range)
+CSV, ISA-Tab metadata (via Web, REST API, or AWS S3)
+OSD-575, I4 Datasets, AWS S3
+US Gov Open Science (Public processed data; cite NASA OSDR)
+Real in-flight data (3-day LEO at 590 km)
+Small sample size (n = 4 civilians, 3 flight days); raw human FASTQ sequences are controlled-access restricted
+High — Processed metabolic and cytokine CSVs download instantly without login for longitudinal baseline modeling
+NASA OSDR Inspiration4 Urine Inflammation Panel (OSD-656)
+Multiplex NULISAseq urinary inflammation biomarker profiles collected pre-, in-, and post-flight
+4 crew across mission timepoints (lightweight tabular files)
+CSV, metadata tables
+OSD-656
+US Gov Open Science (cite NASA OSDR)
+Real in-flight data (SpaceX Inspiration4)
+Discrete spot collections rather than continuous real-time sensor streams; n = 4
+High — Ideal for testing non-invasive biofluid trend detection and assay-drift quality control
+NASA OSDR Inspiration4 Microbiome, Skin & Epigenetics (OSD-572, OSD-574, OSD-630, OSD-687)
+Oral, nasal, and skin microbial swabs (OSD-572), deltoid skin spatial transcriptomics (OSD-574), stool metagenomics (OSD-630), and T-cell histone modifications (OSD-687)
+4 crew across up to 10 timepoints
+Processed gene-count / abundance CSVs (raw reads restricted)
+OSD-572, OSD-574, OSD-630, OSD-687
+US Gov Open Science (cite NASA OSDR)
+Real in-flight data (SpaceX Inspiration4)
+High dimensionality (thousands of molecular features) requires aggressive feature selection
+Moderate — Useful if integrating immune/microbiome status, but too high-dimensional for raw waveform DSP
+Harmonized Inspiration4 Master Table & Bayesian Pipeline (Artemis II Challenge Release)
+Pre-aligned multi-modal table combining 9 Inspiration4 OSDR studies (OSD-569 to OSD-687) plus open-source hierarchical Bayesian horseshoe-shrinkage and latent-state inference code
+24 subject-timepoint rows by 1,112 features (4 crew x 6 timepoints)
+Harmonized matrix, R/Stan/Python code, provenance log
+ResearchGate / Artemis II Pipeline
+Open academic release (CC / reproducible source)
+Real in-flight data (harmonized from NASA OSDR)
+Rank-1 collapse bounds what can be learned from n = 4 alone
+Very High — Eliminates days of data cleaning across 9 OSDR studies; directly reusable for small-N personalized baseline tracking
+Space Omics and Medical Atlas (SOMA) Web Portal
+Interactive multi-omics and physiological browser linking NASA Twins Study, JAXA, Inspiration4, Axiom, and Polaris Dawn cohorts
+10x expansion of public human space omics across multiple missions
+Web browser tables, downloadable summary charts
+SOMA Browser
+Open access academic portal (Weill Cornell / Nature)
+Real in-flight data
+Web interface is geared toward molecular lookup rather than bulk high-rate biosignal streaming
+High — Fast reference for verifying real spaceflight fold-changes in cytokines, RNA, and hematology
+NASA OSDR RadLab Portal, Data API & Environmental Data App (EDA)
+Spaceflight radiation dosimetry time series, payload absorbed doses, and telemetry from four Orion spacecraft modules (Moon -> Flyby -> Orion)
+Multi-mission radiation and cabin telemetry time series
+JSON / CSV via RadLab Data API and web portal
+OSDR Viz & RadLab, OSDR Docs
+US Gov Open Science
+Real in-flight data (ISS, Orion lunar flyby, satellites)
+Dosimetry and environmental telemetry are not pre-synchronized to beat-by-beat human ECG
+Very High — Provides authentic Orion lunar flyby and ISS radiation/cabin telemetry to pair with physiological alerts
+NOAA SWPC GOES Real-Time Proton Flux & Geomagnetic API
+Live and 6-hour to 7-day solar proton flux (>10 MeV, >50 MeV in pfu), X-ray flux, and planetary K-index from GOES satellites
+~131 KB (6-hour) to ~1.6 MB (3-day differential protons)
+Direct JSON endpoints (updated every 1-5 minutes)
+GOES Primary JSON, 7-Day Protons, Kp Index
+US Public Domain (No API key required)
+Real in-flight space-weather telemetry
+Measures geostationary solar particle environment rather than internal cabin shielded dose
+Very High — Zero-friction JSON API to trigger real-time Solar Particle Event (>50 MeV > 5 pfu) crew shelter and medical triage workflows
+NASA OSDR Human Bed-Rest & Dry-Immersion Studies (OSD-195, OSD-51, OSD-783, OSD-784)
+Human skeletal muscle (vastus lateralis and soleus) transcriptomics and phenotype metrics under 21-day bed rest (n = 14) and 7-day dry immersion with electrical myostimulation (n = 10 males)
+n = 10 to 14 human subjects per study
+CSV, Affymetrix CEL, metadata tables
+OSD-195, OSD-51, OSD-783, OSD-784
+US Gov Open Science (cite NASA OSDR)
+Ground spaceflight analog proxy
+Pre/post muscle biopsy transcriptomics and anthropometrics rather than continuous wearable waveforms
+Moderate — Good empirical grounding for musculoskeletal deconditioning and countermeasure tracking
+PhysioNet MMASH & Wearable Biosignal Proxies (Artemis II Challenge Validated)
+Continuous wearable heart rate, beat-to-beat R-R intervals (HRV), triaxial actigraphy, sleep quality, saliva cortisol/melatonin, and anxiety/stress scores
+24-hour continuous multi-channel recordings (MBs of CSVs)
+CSV
+Artemis II Winners Summary, Challenge Rules
+Open Access (PhysioNet credentialed/open licenses)
+Ground physiological proxy (explicitly endorsed in NASA HRP Artemis II Challenge)
+1g terrestrial recordings; must be explicitly labeled as a proxy dataset
+Very High — Best available open dataset for demonstrating real-time biosignal DSP, motion-artifact gating, and HRV/sleep fusion in 48 hours
+Adaptive Psychomotor Vigilance Test (PVT-A) & Phoenix Mars Circadian Parameters
+Validated mathematical stopping thresholds for adaptive vigilance testing (n = 74 across 33h sleep deprivation) and Mars-day (24.70h) urinary melatonin/alertness curves (n = 19)
+Published parameter tables, Kronauer-Jewett r^2 = 0.86 equations, and classification bounds
+Published equations and summary tables in PMC
+PVT-A Study, Phoenix Mars Study
+Open Access PMC publications
+Ground operational analog & lab validation data
+Published statistical parameters and equations rather than raw keystroke logs
+Very High — Directly enables coding a working 30-second to 6-minute adaptive cognitive alertness test and >= 21-hour wakefulness risk flag
+Mars-500 Actigraphy & HI-SEAS III Virtual Space Station (VSS) Benchmarks
+520-day 1-min actigraphy/illuminance classification rules (n = 6) and 8-month HI-SEAS III autonomous behavioral countermeasure acceptability ratings (n = 6)
+n = 6 crew per analog mission
+Published study metrics and classification rules
+Mars-500 PLOS ONE, HI-SEAS III PubMed
+Open Access scientific publications
+Ground isolation analog data
+Raw individual crew psychological diaries and video logs are restricted for privacy
+High — Provides empirical justification for passive actigraphy and offline, confidential self-help UI flows
+NASA-STD-3001 Level of Care IV/V, ExMC CDSS Rev B, Datascope & LSAH MRIDs
+Official clinical decision support architecture rules, Level of Care V autonomy definitions, 71+ LSAH Medical Requirements Integration Documents (MRIDs), and Astroskin sensor rates (250 Hz ECG, 125 Hz respiration, 75 Hz PPG, 50 Hz accel)
+Technical reports and requirement PDFs
+PDF documents
+CDSS Rev B, Datascope, LSAH MRIDs, Astroskin Specs
+US Gov Public Domain / Vendor Specs
+Reference clinical & hardware standards
+Architectural and sampling specifications rather than downloadable patient time series
+Essential — Grounds your system constraints (~69,000 points/min, 20-min comms lag, non-MD CMO workflows) in real NASA engineering requirements

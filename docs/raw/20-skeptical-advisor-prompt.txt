@@ -1,0 +1,871 @@
+
+ROLE
+Act as a skeptical research advisor. Search the web, read primary sources, and challenge my assumptions. Do not agree by default. Label every claim [Established] / [Likely] / [Guess] and cite a link. If you cannot verify something, say so instead of filling the gap.
+
+CONTEXT
+I'm competing in NASA Space Apps Challenge 2026 (48-hour hackathon, Nov 14-15), challenge: "Create Health Monitoring Software for Astronauts on Space Missions". Official framing: long-duration missions expose astronauts to radiation, isolation and confinement, altered gravity and a hostile closed environment, causing immune changes, bone loss, cardiovascular events and behavioral health problems. Astronauts carry much of the responsibility for spotting changes in themselves. Task: software that gathers health indicators and lets astronauts evaluate and act on their health status. Intermediate level. Judging: Impact, Creativity, Validity, Relevance, Presentation. Public data only.
+Team strengths: human-computer interaction, biosignal processing, assistive technology (including non-visual interfaces), robotics. Time left: about one day of work.
+
+WHAT WE ALREADY KNOW (verified)
+- NASA's Earth-Independent Medical Operations (EIMO) program expects crews to detect, diagnose and treat on their own during comms delay and blackouts.
+- No public continuous astronaut waveforms exist; only small public data like Inspiration4 (4 crew, OSDR) and ground proxies.
+- Several public sources found no astronaut-specific false-alarm or alert-fatigue rates.
+- Crew medical officers are often not physicians.
+- Roughly ten GitHub projects already exist for this challenge: mostly dashboards with simulated data; a few are offline-first with personal baselines (AstroDocX, AURORA, Crew Health Monitor).
+- The Artemis II data methodology challenge winners mostly used Bayesian N-of-1 methods on Inspiration4.
+- NOAA solar radiation scale uses >=10 MeV protons, S1 = 10 pfu.
+
+UNVERIFIED - do NOT repeat as fact; verify or drop
+- Any claim that NASA directed teams to use PhysioNet MMASH.
+- A "24x1112 harmonized Inspiration4 master table" being part of an official release.
+- A ">50 MeV, 5 pfu" operational radiation threshold.
+
+CHOSEN PROBLEM (please attack it)
+Alert burden and signal quality: how to avoid overloading a non-expert crew medical officer with false alarms (especially from exercise motion artifacts) while not missing real events, and how to show that quantitatively on public proxy data.
+Draft idea: an "alert budget" tool: a false-alarm-vs-miss trade-off curve, exercise-aware gating that defers rather than deletes alerts (with a ledger of suppressed events), and hands-free/non-visual alert delivery.
+
+TASKS
+1. Alarm fatigue literature: summarize what is known from ICU and wearable monitoring (false alarm rates, consequences, effective mitigations, signal-quality indices). Which findings transfer to a small isolated crew? Which do not?
+2. Datasets with ground-truth labels for artifacts or true/false alarms. Check specifically: PhysioNet/CinC Challenge 2015 (false arrhythmia alarms in ICU), MIT-BIH Noise Stress Test Database, other open wearable datasets with motion/exercise and labeled events. For each: size, format, license, link, what is labeled, and why it is or is not a fair proxy for astronauts.
+3. Prior art: Space Apps teams (2019-2026), NASA/ESA/CSA projects, startups on alert management or signal-quality gating for wearables in remote or autonomous settings. What exactly is already done?
+4. Critique: strongest reasons this problem or idea would fail or look weak to NASA judges. What would a flight surgeon or space-medicine researcher say is naive?
+5. Human factors: evidence on hands-free, audio, haptic and non-visual alerting under high workload or for non-expert operators (aviation, EMS, accessibility research). What is reliable, what is not?
+6. Alternatives: rank 3-5 other problems from NASA's Earth-Independent Medical Operations gap list that fit our strengths better, with reasons.
+7. A realistic 24-hour scope: what to build, what to cut, and which metric to report so the claim is honest.
+
+OUTPUT
+Short executive summary first (uncomfortable findings first), then sections per task, then a table: claim | confidence | source. End with a list of open questions you could not resolve.
+…
+Research verdict: Astronaut Health Monitoring — NASA Space Apps 2026
+Evidence review · November 14, 2026 · Approximately 24 hours remaining
+
+Executive summary
+[Likely] My recommendation is to keep the problem, but change the product definition. Don't build an AI that decides which astronaut health alarms to suppress. Build an offline-first, signal-quality-aware medical triage interface that makes uncertainty visible, requests better measurements, and preserves every alert decision for review.
+
+The uncomfortable findings:
+
+1. [Established] NASA is already researching your core problem. A NASA EIMO paper explicitly identifies alarm fatigue, crew task saturation, and minimizing unnecessary human intervention as system-design concerns. This validates the need but weakens any claim that you discovered a novel problem. 
+
+ntrs.nasa.gov
+
+2. [Established] The strongest labeled false-alarm dataset is not astronaut data. PhysioNet/CinC 2015 provides 750 publicly available labeled ICU alarm recordings. It does not test wearable exercise monitoring, and its construction prevents estimating real-world alerts per crew member per day. 
+
+physionet.org
++1
+
+3. [Established] Exercise-aware heart-rate monitoring is not new. The Canadian Space Agency's Bio-Monitor already captures astronauts' vital signs during exercise, and commercial wearable research has long addressed movement artifacts. Adding an accelerometer threshold alone is not defensible innovation. 
+
+Canadian Space Agency
++1
+
+4. [Likely] An explicit false-alarm-versus-missed-event trade-off is scientifically stronger than an attractive dashboard, but it creates a difficult question: who is authorized to choose that trade-off? A hackathon team cannot establish a clinically acceptable miss rate from terrestrial proxy data. The PhysioNet 2015 challenge itself penalized suppressing true alarms five times more heavily than accepting false alarms. 
+
+physionet.org
+
+5. [Likely] Your most distinctive contribution can be human-computer interaction, not disease prediction. Show a non-expert operator how to distinguish a concerning measurement from unreliable data, when to repeat a measurement, and how to retain a record of deferred alerts. This fits NASA's interest in autonomous, low-workload crew medical operations. 
+
+ntrs.nasa.gov
++1
+
+6. [Established] NASA has already closed at least one seemingly relevant technology gap. Its Human Research Roadmap lists medical-data processing gap Med07 as Closed, while Medical-701, covering autonomous medical capabilities, training, decision support, and resource efficiency, remains Open. Don't build a generic medical-data aggregation dashboard and call it an unsolved NASA gap. 
+
+humanresearchroadmap.nasa.gov
++1
+
+Decision: Keep alert burden as the motivation. Narrow the implementation to measurement reliability, safe alert handling, and assisted operator action. Evaluate the sensing algorithm and the interface separately. Avoid claiming that fewer displayed alerts automatically means safer medical care.
+
+1. Alarm fatigue: what transfers from hospitals to spacecraft?
+What the literature actually shows
+[Established] The problem is real, but the often-repeated statement that "90% of clinical alarms are false" conflates false, non-actionable, and technically invalid alarms.
+
+Evidence
+
+Finding
+
+Interpretation
+
+Drew et al., 2014, ICU observational study
+
+2,558,760 alarms in 31 days; 187 audible alarms per bed per day; 88.8% of 12,671 annotated arrhythmia alarms were false positives
+
+Strong evidence of excessive ICU alarm burden, not an astronaut rate 
+
+pubmed.ncbi.nlm.nih.gov
+
+Paine et al., 2016, systematic review
+
+Actionable alarms ranged from under 1% to 36% across hospital settings
+
+Alarm burden depends heavily on setting, definition, and equipment 
+
+pubmed.ncbi.nlm.nih.gov
+
+Cvach and colleagues' ICU intervention research
+
+A bundled intervention achieved a 61% reduction in average alarms per monitored bed
+
+Alarm configuration and workflow can matter substantially 
+
+pubmed.ncbi.nlm.nih.gov
+
+General-care monitoring study, 2022
+
+A 15-second notification delay substantially reduced alarms under tested configurations
+
+Persistence checks can reduce alarm volume, but delayed detection must be evaluated 
+
+pubmed.ncbi.nlm.nih.gov
+
+Neonatal ICU study, 2025
+
+An adjusted architecture reduced alarms by 84%, without statistically significant differences in measured critical events
+
+Promising, but absence of a significant difference is not proof of equal safety 
+
+pmc.ncbi.nlm.nih.gov
+
+What works technically?
+[Established] Research-supported strategies include personalized thresholds, short persistence checks, sensor-contact improvement, signal-quality assessment, and combining independent physiological channels. A 2026 systematic evidence review identified alarm customization and training as promising strategies but judged all 18 included intervention studies to have moderate-to-high risk of bias. 
+
+pubmed.ncbi.nlm.nih.gov
++2
+
+[Established] Signal-quality indices (SQIs) are not a single universal metric. The relevant methods depend on the sensor:
+
+Signal
+
+Defensible quality checks
+
+Important limitation
+
+ECG
+
+Baseline wander, clipping, beat-detector agreement, QRS morphology consistency, electrode contact
+
+A genuine abnormal rhythm can itself reduce apparent regularity
+
+Wrist PPG
+
+Pulse-shape consistency, clipping, plausible beat intervals, motion correlation, signal-to-noise indicators
+
+Strong motion can make useful pulse estimation impossible
+
+Multi-sensor ECG + PPG
+
+Check whether independent pulse and electrical indicators support the same finding
+
+Both channels can fail, or physiologically disagree, for genuine reasons
+
+A published ECG/arterial-pressure method, for example, estimated ECG quality using agreement between distinct beat detectors. This is a defensible engineering precedent, not a safety certification for all rhythms. 
+
+pubmed.ncbi.nlm.nih.gov
++2
+
+What transfers to a small isolated crew?
+[Likely] Transferable: preventing redundant notifications, explicitly distinguishing poor signal from reassuring physiology, explaining what triggered an alert, allowing sensor reconnection or repeat measurement, and prioritizing limited operator attention. These map closely to the task-load problems identified by NASA EIMO researchers. 
+
+ntrs.nasa.gov
++1
+
+[Likely] Not directly transferable: ICU false-alarm percentages, nurse acknowledgment behavior, acceptable delay thresholds, and alarm volume per day. A space crew has different medical-event prevalence, activities, staffing, equipment, and options for emergency care. NASA also documents that the cardiovascular effects of spaceflight and exercise-related deconditioning vary between individuals. 
+
+pubmed.ncbi.nlm.nih.gov
++2
+
+[Guess] In a small crew, a single unnecessary interruption might have a higher operational cost during a critical task than during routine work. However, I found no primary study establishing the magnitude of this cost for astronaut health alarms. Treat it as a design hypothesis.
+
+Research judgment: Your idea should optimize unnecessary interruptions subject to explicit safety constraints, not minimize the number of displayed alarms.
+
+2. Public datasets: what you can honestly measure
+Dataset comparison
+Dataset
+
+Size, format, license
+
+Ground truth
+
+Fit for your problem
+
+PhysioNet/CinC 2015
+
+750 public alarm records, 500 hidden; 5-minute segments, 250 Hz WFDB-compatible .mat/.hea; ODC-By 1.0
+
+Expert-reviewed true/false labels for five critical arrhythmia alarm types
+
+Best for missed-event versus false-alarm classification. Not exercise or astronaut monitoring 
+
+physionet.org
++1
+
+MIT-BIH Noise Stress Test
+
+12 × 30-minute noisy ECG records plus three noise-source records; WFDB .dat/.hea/.atr; ODC-By 1.0
+
+Original beat annotations remain known after controlled noise injection; SNR from −6 to +24 dB
+
+Best for controlled artifact stress testing. Noise is injected into ECG, not synchronized astronaut exercise 
+
+physionet.org
+
+PPG-DaLiA
+
+15 subjects; 2.7 GB archive; chest ECG, wrist PPG, accelerometer, synchronized recordings; CC BY 4.0
+
+Reference heart rate from ECG, plus recorded activities
+
+Best for exercise/motion measurement reliability. No clinically adjudicated emergency events 
+
+archive.ics.uci.edu
+
+PhysioNet/CinC 2017
+
+8,528 public short ECG recordings; 300 Hz .mat/.hea; ODC-By 1.0
+
+Normal, atrial fibrillation, other rhythm, and noisy classes
+
+Useful independent noisy-versus-interpretable signal test; not continuous alarm monitoring 
+
+physionet.org
++1
+
+WESAD
+
+15 subjects; approximately 2.5 GB compressed; synchronized physiological recordings, pickle/raw files; scientific non-commercial terms
+
+Baseline, stress, amusement; questionnaires
+
+Useful for multimodal HCI, not a false medical-alarm benchmark 
+
+ubi29.informatik.uni-siegen.de
++1
+
+IEEE SPC 2015 / TROIKA
+
+Original treadmill benchmark: 12 subjects; ECG, dual-channel PPG and acceleration at 125 Hz; mirrored .ts representation, about 142 MB
+
+ECG-derived heart rate during exercise
+
+Strong exercise-specific proxy. License metadata and underlying usage language need reconciliation 
+
+zenodo.org
++1
+
+[Established] Dataset sizes, modalities and labels are from publisher/host records. [Likely] Fit assessments are my evaluation, not statements by dataset authors.
+
+Important details and pitfalls
+PhysioNet/CinC 2015
+
+[Established] Of the 750 public alarms, 458 are labeled false and 292 true. This is about 61% false within the selected challenge samples, not a population alarm rate. The dataset includes asystole, extreme bradycardia, extreme tachycardia, ventricular tachycardia, and ventricular fibrillation/flutter. 
+
+physionet.org
++1
+
+[Established] The challenge intentionally separates selected alarms by at least five minutes, limits how many alarms come from each patient, and excludes many ordinary monitoring intervals. Events earlier in a record are not comprehensively annotated. The original hidden patient-disjoint test set is not available for your own evaluation. 
+
+physionet.org
+
+This has three consequences:
+
+[Established] You can calculate sensitivity to the included true alarms and the proportion of included false alarms you defer.
+
+[Likely] You cannot estimate actual alerts per astronaut-day from these records.
+
+[Likely] If you split the 750 records randomly, you cannot confidently claim patient-independent generalization without verifying patient group assignments.
+
+MIT-BIH Noise Stress Test
+
+[Established] It starts from two ECG recordings with known beats and adds controlled electrode-motion noise. This permits measuring how ECG algorithms degrade as SNR deteriorates. It does not automatically produce ground-truth true versus false device alarms unless you also run and evaluate a defined detector. 
+
+physionet.org
+
+PPG-DaLiA
+
+[Established] The wrist data include 64 Hz blood-volume-pulse measurements and 32 Hz accelerometry, with higher-frequency chest ECG available as a reference. The published dataset is intended for heart-rate estimation under daily activities and motion artifacts. 
+
+archive.ics.uci.edu
+
+[Likely] For the exercise-focused branch of your idea, a reasonable metric is heart-rate estimation error compared with ECG, stratified by activity and accepted signal coverage. It is not honest to convert heart-rate error directly into a missed-arrhythmia probability.
+
+WESAD and TROIKA license caution
+
+[Established] WESAD's original author-hosted page explicitly limits usage to scientific, non-commercial purposes; UCI directs readers to that original site. For TROIKA, the Zenodo metadata reports an open license, while the dataset description speaks specifically of challenge or academic research use. 
+
+ubi29.informatik.uni-siegen.de
++2
+
+[Likely] A research hackathon demonstration may fit the intended use, but I would not label either dataset unconditionally free for every downstream commercial purpose without resolving those terms.
+
+Best dataset choice for 24 hours
+[Likely] Use PhysioNet 2015 as the primary safety benchmark if the aim is a false-alarm-versus-miss curve. Use a small MIT-BIH Noise Stress Test subset to demonstrate what happens as signal quality deteriorates.
+
+If you decide that exercise-motion awareness must be the centerpiece, replace the primary benchmark with PPG-DaLiA or TROIKA and change the claim to reliable heart-rate measurement under motion, not safe emergency alarm filtering.
+
+Do not combine incompatible datasets into one impressive-looking medical accuracy score.
+
+3. Prior art: how original is this?
+Space Apps and agency projects
+Project
+
+Already demonstrated or described
+
+What it means for you
+
+Skylab, Space Apps 2022
+
+Astronaut medical AI and disease-prediction application, listed as a Global Nominee
+
+Generic autonomous health assistance predates 2026
+
+VITA, Space Apps 2026
+
+Crew telemetry, alerts, escalation, trends, reporting and tests
+
+Alert-management dashboards already exist
+
+AstroBone, 2026
+
+Offline daily assessment, personal baseline and 3D body visualization
+
+Offline operation and personalization are not distinguishing features
+
+Caffeinated Innovators, 2026
+
+Offline-first medical self-assessment, explainable rules, symptom workflow and handover
+
+Clear overlap with autonomous onboard decision support
+
+CytoZoe, 2026
+
+Historical NASA biomarkers, transparent data-quality decisions and traceable review
+
+Even auditability and quality provenance are partly represented already
+
+CSA Bio-Monitor
+
+Smart garments, vital signs, exercise and sleep measurements, tablet interface
+
+Genuine space-worn physiological monitoring already exists
+
+ESA EveryWear
+
+Astronaut medical logs, questionnaires, exercise, heart-rate and sleep integrations
+
+Broad health data collection is established
+
+NASA Autonomous Medical Operations
+
+Onboard medical decision-support and procedure-guidance research
+
+You're working inside an existing NASA research direction
+
+[Established] These capabilities are described in first-party project pages and repositories. [Likely] For the hackathon repositories, documentation does not prove that every advertised feature works end to end; I did not independently execute their builds.
+
+I found a verifiable 2022 precedent and multiple 2026 examples, but could not establish an exhaustive year-by-year inventory for 2019–2025. Absence from the search is not evidence that no comparable projects existed.
+
+Commercial products and wearable practices
+Apple Watch — [Established] Apple's irregular-rhythm feature seeks measurements when the wearer is sufficiently still and uses multiple measurements before notification. Apple explicitly warns that this approach does not provide continuous surveillance and can miss episodes. This is a particularly strong counterexample to the novelty of exercise-aware gating. 
+
+Apple Support
+
+Empatica EpiMonitor — [Established] Empatica offers wearable seizure monitoring with adjustable sensitivity, user cancellation of pending notifications and temporary snoozing. It already exposes a user-facing alert sensitivity trade-off. Its intended event type is different, and internet-connected caregiver notification is not equivalent to an Earth-independent spacecraft workflow. 
+
+Empatica Support
+
+Philips IntelliVue Alarm Advisor — [Established] Clinical alarm-customization software has been experimentally evaluated. One ICU implementation reduced certain medium-priority alarm categories by approximately 9–16%, while oxygen-saturation alarm reductions were not significant. 
+
+pubmed.ncbi.nlm.nih.gov
+
+[Established] Even the PhysioNet 2015 organizers supplied example algorithms that check PPG or blood-pressure signal quality before deciding whether to suppress an arrhythmia alarm. The core signal-quality gating technique is therefore at least a decade old. 
+
+physionet.org
+
+What is left that might be distinctive?
+[Guess] The strongest potentially differentiating combination is a crew-focused interface containing a safety-constrained trade-off visualization, explicit unverified measurement state, time-bounded follow-up, auditable decisions, and non-visual interaction.
+
+I could not verify that no existing system has this exact combination. It should be presented as an integration and human-factors research prototype, not a fundamentally new physiological detection algorithm.
+
+4. Critique: why NASA judges might reject the idea
+I would expect these objections from a skeptical flight surgeon or space-medicine researcher.
+
+Objection 1 — Your safety trade-off is not medically authorized
+[Established] The 2015 PhysioNet challenge uses a scoring formula that makes incorrectly dismissing a true alarm five times as costly as retaining a false one. That reflects the asymmetric risk in the benchmark, although the factor of five is a challenge scoring decision, not a universal clinical safety standard. 
+
+physionet.org
+
+[Likely] A flight surgeon would ask: What clinical evidence permits the system to defer a suspected serious cardiac event because the astronaut is exercising?
+
+Your answer cannot be that motion makes the measurement unreliable. A true arrhythmia can coexist with exercise and poor sensor quality.
+
+Recommendation: Do not allow a user-adjustable notification budget to override safety-critical alerts. Use the budget visualization for evaluating candidate policies, not as an operational medical safety control.
+
+Objection 2 — Deferring is not automatically safer than suppressing
+[Likely] An alert that is retained in a ledger but never reviewed has still failed to reach the operator when it mattered. Logging a decision does not undo a harmful delay.
+
+A legitimate deferral policy needs an explicit deadline, escalation path, and measurable delay to review. Alarm priority should depend on the consequences of delayed response, consistent with the risk-based framework established by IEC 60601-1-8. 
+
+iso.org
+
+Objection 3 — Your evaluation combines incompatible problems
+[Established] PhysioNet 2015 concerns selected critical arrhythmia alarms, while PPG-DaLiA concerns heart-rate estimation during activities. Neither dataset provides the combined ground truth of astronaut exercise, sensor artifacts, emergency events and actual notification outcomes. 
+
+physionet.org
++1
+
+[Likely] If you train on one and report an overall astronaut-safety performance metric, the result would not be scientifically justified.
+
+Objection 4 — Signal quality is not clinical normality
+[Established] The ECG quality literature uses agreement between detectors and physiological plausibility checks. These methods estimate signal trustworthiness; they do not independently establish the patient's clinical condition. 
+
+pubmed.ncbi.nlm.nih.gov
+
+[Likely] The correct interface requires three conceptual states: an interpretable measurement, an interpretable concerning measurement, and an insufficiently reliable measurement. Poor-quality data should lead to verification or escalation as appropriate, not a green status.
+
+Objection 5 — You may increase the workload you claim to reduce
+[Likely] If your system generates a signal-quality warning, asks for a second measurement, creates a deferred event, and then reminds someone to review it, you've potentially replaced one alert with four tasks.
+
+NASA's EIMO task-load work explicitly warns against inadvertently increasing the workload imposed by medical-support systems. 
+
+ntrs.nasa.gov
+
+Objection 6 — The space adaptation is superficial
+[Likely] A generic ICU classifier with an astronaut-themed dashboard would be weak under the challenge's Relevance and Validity criteria. Your application needs to show what changes when Earth cannot provide immediate medical assistance. 
+
+spaceappschallenge.org
++1
+
+Show the difference between local crew decisions and delayed flight-surgeon review, including what information is recorded for a later handover.
+
+Objection 7 — Even an algorithm that performs well may not be novel
+[Established] Signal-quality-based false-alarm detection was the explicit subject of a public PhysioNet challenge in 2015, including published code and winning solutions. 
+
+physionet.org
+
+[Likely] Without a meaningful human-factors improvement, your project could look like a simplified reproduction of established research.
+
+Objection 8 — There is no evaluated human benefit
+[Guess] This could be your biggest presentation weakness. If you show only a curve of classified alarms, judges may ask where the astronaut's ability to evaluate and act on their health has actually improved.
+
+Recommendation: Include a small, explicitly preliminary usability experiment measuring correct next-step selection and time to action, not merely interface aesthetics.
+
+5. Human factors: audio, haptics and non-visual interaction
+The evidence is promising, but not uniformly favorable.
+
+Study
+
+Evidence
+
+What it supports
+
+Wearable ICU alarm experiment, 30 participants, 2023
+
+Adding haptics improved alarm response time by 12.2% (0.23 s) under the studied conditions
+
+Haptics can improve attention and response in some multitasking contexts 
+
+pubmed.ncbi.nlm.nih.gov
+
+Voice medical-alarm trial, 28 anesthesia providers, 2021
+
+Spoken alarms were identified more accurately and roughly 14 seconds faster than the studied auditory icons
+
+Clear spoken information can be more interpretable than ambiguous alarm sounds 
+
+pubmed.ncbi.nlm.nih.gov
+
+Multisensory alarm feasibility study, 19 undergraduates, 2023
+
+Some workload ratings improved, but the conventional alarm condition produced faster responses
+
+Additional modalities do not guarantee better performance 
+
+pmc.ncbi.nlm.nih.gov
+
+Remote pilot workload experiment, 36 participants
+
+Auditory feedback improved certain tasks at lower workload but became detrimental under high workload
+
+Adding sound during an already demanding task can make things worse 
+
+pubmed.ncbi.nlm.nih.gov
+
+Clinical auditory versus vibrotactile experiment, 2026
+
+Vibrotactile responses were more accurate; auditory responses were faster
+
+Modality selection depends on whether accuracy or response speed matters most 
+
+sciencedirect.com
+
+[Established] These are studies of operators and simulated tasks, not validated astronaut medical-alert interfaces. The results should inform design hypotheses rather than become claimed flight-performance improvements.
+
+Proposed interface rules
+[Likely] Use multimodal delivery with different behavior for different information needs:
+
+Critical event: salient audio plus visual message, optional haptic redundancy, explicit acknowledgment, and no silent automatic dismissal.
+
+Measurement unreliable: explain the specific quality concern and provide a direct path to retry or use another available measurement.
+
+Low-priority review: persist the event in a visible queue with a deadline and escalation rule.
+
+Hands-free interaction: allow spoken presentation of the warning and next step, with a physical or conventional interface fallback.
+
+These are design proposals, not validated spaceflight procedures. The underlying principles are supported by medical-alarm human-factors research and the IEC risk-priority framework. 
+
+pubmed.ncbi.nlm.nih.gov
++2
+
+[Guess] For your team, non-visual output is a better hackathon bet than unrestricted voice input. You can demonstrate understandable audio prompts and accessibility reliably without building speech recognition for spacecraft noise, accents, time pressure, or medical terminology.
+
+[Likely] Do not treat a browser's vibration or text-to-speech functionality as evidence of compatibility with flight hardware. The software can demonstrate interaction principles while clearly identifying the hardware integration as untested.
+
+A useful 30-minute usability experiment
+[Guess] If you can recruit three to five volunteers, compare a conventional alert dashboard with your proposed interface using the same scripted cases. Record whether each participant chooses the correct predefined action, the time to that action, and whether they mistake unreliable data for reassurance.
+
+Counterbalance interface order if possible. Treat the resulting observations as formative usability findings, not statistical proof of improvement or representative astronaut performance.
+
+6. Alternatives: ranking NASA medical autonomy problems
+NASA's current Human Research Roadmap is more useful here than relying on old standalone gap identifiers. Several historical gaps have been merged into broader active gaps, especially Medical-701, while Med07 has been closed. 
+
+humanresearchroadmap.nasa.gov
++1
+
+Rankings below are my judgments for your team's skills and a 24-hour build, not NASA's official prioritization.
+
+1
+Guided medical self-assessment with uncertainty and next-step support
+
+Likely — strongest overall fit
+Map to active Medical-701 and historical Med10/Med05. The problem is helping a non-expert decide what information is missing and what to check next, using explainable, bounded workflows. Strong fit for HCI and accessibility, with less dependence on continuous astronaut waveforms. The main weakness is heavy competition from existing medical copilots.
+
+2
+Hands-free, step-by-step medical procedure guidance
+
+Likely — best HCI differentiation
+Maps to Medical-701 and the historical crew-training gap. Build a non-visual interface that guides a medically untrained operator through one carefully sourced simulation procedure, verifies step completion, and handles interruptions. NASA already develops onboard medical advisory systems, so the contribution must be improved operator interaction rather than the concept itself. 
+
+NASA
+
+3
+Medical resource-aware response planning
+
+Likely — most measurable operational alternative
+Maps to active Medical-201 and Medical-401. Model availability, expiry, power, consumables and communication limits, and show the feasibility of predefined medical workflows. You can quantify resource consumption and constraint violations without inventing disease-detection accuracy. Less distinctive for biosignal processing.
+
+4
+Individualized exercise recovery and deconditioning tracking
+
+Likely — good data availability, harder validation
+Maps to historical Med04, now included in Medical-701. Track recovery indicators, exercises and changes from individual baselines, using carefully identified terrestrial proxies. NASA identifies exercise as a crucial countermeasure, but a one-day software project cannot validate prediction of bone loss or cardiovascular deconditioning. 
+
+NASA
++1
+
+5
+Medical capability benefit-versus-cost explorer
+
+Likely — research-aligned, weaker challenge demo
+Maps to active Medical-601 and Medical-301. Explore trade-offs among medical capabilities, crew time, mass, data and power. The gap is explicitly quantitative, but credible risk-reduction estimates would require evidence you probably cannot assemble in 24 hours.
+
+[Likely] Ranking decision: If you had not started building, I would choose the guided self-assessment or procedure-guidance problem. Given your current research direction, I would not pivot the entire team unless the signal-quality benchmark proves unworkable. Instead, incorporate the strongest part of option 1 — understandable next-step guidance — into your existing idea.
+
+7. The realistic 24-hour project
+Recommended product: SignalTrust
+Working name and architecture proposal — [Guess], not an existing NASA system.
+
+One-sentence pitch
+
+An offline medical monitoring assistant that distinguishes potentially concerning physiological measurements from unreliable sensor data, guides the crew through verification, and exposes the consequences of every alert decision.
+
+Core interaction
+SignalTrust: proposed decision flow
+Physiological measurement or replayed signal
+
+ECG / PPG + source and acquisition context
+
+Signal-quality assessment
+
+Is there sufficient trustworthy information to interpret the measurement?
+
+Interpretable
+
+Run a bounded, explainable assessment. Escalate concerning findings.
+
+Uncertain
+
+Show the measurement limitation. Request confirmation or another source.
+
+Review and evidence ledger
+
+Original observation, quality indicators, action, reason, time, unresolved status, and eventual outcome.
+
+Safety-critical findings must not be silently downgraded because a measurement is noisy. Decision rules here are conceptual and require clinical validation.
+Technical implementation
+[Likely] Aim for three integrated components.
+
+A. One real waveform-processing component. Load a reproducible subset of PhysioNet 2015. Implement a simple documented quality feature or reproduce an existing open baseline with proper attribution. Avoid training a large model. The original challenge already provides example signal-quality algorithms and source code. 
+
+physionet.org
+
+B. One policy-comparison component. Compare always escalate against candidate signal-quality-informed decisions. Display the true/false alarm confusion matrix and the consequences of each threshold. Keep this an explicitly labeled offline evaluation, not a validated medical setting.
+
+C. One crew-facing interface. Replay selected examples, show the signal waveform, quality evidence, clear operator options, a review queue and accessible spoken warnings. Every data point should identify whether it is real terrestrial proxy data or synthetic mission context.
+
+Work allocation
+Hours 0–4
+
+Data and evaluation
+
+Download and load a public labeled subset, verify labels, establish the always-escalate baseline
+
+Hours 4–9
+
+Signal-processing implementation
+
+Implement one SQI/baseline algorithm and a threshold sweep; verify results on held-out records where feasible
+
+Hours 9–15
+
+Crew interface
+
+Build waveform replay, uncertainty explanation, follow-up actions, and auditable ledger
+
+Hours 15–19
+
+Safety and usability tests
+
+Test missing signals, true alarms in noisy segments, disconnected sources and overdue review items
+
+Hours 19–24
+
+Presentation and submission
+
+Prepare the 90-second demonstration, evaluation figure, source documentation and limitations
+
+[Guess] These durations are planning allocations, not guaranteed development times. If data ingestion takes longer than expected, reduce the dataset scope before removing evaluation.
+
+What to cut
+[Likely] Cut the LLM medical chatbot, live wearable integration, radiation predictions, multi-disease classifier, 3D body model, unrestricted voice command system, mission-control backend, and any purported clinical thresholds derived from a general population without validation.
+
+They add implementation work while making your central evidence claim harder to defend. The current challenge asks for gathering indicators and enabling useful evaluation and action, not necessarily the broadest set of features. 
+
+spaceappschallenge.org
+
+The metric I would report
+For the PhysioNet benchmark, define:
+
+False-alert deferral rate
+=
+T
+N
+T
+N
++
+F
+P
+False-alert deferral rate= 
+TN+FP
+TN
+​
+ 
+True-alarm sensitivity
+=
+T
+P
+T
+P
++
+F
+N
+True-alarm sensitivity= 
+TP+FN
+TP
+​
+ 
+Here, positive means the candidate policy escalates a true alarm, and negative means it defers an alarm. A false negative is therefore a true alarm incorrectly deferred.
+
+[Established] These are the challenge's documented confusion-matrix definitions. 
+physionet.org
+
+[Likely] Report both measures together, across a threshold sweep. Never report false-alert reduction without the corresponding true-alarm sensitivity.
+
+Illustrative trade-off only — not measured results
+A template for the required benchmark plot. Replace every value using your own held-out evaluation.
+
+80%
+85%
+90%
+95%
+100%
+0
+15
+30
+45
+60
+0: True-alarm sensitivity (%) 100%
+15: True-alarm sensitivity (%) 99%
+30: True-alarm sensitivity (%) 97%
+45: True-alarm sensitivity (%) 94%
+60: True-alarm sensitivity (%) 88%
+This curve contains hypothetical numbers solely to illustrate the presentation format. It is not a research result or a prediction of performance.
+Critical distinction: PhysioNet 2015 consists of critical arrhythmia alarm cases. If your proposed operational system never automatically defers high-priority alarms, then these classifications belong in an offline counterfactual research evaluation. Do not quietly interpret them as proof that the deployed crew interface can safely reduce critical interruptions.
+
+For a separate exercise experiment, use ECG-reference heart-rate error and accepted-data coverage. This can quantify the benefit and cost of filtering unreliable wearable readings, but not emergency-event safety. 
+
+archive.ics.uci.edu
+
+If you observe zero misses in a small evaluation, say "zero observed misses in N true alarms," with the denominator. Do not present 100% observed sensitivity as proof of perfect future detection. Ideally include a confidence interval and describe the split strategy.
+
+The 90-second demo I would present
+Demo sequence
+
+Proposed
+
+Show an actual noisy ECG or PPG signal, with its source and quality indicators.
+Show the difference between the raw candidate alarm and the signal-quality-aware assessment.
+Trigger the uncertainty state, explain why another measurement is required, and play an accessible spoken prompt.
+Show that the event is retained and cannot silently disappear from the review ledger.
+Finish with the actual evaluation: false alarms deferred versus true alarms incorrectly deferred, including limitations.
+[Likely] This is stronger than demonstrating an AI-generated health score because it exposes the mechanism, failure mode, evaluation, and user action in a single coherent scenario.
+
+Claim audit
+The following distinguishes verified source facts from interpretations and unresolved claims.
+
+Claim
+
+Confidence
+
+Primary source
+
+NASA EIMO identifies alarm fatigue and task saturation as problems
+
+[Established]
+
+NASA task-load abstract
+
+An ICU observational study reported 88.8% false annotated arrhythmia alarms
+
+[Established]
+
+Drew et al.
+
+ICU alarm burden can be reduced through configuration and workflow interventions
+
+[Established]
+
+Systematic review
+
+These ICU reduction percentages predict astronaut alarm reduction
+
+[Guess]
+
+No astronaut validation located
+
+PhysioNet 2015 has 750 public expert-labeled critical alarm records
+
+[Established]
+
+Dataset
+
+MIT-BIH Noise Stress Test offers controlled ECG artifact contamination
+
+[Established]
+
+Dataset
+
+PPG-DaLiA has exercise/activity recordings with ECG-reference heart rate
+
+[Established]
+
+Dataset
+
+WESAD is unrestricted for commercial use
+
+[Guess]
+
+Original publisher restrictions contradict the claim
+
+Signal-quality gating for false medical alarms is new
+
+[Established] — false
+
+2015 challenge and baseline algorithms
+
+Apple Watch incorporates stillness requirements for some rhythm monitoring
+
+[Established]
+
+Apple documentation
+
+Haptic information can improve response times under tested conditions
+
+[Established]
+
+Experimental study
+
+Haptic/audio delivery is proven superior for astronaut medical warnings
+
+[Guess]
+
+No direct validation located
+
+NASA Med07 is closed; Medical-701 is open
+
+[Established]
+
+Med07 · Medical-701
+
+A transparent verification workflow is a better hackathon direction than autonomous alarm suppression
+
+[Likely]
+
+Research judgment informed by NASA EIMO and PhysioNet safety trade-offs
+
+NASA directed teams to use MMASH
+
+[Guess]
+
+Not verified; do not claim
+
+An official 24×1112 harmonized Inspiration4 master table exists
+
+[Guess]
+
+Not verified; do not claim
+
+A solar-proton threshold of above 50 MeV and 5 pfu is an official operational limit
+
+[Guess]
+
+Not verified; do not claim
+
+Open questions I could not resolve
+1. [Guess] What is the actual frequency of astronaut medical alert fatigue? I found no directly measured, public astronaut-specific alarm burden or false-alarm dataset.
+
+2. [Guess] What are acceptable false-negative and notification-delay limits during an astronaut's exercise session? I found no publicly validated mission-specific policy for the proposed use case.
+
+3. [Guess] Which continuous physiological signals will actually be available on a future Earth-independent mission? Existing space wearables demonstrate possible modalities but not a universal operational telemetry interface.
+
+4. [Guess] Can an uncertainty-aware interface improve non-expert medical decisions under realistic spaceflight workload? The terrestrial human-factors evidence is relevant but does not establish this outcome.
+
+5. [Guess] Does an integrated alert ledger decrease total workload rather than simply moving work from notifications to review tasks? This requires a controlled usability study.
+
+6. [Guess] Is the exact combination of quality-aware triage, a safety-constrained alert budget and accessible interaction absent from all prior systems? The individual techniques have substantial prior art; an exhaustive novelty search was not completed.
+
+7. [Guess] Can the team achieve useful held-out benchmark performance within the remaining day? Dataset documentation and feasibility were reviewed, but I did not run a new algorithm or measure performance. No results in this report should be treated as your team's experimental results.
+
+Final decision
+[Likely] Keep the project — but don't center the pitch on deleting false alarms. Center it on helping astronauts make better decisions when their measurements are uncertain and Earth-based assistance is delayed.
+
+My preferred positioning is:
+
+SignalTrust — Know when to trust the signal. Know what to check next.
+
+Build a small, evidence-based system that demonstrates three things: real signal-quality processing, transparent handling of potentially missed events, and a practical crew-facing verification workflow.
+
+[Likely] If you can show a genuine quantitative result on public proxy data, preserve every failure case, and explain precisely why the result does not establish astronaut medical safety, you will have a more scientifically defensible submission than a large dashboard built entirely on simulated health scores.
+
+
+
+
+
+80%

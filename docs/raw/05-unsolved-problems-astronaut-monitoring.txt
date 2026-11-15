@@ -1,0 +1,353 @@
+Unsolved Problems in Astronaut Health Monitoring Software
+
+Executive Summary
+
+1. NASA's Exploration Medical Capability (ExMC) defines Earth-Independent Medical Operations (EIMO) as the progressive shift of medical authority from Earth to onboard crew as Mars-class communication delays reach ~20 minutes each way (doubling to ~40 minutes round-trip) with planned and unplanned blackouts (Established) (NASA NTRS EIMO TIM, NASA NTRS CDS).
+
+2. Current International Space Station (ISS) care relies on Mission Control flight surgeons and rapid return—shown by Crew 11's January 2026 early deorbit for an undisclosed medical issue—whereas Level of Care V eliminates expeditious evacuation (Established) (NASA, CBS News, Levin et al.).
+
+3. ExMC Clinical Decision Support System (CDSS) and Datascope assessments identify weak knowledge sharing across disparate Electronic Health Records (EHRs), habitats, vehicles, and spacesuits as a foundational barrier (Established) (NASA NTRS EIMO TIM, NASA NTRS CDSS Rev B).
+
+4. Even NASA's High-Performance Spaceflight Computing (HPSC) processor—targeting 100x gains over current flight hardware—lags considerably behind fully AI-driven onboard CDSS demands amid tight storage and downlink limits (Established) (NASA NTRS Datascope).
+
+5. Flight cohorts of N = 1 to 4 and analog crews of N = 6 create high statistical false-positive risk, shifted physiological baselines, and AI model drift, while target milestones for predictive SANS (2031), exploration immune biomarkers (2033), and updated bone standards (2028) remain years away (Established/Contested) (NASA HRP RAP, Space Medicine Foundation, AI Healthcare Review).
+
+6. Many Crew Medical Officers (CMOs) hold little medical training unless they possess EMT or paramedic backgrounds, yet bulky devices, garment motion artifacts, and disrupted CDSS workflows burden care under time pressure (Established) (NASA ISS Lessons, HERA Astroskin, NASA NTRS CDSS Rev B).
+
+7. Analog research establishes that 10-minute vigilance assays are operationally impractical, communication delays drive crew withdrawal from ground support ("autonomization"), and Antarctic data contest the classic third-quarter slump (Established/Contested) (PMC PVT-A, Mars-500, Antarctica Research).
+
+8. NASA's dual role as employer, clinician, and researcher incentivizes symptom underreporting over flight-assignment fears, while small crew sizes make statutory aggregate-only genetic reporting impossible without identifying individuals (Established) (NCBI IOM Space Medicine, AMA Journal of Ethics).
+
+9. Individual clinical records in NASA's Lifetime Surveillance of Astronaut Health (LSAH) require ~13 to 25 months for formal approval, leaving 48-hour teams reliant on NASA Open Science Data Repository (OSDR) / SOMA processed datasets and published analog parameters (Established) (NASA NLSP Guidelines, NASA OSDR FAQ).
+
+10. Space Apps rubrics grade equally across Impact, Creativity, Validity, Relevance, and Presentation while requiring NASA open data, indicating—though no penalized-entry post-mortems are public—that generic vitals dashboards, fabricated telemetry, cloud assumptions, and unvalidated diagnostic claims fail technical scrutiny (Established/Speculation) (Space Apps Guide, Space Apps KR 2026).
+
+Current In-Flight Monitoring Across Mission Classes
+
+NASA's Human Research Program (HRP) organizes human-system threats around five spaceflight hazards: space radiation, isolation and confinement, distance from Earth, altered gravity fields, and hostile/closed environments (Established) (NASA HRP Risks). A third-party clinical synthesis reports 21 active risks on NASA's Human Research Roadmap as of October 2026 (Space Medicine Foundation Atlas); NASA's public risk pages emphasize Spaceflight Associated Neuro-ocular Syndrome (SANS), bone deterioration where standard dual-energy X-ray absorptiometry (DXA) fails to characterize fracture risk, cardiovascular adaptations and orthostatic intolerance, immune dysregulation with latent viral reactivation, microbiome shifts, EVA hypoxia, and behavioral/sleep decrements (Established) (NASA NTRS Platts 2024, NASA HRP Risks, NASA NLSP). To move beyond low-Earth orbit (LEO), ExMC frames EIMO not as an immediate "Star Trek sickbay," but as a graded spectrum encompassing pre-mission Probabilistic Risk Assessment (migrating from the LEO-limited Integrated Medical Model to IMPACT), acute care, prolonged clinical management, consumable tracking, and crew task-load modeling via Model-Based Systems Engineering (Established) (Levin et al., NASA NTRS EIMO TIM, NASA NTRS SoSA).
+
+Operational hardware remains fragmented across agencies and commercial operators (Established) (NASA NTRS EIMO TIM, Axiom Science). The Canadian Space Agency (CSA) deployed the Bio-Monitor (commercialized as Astroskin) to replace bulky episodic ISS ECGs, pressure cuffs, fingertip oximeters, and ankle actigraphs (CSA Bio-Monitor). According to Hexoskin vendor specifications, Astroskin samples a 3-lead ECG at 250 Hz (vendor-claimed 97% accuracy), dual respiratory bands at 125 Hz, forehead PPG at 75 Hz (1 Hz SpO2), 1 Hz skin temperature, 50 Hz 3-axis acceleration, and ECG-PPG systolic blood pressure estimates (~69,000 raw data points/minute for up to 48 hours) (Hexoskin Specs). However, in 30-day HERA analog testing, battery and Bluetooth constraints prevented real-time streaming, requiring 24-hour local recording followed by manual download, and on ISS astronauts dock the battery pack into a base linked to a Canadian Q7 processor card for ground analysis (CSA Bio-Monitor, HERA Astroskin Report, CSA News). A 2017-era NASA/CSA report also outlined development of six low-profile (<= 5 mm), coin-cell Bluetooth patches (including galvanic skin response and pulse-transit-time blood pressure for 7 days) feeding NASA Ames's Medical Data Architecture (HERA Astroskin Report). ESA contributes human head-down bed-rest and dry-immersion datasets to NASA OSDR, flew an infrared 33-trace-gas cabin monitor and POLSA MXene nanomaterial biomonitors on Axiom missions (Axiom Science, OSDR NAR 2024), and provided a previously used post-flight monitoring device referenced on Polaris Dawn by a non-primary blog (OneRocketMom). Meanwhile, Inspiration4, Polaris Dawn, Axiom, JAXA, and the NASA Twins Study are linked via the Space Omics and Medical Atlas (SOMA) (Space Medicine Foundation, PMC SOMA), and TrialX (a commercial space-health vendor) states its EXPAND archive stores over 1 million commercial data points across flights including Fram2 using Garmin smartwatches and BioButton wearables (TrialX). Public documents reviewed here do not provide operational software specifications for ESA's EveryWear app, JAXA's in-flight medical software, or ISS Optical Coherence Tomography (OCT) and Private Medical Conference (PMC) pipelines.
+
+Mission Class & Status	Active or Target Sensors & Data	Primary Analysts & Speed	CMO Role & Evacuation Reality	Source
+ISS — Operational (LEO)	Episodic ECG, BP cuff, fingertip SpO2, ultrasound, glucometer, ankle actigraphy, cabin gas/microbe checks, research Bio-Monitor smart shirt (Established)	Ground flight surgeons via live telemetry and docked batch downlinks; note TrialX's vendor blog inaccurately generalizes DSN routing to all missions (Contested)	Many CMOs have little medical training unless EMT/paramedic; rapid evacuation feasible, shown by Crew 11's Jan 2026 early return (Established)	CSA, TrialX, NASA ISS Lessons, CBS News
+Artemis II / Gateway — Active Research & Planned Architecture (Cislunar)	Artemis II Standard Measures, ARCHeR sleep/activity/well-being tracking, immune biomarkers; Gateway targets Level of Care IV/V data systems (Established)	Hybrid ground-crew analysis transitioning toward onboard CDSS across Orion, Gateway, HLS, and EVA suits (Established)	Crew assumes greater triage and stabilization duties under multi-day return constraints (Established)	NASA HRP Ongoing, NASA NTRS CDS, NASA NTRS SoSA
+Mars-Class — Conceptual Target Architecture (Deep Space)	Continuous passive wearables, point-of-care biofluids (covering ~1/3 of >100 NASA conditions of concern), environmental sensors under Level of Care V (Established)	Onboard CMO and local CDSS first; ~20 min each way (~40 min round-trip) lag and blackouts prevent real-time flight surgeon direction (Established)	Fully autonomous detection, triage, and prolonged care; zero expeditious evacuation; backup CMO required if primary CMO is incapacitated (Established)	Levin et al., NASA NTRS CDS, AI Healthcare Review, Science.gov
+
+Ranked Map of Unsolved Problems
+
+The table below ranks ten documented unsolved problems by operational impact on Level of Care V autonomy, salience in NASA ExMC/HRP roadmaps, and direct relevance to astronaut health monitoring software. Ranks 1–5 align one-for-one with the deep dives that follow, while Ranks 6–10 are unpacked immediately afterward so all concrete gaps are fully mapped.
+
+Rank & Problem	Who Suffers	Severity	How Well-Studied	Available Public Data	Difficulty for 48h	Source
+1. Cross-system data silos, disparate EHRs, and multi-habitat interoperability failure (Established)	Astronaut, CMO, Flight Surgeon, Mission Planner	Critical	Well-documented in ExMC CDSS Rev B, SoSA, and Datascope; unresolved operationally	OSDR metadata schemas and API public; operational ISS EHRs and spacecraft buses NOT public	High — multi-vehicle clinical/vehicle telemetry buses are closed	NASA NTRS EIMO TIM, NASA NTRS CDSS Rev B
+2. Small-sample inference (N = 1–6) and shifted personalized baselines (Established)	CMO, Flight Surgeon, Astronaut	Critical	Recognized across Twins Study, SOMA, HRP variability goals, and space-AI reviews	OSDR processed omics/physiology, SOMA Browser (N = 4), and ESA bed-rest public; raw human sequences and LSAH records NOT public	Moderate–High — small-N limits real, though OSDR/SOMA enable drift profiling	AI Healthcare Review, Space Medicine Foundation, NASA NTRS Platts 2024
+3. Constrained onboard compute, storage bottlenecks, and comms delays/blackouts (Established)	CMO, Astronaut, Flight Surgeon	Critical	Quantified in Datascope (~20 min lag, HPSC 100x shortfall) and HERA	Astroskin sampling/storage specs public; flight avionics and live link logs NOT public	Moderate — latency and edge compute/storage budgets can be parameterized	NASA NTRS Datascope, HERA Astroskin Report
+4. Non-expert CMO cognitive load, motion-noise/alert distortion, and CDSS workflow friction (Established)	CMO, Astronaut	High	Studied in HERA Astroskin trials, ISS lessons, and CDSS Rev B	HERA usability survey dimensions and OSDR physiology public; operational ISS false-alarm logs NOT public	Low–Moderate — signal-quality gating and low-load HCI fit 48h scope	NASA ISS Lessons, NASA NTRS CDSS Rev B, HERA Astroskin Report
+5. Astronaut data privacy, dual-agency conflict, and symptom underreporting (Established)	Astronaut, Flight Surgeon, Mission Planner	High	Thoroughly examined in IOM/AMA bioethics and NLSP rules; operationally open	NLSP gating policies and bioethics reports public; identifiable clinical records (25 mo wait) NOT public	Moderate — clear policy constraints, minimal public behavioral ground truth	NASA NLSP Guidelines, NCBI IOM Space Medicine, AMA J Ethics
+6. Unvalidated predictive biomarkers for SANS, bone fracture, and immunity (Established/Contested)	Astronaut, Flight Surgeon, Mission Planner	Critical	Heavily studied; HRP roadmap places deliverables at 2028–2036	OSDR/ALSDA assays and bed-rest data public; longitudinal SANS imaging and LSAH cohorts NOT public	High — multi-year longitudinal validation impossible in 48h	NASA HRP RAP, NASA NTRS Platts 2024
+7. AI explainability, epistemic uncertainty, and non-expert trust calibration (Established)	CMO, Flight Surgeon, Astronaut	High	Flagged in space-AI reviews; minimal empirical astronaut trust testing	OSDR/SOMA multi-omic and analog shifts public; flight-validated AI failure benchmarks NOT public	Moderate — out-of-distribution uncertainty measurable on OSDR; clinical trust untested	AI Healthcare Review, NASA NTRS CDSS Rev B
+8. High-burden behavioral and cognitive monitoring compliance (Established/Contested)	Astronaut, Flight Surgeon, Mission Planner	High	Studied in HI-SEAS, Mars-500, Antarctica; CHAPEA/SIRIUS attrition data sparse	Published PVT-A/actigraphy methods and OSDR behavioral assays public; CHAPEA/crew diaries NOT public	Moderate — clear test-duration trade-offs, limited raw analog time series	PMC PVT-A, PLOS ONE Mars-500, PubMed VSS
+9. Circadian misalignment and autonomous schedule adherence (Established)	Astronaut, Mission Planner	Moderate–High	Quantified in Phoenix Mars ops (N = 19) and ISS; autonomous adherence weaker	Published Mars-day circadian metrics and OSDR datasets; operational ISS schedules NOT public	Low–Moderate — published mathematical circadian-phase penalties available	PMC Phoenix Mars, NASA HRP Risks
+10. Comms-delay crew-ground detachment ("autonomization") (Established/Contested)	Astronaut, Flight Surgeon, Mission Planner	Moderate–High	Observed in Mars-500; labeled "less-well understood" by ExMC	Qualitative Mars-500 ethology papers; internal MCC-crew transcripts NOT public	High — multi-month psychosocial isolation cannot be tested in 48h	NASA NTRS EIMO TIM, Mars-500
+
+Top 5 Problems: Deep Dives
+
+1. Cross-System Data Silos, Disparate EHRs, and Multi-Habitat Interoperability Failure
+
+Evidence. ExMC technical interchange meetings establish that exploration crews must be supported across multiple habitats, transit vehicles, surface systems, and spacesuits engineered over different decades to different specifications, making cross-system information flow via an integrated data architecture essential (Established) (NASA NTRS EIMO TIM, NASA NTRS Datascope TIM). NASA's ExMC CDSS Architecture Recommendation (Rev B) explicitly documents that current CDSS tools struggle to generalize and share clinical knowledge across disparate EHRs, suffer from poor underlying data quality, and disrupt workflows through interoperability failures (Established) (NASA NTRS CDSS Rev B). ExMC accordingly warns that single-point standalone medical tools are unacceptable without integration into broader Crew Health and Performance (CHP) and vehicle systems (Established) (NASA NTRS ECDS, NASA NTRS CDS).
+
+What Is Known. Astronauts, CMOs, flight surgeons, and mission planners suffer diagnostic blind spots whenever physiological streams, clinical history, EVA suit metrics, cabin environmental monitors, nutrition, and exercise logs reside in disconnected subsystems (Established) (NASA NTRS CDS). If unsolved, a vital-sign shift cannot be cross-checked automatically against cabin trace gases, EVA pre-breathe hypoxia, or medication timing, forcing manual correlation during emergencies (Established) (NASA NTRS CDS, NASA HRP Risks). NASA has attempted to resolve this through SysML System-of-Systems Architecture modeling (NASA NTRS SoSA), NASA Ames's common-format Medical Data Architecture for CSA patches (HERA Astroskin Report), commercial archival integration in TrialX's EXPAND (TrialX), and a 2024 solicitation targeting a new COTS astronaut EHR by July 2026 (FedScoop). It remains hard because international modules, commercial wearables, and legacy vehicles follow heterogeneous schemas and strict access barriers (Established) (NASA NTRS EIMO TIM, NCBI IOM Space Medicine). Publicly, teams can inspect OSDR's standardized assay schemas and RadLab environmental pairings via API and AWS S3, while operational vehicle telemetry buses and astronaut EHRs are non-public (Established) (NASA OSDR, OSDR NAR 2024).
+
+What Is Genuinely Open. Reliable onboard push-pull data synchronization and conflict resolution across intermittent spacecraft-to-habitat links without cloud infrastructure remains unachieved, and public documentation through late 2026 has not verified whether NASA's targeted July 2026 EHR replacement unified clinical and operational monitoring silos (Established/Speculation) (NASA NTRS Datascope TIM, FedScoop).
+
+2. Small-Sample Inference (N = 1–6) and Shifted Personalized Baselines
+
+Evidence. Human spaceflight generates tiny cohorts: the NASA Twins Study profiled N = 1 flight astronaut against N = 1 ground twin (ResearchGate SOMA), the Inspiration4 SOMA studies spanned N = 4 civilians across 3 flight days (2,911 biospecimen aliquots across 289 days) (Space Medicine Foundation, PMC SOMA), and long-duration analogs such as HI-SEAS III and Mars-500 studied N = 6 (PubMed VSS, Mars-500). An AI-assisted clinical synthesis of SOMA cautions that measuring vast numbers of variables across four subjects creates a high probability of false positives without replication and cannot directly predict long-duration missions (Contested) (Space Medicine Foundation). Simultaneously, autonomous space-AI reviews identify limited astronaut sample size, shifted physiological baselines in microgravity, and resulting model drift as core barriers (Established) (AI Healthcare Review), echoing HRP's explicit priority on "Understanding Individual Variability in Spaceflight" and Mars-500 findings of pronounced crewmember personalization even inside identical habitats (Established) (NASA NTRS Platts 2024, Mars-500 Ethology).
+
+What Is Known. CMOs, flight surgeons, and astronauts suffer miscalibrated risk assessment when population-level Earth thresholds flag normal microgravity fluid redistribution, cardiac remodeling, or transient immune shifts as pathology—or miss individualized deterioration (Established) (AI Healthcare Review, NASA HRP Risks). If unsolved, onboard software triggers either chronic false alarms or delayed intervention on silent deterioration (Established/Speculation) (AI Healthcare Review, NASA NTRS CDSS Rev B). Prior work includes cross-referencing human Inspiration4 immune signatures against the NASA Twins Study and 817 NASA GeneLab mouse transcriptomes (), standardizing cross-mission biobanking under SOMA (PMC SOMA), and proposing domain adaptation and self-supervised learning to bridge terrestrial-to-space distributions (AI Healthcare Review). The problem stays hard because multi-year deep-space radiation plus partial gravity lacks any large human training cohort, and individual longitudinal astronaut data in LSAH are restricted (Established) (NASA NLSP Guidelines). Publicly, OSDR (>500 studies, ~1,000 datasets including ESA head-down bed rest, dry immersion, and processed Inspiration4 assays) and the SOMA Browser provide multi-timepoint pre/in/post-flight baselines, whereas raw human sequences and clinical EHR histories are non-public (Established) (OSDR NAR 2024, NASA OSDR FAQ, SOMA Browser).
+
+What Is Genuinely Open. Establishing personalized N-of-1 longitudinal drift boundaries that separate benign individual spaceflight adaptation from progressive pathology across diverse commercial and career crewmembers—without large training populations—remains unsolved (Established) (AI Healthcare Review, Axiom Science).
+
+3. Constrained Onboard Compute, Storage Bottlenecks, and Comms Delays/Blackouts
+
+Evidence. Under NASA-STD-3001 Level of Care V, Mars missions face ~20-minute one-way communication delays (~40 minutes round-trip) plus planned solar conjunctions and unplanned communication blackouts alongside narrow downlink bandwidth (Established) (NASA NTRS CDS, NASA NTRS Datascope). Critically, NASA's Datascope analyses establish that spacecraft lack cloud-like resources, suffer severely constrained local storage/retrieval and processing speeds, and that even the NASA High-Performance Spaceflight Computing (HPSC) processor project—targeting a 100x speedup over current flight computers—still "lags considerably behind what will be needed to enable a fully AI-driven CDSS" (Established) (NASA NTRS Datascope). On the sensor edge, HERA analog trials confirmed that battery and Bluetooth limits blocked real-time streaming of Astroskin's high-rate output (vendor-listed at ~69,000 raw data points/minute), forcing local onboard recording over 24-hour periods before manual laptop download (Established) (Hexoskin Specs, HERA Astroskin Report).
+
+What Is Known. CMOs, astronauts, and flight surgeons suffer acute operational vulnerability: waiting ~40 minutes round-trip for terrestrial guidance during trauma, arrhythmia, or hypoxia risks loss of life or permanent injury, while multi-sensor high-rate logging saturates onboard storage and narrow links (Established) (Levin et al., NASA NTRS Datascope). Attempts to bridge this include CCSDS Space Packet Protocol store-and-forward retransmission (TrialX), docking modules for batch ISS transfers (CSA Bio-Monitor), and Datascope architectural optimization (NASA NTRS Datascope). It remains hard because radiation-hardened flight silicon trails terrestrial AI hardware by orders of magnitude while continuous multi-lead ECG, imaging, and biofluid demands expand—contradicting commercial blog framing that portrays real-time AI cloud pipelines as deep-space ready (Contested) (NASA NTRS Datascope, TrialX). Publicly, device sampling specs and OSDR assay sizes enable bandwidth and storage modeling, whereas actual flight-avionics compute/telemetry logs are non-public (Established) (Hexoskin Specs, NASA OSDR).
+
+What Is Genuinely Open. Determining onboard triage rules for compressing, summarizing, or discarding raw high-frequency waveforms versus retaining forensic diagnostic evidence—and structuring asynchronous delay-tolerant medical consult packets—remains unresolved (Established) (NASA NTRS EIMO TIM, NASA NTRS Datascope).
+
+4. Non-Expert CMO Cognitive Load, Motion-Noise/Alert Distortion, and CDSS Workflow Friction
+
+Evidence. NASA's ISS Lessons Learned states explicitly that many crewmembers, except those with EMT or paramedic experience, have little medical training (Established) (NASA ISS Lessons), and emergency simulations include scenarios where an incapacitated CMO leaves an even less-trained backup to perform surgery (Established) (Science.gov). CSA notes legacy ISS diagnostics are bulky, invasive, and time-consuming (CSA Bio-Monitor). Yet even integrated Astroskin wearables exposed hardware and software friction during 30-day HERA trials and high-intensity exercise evaluations: garments raised questions over donning difficulty, movement restriction, odor, and sensor slippage during motion; signal quality during exercise was acceptable only "in most cases"; and automated signal-loss, signal-quality, and anomalous-event alerting had to be deferred to future versions (Established) (HERA Astroskin Report, ). Complementing this, ExMC CDSS Rev B cites poor usability, poor data quality impacts, disrupted clinician workflows, decision time pressure, and task complexity as core risks—requiring context-aware UIs that surface off-nominal indicators without delaying clinical actions, even though the document provides no empirical false-alarm statistics (Established) (NASA NTRS CDSS Rev B).
+
+What Is Known. Both astronauts and CMOs experience high cognitive burden when noisy daily countermeasures (such as mandatory exercise) corrupt wearables or when stressful emergencies force non-physicians through dense medical software (Established) (NASA NTRS CDSS Rev B, HERA Astroskin Report). Unsolved, poorly gated signal noise induces alert fatigue or misleading clinical readings, while complex workflows cause error and delay under crisis (Established/Speculation) (HERA Astroskin Report, NASA NTRS CDSS Rev B). Tried mitigations include smart shirts and sub-5 mm patch form factors (CSA Bio-Monitor, HERA Astroskin Report), just-in-time training (JITT) and procedure guidance (Levin et al.), AI companion CIMON (CEMA 2019), and ExMC architecture task-load modeling (NASA NTRS SoSA). It remains difficult because intense exercise generates severe mechanical artifacts, rare medical emergencies erode procedural skill retention, and operational ISS monitor false-alarm rates are non-public (Established) (, HERA Astroskin Report). Public materials include HERA usability criteria and OSDR physiological datasets, while flight-validated false-alarm benchmarks are unavailable (Established) (HERA Astroskin Report, NASA OSDR).
+
+What Is Genuinely Open. Automated signal-quality gating that reliably separates garment slippage and high-intensity exercise noise from true cardiorespiratory events—and context-aware interfaces tuned to non-expert CMO cognitive limits—remain unvalidated in deep-space operations (Established) (HERA Astroskin Report, NASA NTRS CDSS Rev B).
+
+5. Astronaut Data Privacy, Dual-Agency Conflict, and Symptom Underreporting
+
+Evidence. Institute of Medicine (IOM) ethics analyses establish that space medicine collapses standard clinical boundaries: NASA acts concurrently as employer, primary healthcare provider, and researcher, while an astronaut is simultaneously worker, patient, subject, and peer caregiver (Established) (NCBI IOM Space Medicine, AMA Journal of Ethics). IOM documents explicit agency language warning that protocol refusal "may prejudice the crew member's assignment to missions," incentivizing symptom underreporting (Established) (NCBI IOM Space Medicine). Legally, AMA bioethics analysis shows NASA can meet Genetic Information Nondiscrimination Act (GINA) occupational rules except for one clause (29 CFR §1635.8(b)(5)(i)): employers may receive toxic-monitoring genetic data only in the aggregate, which is impossible without identifying individuals in small astronaut cohorts (Established) (AMA Journal of Ethics). Furthermore, HIPAA, the Privacy Act of 1974, and OMB M-06-16 (requiring sensitive extracts to be logged and erased within 90 days or justified) restrict LSAH/LSDA releases to ~13 months for de-identified and ~25 months for identifiable records, and NASA cited medical privacy to withhold clinical details during Crew 11's January 2026 early return (Established) (NASA NLSP, NASA NLSP Guidelines, NASA).
+
+What Is Known. Astronauts, flight surgeons, and mission planners all suffer when fear of grounding causes underreporting, because concealed illness distorts health norms and raises the chance of an unmitigated in-flight crisis; international partners also lack consensus rules for cross-agency medical data governance (Established) (NCBI IOM Space Medicine, ResearchGate Int Database). Agencies have tried tiered data-access boards (IRB and LSAH Advisory Board), removing family history from selection, excluding genetic data from assignment decisions under GINA clinical exceptions, and restricting raw sequence access in OSDR (Established) (NASA NLSP Guidelines, AMA Journal of Ethics, NASA OSDR FAQ). It remains hard because inside an isolated four-to-six-person spacecraft, a sick crewmate threatens everyone's survival and is treated by a peer CMO, eroding terrestrial doctor-patient confidentiality walls (Established) (NCBI IOM Space Medicine). Only data-sharing policies, ethical frameworks, and pooled data are public; identifiable clinical records and raw human sequences are closed (Established) (NASA HHP Sharing, NASA NLSP Guidelines).
+
+What Is Genuinely Open. Onboard software lacks settled governance protocols specifying which indicators remain private for self-monitoring, which escalate to a peer CMO or crew commander, and what mission-safety thresholds override individual confidentiality in autonomous deep-space operations (Established) (NCBI IOM Space Medicine, NCBI IOM Ethics Framework).
+
+Secondary Operational Gaps (Ranks 6–10)
+
+Beyond the top five problems, five additional NASA-documented gaps constrain autonomous health software. First, unvalidated predictive biomarkers for SANS, bone fracture, and immune dysfunction (Rank 6) affect astronauts, flight surgeons, and mission planners: standard DXA poorly predicts fracture risk while NASA HRP's June 2026 roadmap places bone standards at 2028, personalized SANS prediction at 2031 (surveillance at 2036), and exploration immune biomarkers at 2033 (Established/Contested) (NASA NTRS Platts 2024, NASA HRP RAP). Animal/analog datasets and processed Inspiration4 assays exist on OSDR, but multi-year human deep-space validation remains impossible (Established) (OSDR NAR 2024). Second, AI explainability, uncertainty management, and trust calibration (Rank 7) burden non-physician CMOs and flight surgeons: if black-box CDSS advice hides model drift or confidence bounds under out-of-distribution physiology, crews face automation bias or rejection (Established) (, NASA NTRS CDSS Rev B). Proposed ML adaptation lacks flight-validated human-trust trials, though OSDR allows testing out-of-distribution uncertainty (Established) (AI Healthcare Review).
+
+Third, high-burden behavioral compliance (Rank 8), circadian schedule adherence (Rank 9), and comms-delay detachment (Rank 10) erode crew performance and Mission Control awareness. Long surveys and 10-minute PVTs suffer practical abandonment and even short operational urine protocols saw 4 of 19 Phoenix Mars personnel miss samples, while HRP gap BH-201 defers semi-autonomous behavioral thresholds to 2031–2034 (Established) (PMC Phoenix Mars, PMC PVT-A, NASA HRP RAP). Circadian work misalignment (P < 0.001) and >= 21 hours of wakefulness (P < 0.0001) sharply degrade alertness even when mathematical light-sleep models track melatonin well (r² = 0.86) (PMC Phoenix Mars), and Mars-500 demonstrated that 20-minute comms lags cause crews to curtail ground communication and lose external verification—an effect ExMC calls "less-well understood" (Established) (NASA NTRS EIMO TIM, Mars-500).
+
+Behavioral and Cognitive Health Monitoring in Analog Missions
+
+Terrestrial isolated, confined, and extreme (ICE) analogs establish clear divergence between low-friction automated monitoring and burdensome self-reporting. Basner and colleagues demonstrated on N = 74 subjects across 33-hour total sleep deprivation and 5-day partial sleep restriction that the standard 10-minute Psychomotor Vigilance Test (PVT) is often impractical, whereas an adaptive-duration PVT-A cut mean test length to 6.0–6.4 minutes (down to 27–37 seconds for clear impairment or alertness) without significant classification loss (Established) (PMC PVT-A). Passive 1-minute wrist actigraphy plus illuminance reliably classified sleep, wake, and waking rest across 520 days in Mars-500 (Established) (PLOS ONE Mars-500), while the N = 19 Phoenix Mars Lander fatigue study confirmed that 87% (13/15 with adequate urine) entrained to a ~24.70-hour Mars day and that light-exposure/sleep modeling correlated strongly with urinary 6-sulfatoxymelatonin (r² = 0.86, P < 0.001) (Established) (PMC Phoenix Mars). On the psychological side, an 8-month HI-SEAS III study (N = 6) found the confidential, self-contained Virtual Space Station (VSS) conflict and stress modules highly acceptable (1.8 on a 7-point Likert scale), supporting 9 worked problems across 13 identified stressors specifically because no ground reporting was required (Established) (PubMed VSS). Ethological observation in Mars-500 further showed that declining intra-habitat communication from month 1 to month 6 and communication shifts tied to individual anxiety and social status reflected adaptation without questionnaire load (Established) (ResearchGate Mars-500 Ethology), while NASA's Cognition battery was deployed across three Antarctic stations alongside N = 13 DLR controls (Established) (NASA TechPort).
+
+Conversely, analog evidence documents where behavioral monitoring breaks down. Even highly motivated operational teams missed biofluid schedules (4/19 in Phoenix lacked usable urine data) (Established) (PMC Phoenix Mars), Mars-500 subjects suffered exhausting research workloads alongside habitat repairs and progressively withdrew telemetry from Mission Control under 20-minute latency (Established) (Mars-500, ResearchGate Mars-500 Ethology), and HI-SEAS VSS users displayed highly individualized preferences regarding which modules felt useful (Established) (PubMed VSS). Temporal trajectory assumptions are also contested: whereas Mars-500 flagged month 3 as a behavioral inflection point (ResearchGate Mars-500 Ethology), Antarctic overwintering research indexed on ResearchGate includes a June 2018 study describing "psychological hibernation" as a coping state and an abstract finding cognition worst in the final residence phase with "no third quarter phenomenon" (Contested) (Antarctica Research). Finally, while NASA's FY 2023 report outlined CHAPEA for integrated health, cognitive, and physical tracking (NASA FY23 Report) and scoping literature groups SIRIUS and CHAPEA with HI-SEAS and Mars-500 (PMC Scoping Review), quantitative compliance and survey-attrition outcomes from SIRIUS and CHAPEA are not reported in public sources reviewed here.
+
+Common Traps in Space Apps Astronaut Health Challenges
+
+Published NASA Space Apps participant guides and 2026 regional rules confirm that NASA and partner subject matter experts judge entries across five equally weighted pillars (1–20 points each in local rubrics, with top regional awards requiring >= 90%): Impact, Creativity, Validity ("scientifically valid and practical for real-world implementation"), Relevance ("responsive to the challenge"), and Presentation, while explicitly directing teams to use NASA open data or APIs (Established) (Space Apps Guide, Space Apps KR 2026, Space Apps TH 2026). Among more than 11,500 submissions in 2025, global winners such as SpaceGenes+ (Best Use of Science Award for exploring combined microgravity and radiation molecular shifts) and PureFlow (Best Mission Concept Award for accounting for closed-loop power, waste, life support, and communications constraints) grounded their scope tightly in empirical NASA biology data or authentic habitat constraints rather than overclaiming clinical diagnosis (Established) (NASA 2025 Winners). Because NASA does not publish official post-mortems of penalized Space Apps submissions, the failure modes below represent analytical inferences ((Speculation)) derived from the published Validity/Relevance rubric and ExMC's documented constraints.
+
+Generic vital-sign dashboards. Plotting raw or simulated heart rate, SpO2, and temperature replicates commercial interfaces already flown with CSA's Bio-Monitor (CSA Bio-Monitor), ignores shifted spaceflight baselines and exercise motion artifacts (AI Healthcare Review, HERA Astroskin Report), and adds display clutter for non-physician CMOs under time pressure (NASA NTRS CDSS Rev B, NASA ISS Lessons) (Speculation).
+
+Fake or unattributed astronaut telemetry. Individual astronaut medical records in LSAH require 13–25 months for IRB/Advisory Board clearance and human sequencing data in OSDR are controlled-access (NASA NLSP Guidelines, NASA OSDR FAQ); presenting fabricated vital streams as real flight data undermines Validity and skips genuinely public NASA datasets such as OSDR/SOMA processed assays and bed-rest studies (OSDR NAR 2024, Space Apps Guide) (Speculation).
+
+Unsubstantiated diagnostic claims. Presenting a weekend ML model as capable of diagnosing SANS, fracture risk, or immune disease conflicts directly with NASA HRP's June 2026 roadmap showing those biomarkers remain unachieved until 2028–2033 (NASA HRP RAP) and ignores false-positive inflation on N = 1–4 cohorts (Space Medicine Foundation, AI Healthcare Review) (Speculation).
+
+Cloud-tethered and always-online assumptions. Architectures calling live terrestrial APIs, cloud LLMs, or continuous Mission Control streams violate Mars ~20-minute one-way delays, blackouts, and Datascope compute/storage ceilings where even HPSC trails cloud AI (NASA NTRS Datascope) (Speculation).
+
+Privacy-blind crew surveillance. Continuous unredacted audio, video, or genomic exposure to commanders or ground controllers clashes with GINA's impossibility of small-crew aggregation (AMA Journal of Ethics), dual-agency underreporting incentives (NCBI IOM Space Medicine), and analog evidence that crews value strict onboard confidentiality () (Speculation).
+
+Open Questions Unresolved by Available Evidence
+
+1. In-flight false-alarm and alarm-fatigue rates: Public NASA documents reviewed here—including ExMC CDSS Rev B—do not report empirical false-positive alert rates from operational ISS medical monitors or CDSS prototypes (Established gap) (NASA NTRS CDSS Rev B).
+
+2. SIRIUS and CHAPEA quantitative compliance and survey fatigue: While CHAPEA was framed to gather integrated health and cognitive metrics (NASA FY23 Report) and scoping reviews index SIRIUS and CHAPEA (), quantitative self-report completion and survey-fatigue drop-off curves from both analogs were unavailable in reviewed primary reports (Established gap).
+
+3. ESA EveryWear, JAXA software, ISS OCT, and PMC internals: Available public sources did not provide operational software specifications for ESA's EveryWear app, JAXA's autonomous in-flight medical software, or ISS Optical Coherence Tomography and Private Medical Conference workflows (Established gap).
+
+4. 2026 NASA EHR replacement outcome: NASA solicited a replacement COTS astronaut EHR for deployment no later than July 2026 (FedScoop), but sources available as of November 2026 do not verify whether implementation completed or resolved clinical data silos (Established gap).
+
+5. Explicit CDSS compute and memory budgets: NASA Datascope establishes that HPSC's 100x speedup still lags full AI CDSS requirements (NASA NTRS Datascope), without publishing numerical FLOP, RAM, or power ceilings for target onboard clinical models (Established gap).
+
+6. Empirical CMO trust calibration in medical AI: Space-AI reviews flag explainability and uncertainty management as barriers (AI Healthcare Review), yet controlled studies quantifying how non-MD CMOs accept or override uncertain AI advice under emergency time pressure were not present in reviewed sources (Established gap).
+
+7. Official Space Apps penalized-project critiques: Judging pillars and winning prototypes are public (Space Apps Guide, NASA 2025 Winners), whereas NASA does not publish judge feedback explaining why unsuccessful astronaut-health submissions scored poorly (Established gap).
+
+
+
+
+Sources used in the report
+  (PDF) Enabling Human Space Exploration Missions Through
+
+  Earth Independent Medical Operations [EIMO] Leadership Meeting
+
+  IWS SoSA for Review
+
+  Leveraging artificial intelligence for autonomous space healthcare
+
+  Clinical Decision Support – Overview and Updates
+
+  Exploration Laboratory Analysis - NASA Technical Reports Server
+
+  Introduction to the Human Research Program
+
+  Earth Independent Medical Operations (EIMO) DATASCOPE
+
+  Inspiration4 and the Space Omics and Medical Atlas (SOMA), 2024
+
+  (PDF) Collection of biospecimens from the inspiration4 mission
+
+  Space Omics and Medical Atlas (SOMA) - Cornell University
+
+  Research Database | Axiom Space Science
+
+  Polaris Dawn experiments support space exploration
+
+  Collection of Biospecimens from the Inspiration4 Mission ... - PMC
+
+  Lifetime Surveillance of Astronaut Health - NASA Life Sciences Portal
+
+  Data Request Guidelines - NLSP - NASA Life Sciences Portal
+
+  Exploring the Ethics of Space Medicine - Safe Passage - NCBI - NIH
+
+  Should NASA Collect Astronauts' Genetic Information for
+
+  Recommendations for Ethics Responsibilities and Decision ... - NCBI
+
+  Human Health and Performance Data Sharing - NASA
+
+  NASA looking for new electronic health record system to support
+
+  How Health Data is Collected in Space Missions? - TrialX
+
+  Developing an international database on long-term health effects of
+
+  Integrating Space Sexology Into Long-Duration Mission Architecture
+
+  Aeronautics and Space Report of the President: Fiscal Year 2023
+
+  Correlation of etho-social and psycho-social data from “Mars-500
+
+  Astroskin Wearable Physiological Monitoring - Hexoskin
+
+  Bio-Monitor: Keeping an eye on astronauts' vital signs
+
+  Wearable Biosensor Monitor to Support Autonomous Crew Health
+
+  Evaluation of Astroskin Bio-monitor during high intensity physical
+
+  INNOVATIVE BIOMONITORING SYSTEMS IN THE AEROSPACE
+
+  Astroskin - Canada.ca
+
+  Ongoing HRP Research in Space - NASA
+
+  HRP - Research Approach Plans - June 2026 - NASA
+
+  Risks of Human Spaceflight - NASA
+
+  Risk & Gap Atlas - Space Medicine Foundation
+
+  NASA Announces 2025 International Space Apps Challenge Global
+
+  NASA Space Apps Seoul 2026
+
+  NASA Space Apps Challenge 2025 Guide | PDF | Exoplanet - Scribd
+
+  Thailand 2026 - SPACE OF CHALLENGE ASIA
+
+  About OSDR - NASA Science
+
+  OSDR - FAQ - Frequently Asked Questions - NASA Science
+
+  NASA open science data repository: open science for life in space
+
+  Autonomous, Computer-Based Behavioral Health Countermeasure
+
+  (PDF) Main findings of psychophysiological studies in the Mars 500
+
+  Learning to Live on a Mars Day: Fatigue Countermeasures during
+
+  Behavioral health in Antarctica: Implications for long-duration space
+
+  The Mars-500 crew in daily life activities: An ethological study
+
+  An Adaptive-Duration Version of the PVT Accurately Tracks
+
+  Project - NASA TechPort
+
+  Psychological and Behavioral Changes during Confinement in a
+
+  NASA to Provide Media with International Space Station Update Today
+
+  NASA will bring space station crew home early after medical issue
+
+  International Space Station Lessons Learned for Space Exploration
+
+  earth based 3d: Topics by Science.gov
+
+
+
+
+Sources read but not used
+  Progressively Enabling Earth Independent Medical Operations (EIMO)
+
+  FY2025 Section A: Basic Research Topics
+
+  Category: Mars - InnovaSpace
+
+  Aerospace Medicineand Human Performance - AsMA
+
+  Clinical Decision Support - Overview and Update
+
+  Clinical Decision Support Project - NASA Technical Reports Server
+
+  Exploration Medical Capability - NASA Technical Reports Server
+
+  Market Survey 2020: Commercial Clinical Decision Support Systems
+
+  Supporting Crew Medical Decisions on Deep Space Missions
+
+  HRP-48032 Rev. B
+
+  The value of a spaceflight clinical decision support system for earth
+
+  space medical center - CNES
+
+  ccsds 880.0-g-3 - Consultative Committee for Space Data Systems
+
+  Perspective Chapter: Technology and Innovation Driven by Space
+
+  Behavioral Health and Performance Element: Evidence Report
+
+  Astronaut Health Monitoring Without Earth | NASA Space Apps 2026
+
+  earth independent medical operations (eimo) datascope: challenges
+
+  Datascope to Enable Earth Independent Medical Operations (EIMO)
+
+  Datascope Corp - International Medical Devices Database
+
+  Maquet - Wikipedia
+
+  2023 Medical Device Recalls - FDA
+
+  network of international business schools
+
+  Regional Tech Updates - Port San Antonio
+
+  DATASCOPE CORP. v. SMEC, INC, 776 F.2d 320 (Fed. Cir. 1985)
+
+  Collection of biospecimens from the inspiration4 mission establishes
+
+  SOMA Publications - NASA
+
+  NASA's Standard Measures: A snapshot of astronaut health - ESA
+
+  NASA SPACE FLIGHT HUMAN-SYSTEM STANDARD: VOLUME 1
+
+  Extended Reality In U.S. Spaceflight Operations - IRJET
+
+  Astroskin Now Available - Pushes the Boundaries of Health
+
+  This Smart "Astroskin" Shirt Tracks Astronauts' Vital Signs - Futurism
+
+  Astroskin Device - Search Data - NLSP
+
+  Wearable Biosensor Monitor to Support Autonomous Crew Health
+
+  HRP - Human Research Program - NASA
+
+  HESTIA and the Human Research Roadmap - NASA
+
+  Global Nominees - NASA Space Apps Challenge
+
+  NASA Space Apps Challenge 2026 - Thompson Rivers University
+
+  Create Health Monitoring Software for Astronauts on Space Missions
+
+  NASA Space Apps Kuala Lumpur 2026 to Turn NASA Data into
+
+  NASA Space Apps COVID-19 Challenge Winners Share Stories of
+
+  Space Apps Challenge | Canadian Space Agency
+
+  GeneLab - NASA TechPort - Project
+
+  NASA Science Mission Directorate (SMD)
+
+  Enabling Model Organism and Commercial Astronaut Data Access
+
+  Spaceflight Analogue Culture Enhances the Host-Pathogen
+
+  Biobehavioral and psychosocial stress changes during three 8–12
+
+  Effects of Communication Delay on Human Spaceflight Missions
+
+  Seedhouse E. Life Support Systems For Humans in Space 2020 | PDF
+
+
+
+
+Thoughts

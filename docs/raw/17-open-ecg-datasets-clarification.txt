@@ -1,0 +1,285 @@
+Главное уточнение: открытые ЭКГ с опасными ритмами существуют, но «непрерывный сигнал», «полная разметка событий» и «ЭКГ+PPG» редко совпадают в одном наборе. В частности, VitalDB Arrhythmia размечает выбранные участки операций, а MIMIC-IV Waveform предоставляет сигналы без готовой экспертной разметки критических событий. Это существенно меняет то, что можно честно проверить на этих данных.[physionet +1]
+Ниже — проверка по первичным источникам: документы агентств, оригинальные статьи, официальные страницы датасетов и Space Apps. Дата среза — 15 ноября 2026 года. «Не найдено» означает отсутствие подтверждения в просмотренных публичных источниках, а не доказательство отсутствия разработки.
+1. NASA, ESA, CSA, JAXA и академические работы: автономность и надёжность сигналов
+1.1. NASA: автономность и trust gap подтверждены, но не как готовое решение ложных ЭКГ-тревог
+Работа, дата
+Что подтверждено
+Что не подтверждено
+NASA HRP, Use of AI Technology to Mitigate Exploration Medical Risk, июнь 2025, доклад AsMA
+NASA прямо называет «trust gap» для AI; предлагает итеративные verification & validation. Желаемая архитектура — on-premise/edge без облака. На схеме присутствуют медицинские устройства, wearables и мультимодальные потоки. [nasa]
+Это не исследование доли ложных тревог и не клиническая валидация фильтра ЭКГ. Точное название «Artemis Boards, 27 июня 2025» для этого документа не подтверждено: найден другой первичный доклад июня 2025.
+NASA ExMC, Clinical Decision Support System — Use Cases, Rev. B, март 2023
+Контекстно-зависимые тревоги, настройка порогов, интеграция физиологических и средовых данных; сценарии cardiac arrest и pneumothorax. [nasa]
+В реализации cardiac arrest инструменты симулированы заранее загруженными данными. Проверка на реальном потоке опасной аритмии и опубликованные false-alarm metrics — не найдены. [nasa]
+TRISH HERMES / Ejenta / TrialX, объявление 1 ноября 2023; описание программы 2026
+Автоматический сбор/анализ медицинских и средовых данных на HERMES Edge Computers без подключения к облаку. [bcm +1]
+Опубликованная валидация различения «артефакт / настоящая VT/VF», signal-quality gate и число ложных тревог на человеко-час — не найдены.
+Прямые адреса документов/проектов:
+https://ntrs.nasa.gov/citations/20250004111
+https://ntrs.nasa.gov/citations/20220017885
+https://www.bcm.edu/news/trish-selects-healthcare-and-data-management-projects-for-spaceflights
+
+Это подтверждает потребность в автономности и проверяемости AI, но не позволяет говорить: «NASA доказала, что астронавты не доверяют ЭКГ-тревогам». Исследование именно такого пользовательского доверия с участием экипажей в найденных источниках отсутствует.[nasa +1]
+1.2. ESA
+Работа, дата
+Подтверждено
+Ограничения
+EveryWear, CNES/MEDES/ESA; техническое описание IAC 2022
+Бортовое приложение/сервер для медицинского и исследовательского сбора данных, включая интеграции с физиологическими устройствами. [iafastro]
+Не найдено опубликованной валидации автономных критических ЭКГ-тревог или их artifact rejection.
+EchoFinder-2, полётная работа на ISS, 17 июня 2026
+AI-распознавание органов, камера и AR помогают позиционировать УЗИ-датчик. В описанной NASA сессии участвовали врачи на Земле. [nasa]
+Это помощь получению изображения, не непрерывный детектор критических событий.
+Heart rate variability adaptation due to head-down tilt bed rest…, 31 июля 2025
+24-часовые Holter ECG у 66 мужчин в шести ESA bed-rest кампаниях; исследование автономной регуляции. [nih]
+Исходные данные не открыты для немедленного скачивания: статья указывает reasonable request с соблюдением политики ESA. [nih]
+https://dl.iafastro.directory/event/IAC-2022/paper/69181/
+https://pmc.ncbi.nlm.nih.gov/articles/PMC12313925/
+
+Отдельное первичное исследование ESA 2020–2026 о доверии экипажа именно к ложным тревогам носимой ЭКГ — не найдено.
+1.3. CSA: Bio-Monitor / Astroskin
+CSA подтверждает полётную систему: рубашка, головная повязка, планшет; запись физиологических сигналов и последующая передача данных. Страница обновлена 26 февраля 2026 года. Это сильное подтверждение сбора данных, но не автономной диагностики.[gc]
+Оригинальная статья Bio-Monitor Detects Reduced Obstructive Sleep Apnea and Susceptibility to Arrhythmia in Spaceflight, 2025: один астронавт, измерения до, дважды во время и после шестимесячного полёта. Описаны клинически значимые электрофизиологические находки, включая complete heart block. Автоматическое обнаружение этих событий на борту и показатели качества тревог не установлены.[nih]
+https://www.asc-csa.gc.ca/eng/sciences/bio-monitor.asp
+https://pubmed.ncbi.nlm.nih.gov/41360141/
+
+1.4. JAXA
+Официальная страница Validation of On-orbit Digital Holter ECG Monitoring, опубликованная в каталоге JAXA 27 февраля 2021 года, описывает 24-часовую ЭКГ для оценки сердечно-сосудистой и автономной функции; положение электродов и состояние кожи также документируются. Дата страницы не означает, что сам эксперимент впервые проведён в 2021 году.[jaxa]
+https://humans-in-space.jaxa.jp/en/biz-lab/experiment/theme/detail/000925.html
+
+Что найдено: полётный Holter-мониторинг и исследования HRV/Biological Rhythms. Что не найдено: публикация JAXA 2020–2026 с валидацией offline critical-event detection, автоматического различения ЭКГ-артефактов и аритмий либо доверия экипажей к таким тревогам.[jaxa +1]
+1.5. Прямо релевантные академические работы и SpacePatch
+Работа
+Что сделано
+Валидация и границы
+Mani et al., Machine learning workflow for edge computed arrhythmia detection in exploration class missions, 22 июня 2024
+ECG → noise detection/denoising → признаки → классификация normal sinus rhythm / AF / atrial flutter; ONNX/Android edge. [nature]
+742 часа земной ЭКГ; macro F1 0,899; F1: normal 0,993, AF 0,938, flutter 0,767. Explicit noise handling есть. Космической клинической валидации, VT/VF/asystole detector и длительного alarm burden нет. [nature]
+Huang et al., Efficient Edge-AI Models for Robust ECG Abnormality Detection on Resource-Constrained Hardware, 12 марта 2024
+Локальная классификация 12-lead ECG на STM32; тестирование белого шума и отсутствующих каналов. [nih]
+TNMG и внешняя CPSC; validation F1 0,827/0,828, внешние средние F1 около 0,70/0,72. Земная работа; white-noise robustness не равна устойчивости к реальному движению. [nih]
+Smital et al., Real-time quality assessment of long-term ECG signals recorded by wearables in free-living conditions, 2020
+Именно оценка качества длительной носимой ЭКГ; связан с BUT QDB. [physionet]
+Разметка качества и данные доступны. Это не космическая валидация и не разметка критических событий. [physionet]
+SpacePatch, DLR-supported; испытания 2025–2026
+Кардиомеханические сигналы, onboard processing; исследования гравитационных артефактов в параболических полётах; отдельные протонные испытания аппаратуры. [dlr +1]
+Метрики «настоящая опасная аритмия против артефакта во время движения/облучения» не найдены. Radiation resilience аппаратуры не доказывает правильность медицинского решения.
+https://www.nature.com/articles/s41526-024-00409-0
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11371854/
+https://doi.org/10.1109/TBME.2020.2969719
+https://event.dlr.de/en/ila2026/spacepatch-ila2026/
+https://www.sensors.tuhh.de/news.html
+
+Итог: фильтрация ЭКГ и оценка качества для exploration-oriented исследований существуют. Утверждение «никто не занимается артефактами» неверно. Не найдено другое: опубликованной сквозной космической валидации непрерывного детектора опасных событий с качественно проверенным отказом от решения при плохом сигнале.[nature +1]
+2. Реальные числа: ложные тревоги, артефакты и физнагрузка
+Здесь нельзя смешивать три знаменателя:
+1.	Доля ложных среди уже сработавших тревог.
+2.	Доля записей, содержащих артефакты.
+3.	Доля окон сигнала, отбракованных по качеству.
+Исследования ниже измеряют разные величины; объединять их в одну «частоту ложных тревог wearables» нельзя.[nih +2]
+Исследование, дата
+Выборка
+Число и точный смысл
+Drew et al., Insights into the Problem of Alarm Fatigue with Physiologic Monitor Devices, 22 октября 2014
+461 взрослый пациент ICU; 31 день; вручную размечены 12 671 arrhythmia alarms
+88,8% размеченных аритмических тревог — false positives. Это не 88,8% всех 2,56 млн зарегистрированных сигналов тревоги и не доля артефактов носимых устройств. Причины включали низкую амплитуду QRS, широкие QRS, pacing и артефакты. [nih]
+Lehman et al., VTaC, NeurIPS 2023; релиз v1.1 — 14 сентября 2026
+5 037 размеченных VT-тревог; три больницы, три производителя
+1 441 истинная тревога — 28,61%; следовательно, 71,39% ложных среди этой отобранной размеченной выборки. «Uncertain» и «Rejected» исключены, поэтому это не универсальная больничная частота. [physionet]
+El-Sherif & Turitto, Ambulatory Electrocardiographic Monitoring between Artifacts and Misinterpretation…, online 4 ноября 2014
+500 Holter + 500 telemetry recordings
+Артефакты в 20/500 Holter — 4%; в 28/500 telemetry — 5,6%; суммарно 4,8% записей. Записи не были последовательной популяционной выборкой. Это не false-alarm rate. [nih]
+False Atrial Fibrillation Alerts from Smartwatches are Associated with Decreased Perceived Physical Well-being…, 3 апреля 2023, Pulsewatch
+80 участников анализа; 15 получили уведомления
+У 10 из 15 получивших уведомления — 67% — AF не подтверждалась одновременным ECG patch. Среди 35 ложных уведомлений 19 связаны с шумным PPG, 11 — с другими ритмами/экстрасистолами. Это PPG-уведомления, не автоматические ЭКГ-тревоги. [nih]
+Lindsey et al., Activity Type Effects Signal Quality in Electrocardiogram Devices, 20 августа 2025
+39 здоровых: Polar H10 n=12, Equivital n=13, Zephyr n=14; BIOPAC у всех
+Средняя отбраковка окон: ходьба 11,4%; exercise circuit 29,9%; obstacle course 40,4%. Критерии включают SQI<0,7, неправдоподобную ЧСС и резкие изменения ЧСС. Это отбраковка данных, не аритмические ложные тревоги. [nih]
+Kaetheeswaran et al., HEART-Watch, 25 августа 2026
+40 здоровых взрослых; Pixel Watch ECG+PPG+ACC и chest ECG
+Слабые/недействительные 30-секундные окна smartwatch ECG: сидя 5,31%, стоя 5,00%, при ходьбе 12,50%. Это авторское правило качества; не клинические false positives. [nih]
+Прямые источники:
+https://pubmed.ncbi.nlm.nih.gov/25338067/
+https://physionet.org/content/vtac/1.1/
+https://pmc.ncbi.nlm.nih.gov/articles/PMC6931821/
+https://pmc.ncbi.nlm.nih.gov/articles/PMC10358285/
+https://pmc.ncbi.nlm.nih.gov/articles/PMC12390035/
+https://pmc.ncbi.nlm.nih.gov/articles/PMC13505899/
+
+Две важные поправки к прежним обсуждениям
+•	Число 12,5% при ходьбе теперь подтверждено первичной статьёй HEART-Watch. Но использовать его можно только как долю weak/invalid окон в конкретном исследовании Pixel Watch, не как «12,5% ложных тревог».[nih]
+•	Для астронавтов не найдено опубликованного числа «X% ЭКГ-тревог ложные» или «Y% времени носимая ЭКГ непригодна». Земные ICU/exercise проценты не доказывают частоту проблемы в космосе.
+3. Открытые данные: что действительно размечено
+3.1. VitalDB Arrhythmia — полезен, но не полностью размеченный поток всей операции
+Официальный релиз — 26 февраля 2026; статья — 20 марта 2026:
+https://physionet.org/content/vitaldb-arrhythmia/1.0.0/
+https://www.nature.com/articles/s41597-026-07076-8
+
+Подтверждено:
+•	482 хирургических пациента; 734 528 секунд размеченного ECG; 661 894 размеченных сокращения; ECG 500 Гц.[nature]
+•	Пять анестезиологов; минимум два независимых просмотра сегмента; 9,3% случаев потребовали общего консенсуса.[nature]
+•	Есть  bad_signal_quality  и отдельный  Noise : первое допускает интерпретацию ритма при ухудшенной морфологии; второе означает, что QRS надёжно не различимы.[physionet +1]
+•	Категория  Ventricular Tachyarrhythmia : 88 случаев, 9 927 секунд. Это не эквивалент 88 независимых эпизодов устойчивой VT.[physionet]
+•	Синхронные PPG/артериальное давление можно присоединять из родительского VitalDB через  case_id .[physionet]
+Что нельзя утверждать:
+•	Нет отдельных заявленных классов VF и asystole; отдельного набора меток «extreme bradycardia / extreme tachycardia», как в CinC 2015, тоже нет. Sinus Node Dysfunction и Supraventricular Tachyarrhythmia не являются взаимозаменяемыми названиями этих критических тревог.[nature]
+•	Размечены выбранные участки — приблизительно 20 минут на случай, а не всё время операции. За пределами аннотированного диапазона отсутствие метки не означает норму.[physionet]
+Упаковка и лицензия:
+Компонент
+Объём / лицензия
+Arrhythmia annotations
+20,9 MB распаковано; ZIP 3,4 MB; CC BY 4.0. Сырых waveform-файлов в этом пакете нет. [physionet]
+Родительский VitalDB
+6 388 случаев; 95,4 GB распаковано; на PhysioNet указана CC BY 4.0. [physionet]
+Сайт vitaldb.net
+На странице условий отдельно указана CC BY-NC-SA 4.0. Есть расхождение с PhysioNet; нельзя автоматически переносить одну лицензию на все способы распространения. [vitaldb +1]
+3.2. MIMIC-IV Waveform — открытый мультимодальный поток, но без готовых критических меток
+https://physionet.org/content/mimic4wdb/0.1.0/
+
+Версия 0.1.0 от 10 июля 2022:
+•	200 записей, 198 пациентов; 12,8 GB распаковано.
+•	ECG, PPG, дыхание, давление и numeric-показатели; WFDB + CSV.
+•	Открытый доступ, лицензия ODbL 1.0.
+•	Опубликованная структура — waveform и numerics; готовая экспертная разметка VT/VF/asystole/brady/tachy не предоставлена.[physionet]
+Обещание «следующий релиз около 10 000 записей» на странице — план, а не подтверждение такого опубликованного релиза. Также нельзя путать лицензию этого waveform-релиза с credentialed-доступом к основной клинической базе MIMIC-IV.[physionet +1]
+3.3. Другие наборы
+Набор / дата
+Сигналы, объём
+Метки и пригодность
+Лицензия
+CinC 2015, 15.02.2015
+Публичные 750 training recordings; два ECG + PPG и/или ABP; 250 Гц; 5 минут, часть с дополнительными 30 с
+Пять нужных типов тревог: asystole, extreme bradycardia/tachycardia, VT, ventricular flutter/fibrillation; true/false для целевой тревоги. Остальные события внутри окна не размечены. 500 test records официально private. [physionet]
+ODC-By 1.0; training ZIP 322,9 MB. [physionet]
+VTaC v1.1, 14.09.2026
+5 037 размеченных шестиминутных окон; ECG + PPG и/или ABP, 250 Гц; расширенная папка 17 131 окон, включая неразмеченные; весь релиз 18 GB
+Только VT-тревоги true/false; alarm-centered, не полная разметка непрерывного пребывания. Есть  record  и опубликованный benchmark split. [physionet]
+CC BY-SA 4.0. [physionet]
+MIT-BIH Malignant Ventricular Ectopy / VFDB, релиз 1999
+22 × 30 минут ECG; PPG нет; 33,1 MB
+Rhythm-change labels: VT, VF/VFL, ASYS, SBR, SVTA, NOISE и другие. Beat labels отсутствуют. [physionet]
+ODC-By 1.0. [physionet]
+CU Ventricular Tachyarrhythmia / CUDB, релиз 2007
+35 записей примерно по 8 минут; ECG 250 Гц; 6,4 MB
+Sustained VT/VFL/VF. VF onset приблизителен; документация прямо предупреждает, что reference annotations не окончательный gold standard; beat labels ненадёжны для классификации экстрасистол. [physionet]
+ODC-By 1.0. [physionet]
+Sudden Cardiac Death Holter / SDDB, 2004
+23 длительных Holter, примерно 4–25 часов; 1,1 GB; PPG нет
+Есть таблица VF onset;  .ari  unaudited и неполный набор audited  .atr . VFDB содержит связанные выдержки — опасность утечки между train/test. [physionet]
+ODC-By 1.0. [physionet]
+BUT QDB, 22.07.2020
+18 ECG-записей ≥24 ч от 15 человек; одно отведение 1000 Гц + ACC 100 Гц; 4,2 GB
+Три класса качества; полностью размечены только три записи, остальные частично. Критические ритмы не являются задачей разметки. [physionet]
+CC BY 4.0. [physionet]
+https://physionet.org/content/challenge-2015/1.0.0/
+https://physionet.org/content/vtac/1.1/
+https://physionet.org/content/vfdb/1.0.0/
+https://physionet.org/content/cudb/1.0.0/
+https://physionet.org/content/sddb/1.0.0/
+https://physionet.org/content/butqdb/1.0.0/
+
+Вывод по данным: для проверки уже сработавших мультимодальных тревог есть CinC 2015 и более крупный VTaC; для поиска ритмов внутри непрерывных ECG-участков — VFDB/CUDB и частично VitalDB Arrhythmia. Единого найденного набора «длительная wearable ECG+PPG, все пять критических типов, исчерпывающая разметка всего времени, свободная лицензия» — нет.[physionet +3]
+4. Данные астронавтов и аналогов: что реально можно скачать
+4.1. Inspiration4
+Оригинальная статья Jones et al., Molecular and physiological changes in the SpaceX Inspiration4 civilian crew, 11 июня 2024, подтверждает Apple Watch Series 6: ЧСС, HRV, SpO₂, активность. В полёте часы носили в среднем 1,3±0,1 дня; в статье есть часовые агрегаты HR/HRV. Это не опубликованный непрерывный ECG waveform.[nature]
+https://www.nature.com/articles/s41586-024-07648-x
+https://www.nature.com/articles/s41526-024-00393-5
+https://www.nasa.gov/osdr-latest-news-i4-mission-datasets/
+
+Ресурс
+Что реально подтверждено
+OSDR Inspiration4
+Публичные processed omics и clinical assays; NASA перечисляет исследования OSD-569…575 и другие. [nasa +1]
+OSD-575
+Blood serum metabolic panel / immune-cardiac cytokine arrays. Наличие слова cardiac не означает ECG. [nasa +1]
+Статья о доступе, 14.05.2024
+Можно скачивать metadata CSV и разрешённые processed files; видимость метаданных private medical datasets не даёт доступа к самим данным. [springer]
+TRISH EXPAND / TrialX
+Статья относит к хранимым данным wearables, включая HR/ECG, и описывает controlled-access repositories. Это подтверждение хранения, не анонимного скачивания. [springer]
+Прямой открытый файл сырой полётной ECG Inspiration4
+Не найдено.
+Прямой открытый временной ряд HR/HRV/SpO₂ с подтверждённой структурой файлов и лицензией
+Не найдено в проверенных страницах. Статья подтверждает измерения и графики, но это другой уровень доступности.
+Мой прежний вывод «никаких открытых данных астронавтов нет» был бы слишком широким: processed human data открыты. Более узкое утверждение — открытый полётный ECG-поток для проверки детектора — остаётся неподтверждённым.[nasa +1]
+4.2. LSDA / NASA Life Sciences Portal
+https://www.nasa.gov/hrp/nlsp/
+https://nlsp.nasa.gov/data-request-guidelines
+https://lsda.jsc.nasa.gov/explore/lsdahome/datarequest
+
+NASA различает pooled, de-identified и identifiable human data. Для выдачи индивидуальных данных предусмотрены научное обоснование и соответствующее рассмотрение, включая IRB; публичная карточка набора не означает downloadable individual ECG.[nasa +1]
+На обновлённой в сентябре 2026 странице NASA прямо выделены Human Research Open-Access Datasets: UTMB Bedrest Campaigns 1, 3 и 11. Наличие открытых analog datasets подтверждено. Конкретный анонимно скачиваемый raw ECG/PPG-файл с частотой дискретизации и размеченными опасными событиями в этих кампаниях — не найдено.[nasa]
+Важно: LSDA и ALSDA — не одно и то же. LSDA относится к human research; ALSDA исторически архивировала non-human Space Biology/HRP phenotypic data. Перепутать их — значит получить мышиную или клеточную «кардиологию» вместо ЭКГ человека.[nasa +1]
+4.3. ESA analog ECG
+Статья 2025 года о 66 участниках шести ESA bed-rest кампаний содержит реальные 24-часовые Holter ECG, но прямо говорит, что данные не публичны и предоставляются по запросу с учётом политики ESA. Для немедленного скачивания этот набор не подходит.[nih]
+5. Space Apps: победители, содержание проектов и жюри
+Подтверждённые близкие проекты
+Проект / год
+Подтверждённый статус
+Чем занимался; чего победа не доказывает
+SpaceGenes+, 2025
+Global Winner, Best Use of Science; официальное объявление NASA от 18.12.2025
+Интерактивный dashboard о совместном воздействии radiation/microgravity на здоровье на молекулярном уровне. Это близко по здоровью экипажа, но не sensor alarm detector. [nasa]
+PureFlow, 2025
+Global Winner, Best Mission Concept
+3D/system-engineering платформа проектирования и проверки habitat, включая life support и угрозы солнечных бурь. Смежная безопасность обитания, не клинический мониторинг. [nasa]
+Drift Off, 2016
+Официальный архив подтверждает Global Nominee
+Концепция поддержки сна с физиологическими датчиками. По одному архиву нельзя назвать Global Winner; клиническая валидация не найдена. [spaceappschallenge]
+https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/
+https://2016.spaceappschallenge.org/challenges/space-station/rock-it-space-fashion-and-design/projects/drift-off
+
+Подтверждённый прошлый глобальный победитель с валидированным offline ECG critical-event detector — не найдено.
+«Чем побеждали» в строгом смысле установлено только на уровне категории награды и описания результата. Публичные индивидуальные scorecards, сравнение с соперниками и доказательство, что конкретная техническая особенность принесла победу, — не найдено.[nasa]
+Жюри и критерии
+Официальная схема:
+•	Local judges выбирают номинантов.
+•	NASA и Space Agency Partner subject-matter experts оценивают глобальных номинантов.
+•	Executive committee агентств выбирает Global Winners.
+•	Критерии: Impact, Creativity, Validity, Relevance, Presentation.[spaceappschallenge +1]
+https://www.spaceappschallenge.org/awards/
+https://www.spaceappschallenge.org/resources/judging-criteria/
+
+Имена судей, которые оценивали именно health-проекты выше, их специализации и персональные оценки — не найдено. Проверяемый официальный состав жюри Budapest 2026 в просмотренных страницах — не найдено. Не следует представлять цитируемого в пресс-релизе руководителя NASA как судью конкретной команды.
+6. Фактчек: Марс, Artemis II и CMO
+6.1. «До примерно 22 минут в одну сторону до Марса»
+Подтверждено. NASA, 10 марта 2026: до 22 минут one-way; также возможны длительные периоды blackout. Технический NASA white paper уточняет диапазон верхних задержек 21–23 минуты в зависимости от траектории. Поэтому «около 22 минут» — корректное округление, но не постоянная задержка и не универсальный точный максимум.[nasa +1]
+https://www.nasa.gov/centers-and-facilities/nesc/expanding-the-human-factors-toolbox-an-approach-to-balancing-crew-and-mission-design-parameters/
+https://www.nasa.gov/wp-content/uploads/2024/01/mars-communications-disruption-and-delay.pdf
+
+Что не подтверждено: что любой обмен всегда занимает 44 минуты. Двойная световая задержка — только нижняя граница вопрос–ответ при заданном расстоянии; экспертная обработка добавляет время.[nasa +1]
+6.2. «Artemis II: blackout около 40 минут, 6 апреля 2026»
+Подтверждено не только планом, но и оперативным сообщением NASA от 6 апреля, обновлённым 7 апреля:
+•	18:44 EDT: Orion вошёл в planned communications blackout за Луной.
+•	19:24 EDT: после выхода из-за Луны DSN восстановила связь.
+•	NASA описывает длительность как about 40 minutes.[nasa]
+https://www.nasa.gov/blogs/missions/2026/04/06/artemis-ii-flight-day-6-lunar-flyby-updates/
+
+Уточнения:
+•	Это геометрическое перекрытие радиолинии Луной, а не авария связи.[nasa]
+•	В расписании на той же странице ещё стоит план 18:44–19:25, тогда как live-update сообщает восстановление в 19:24. Для фактического времени приоритет у live-update.[nasa]
+•	В Будапеште это уже ночь 7 апреля; дата «6 апреля» относится к NASA Eastern Time.
+•	Сам blackout не доказывает, что в этот момент произошла медицинская проблема или не сработала существующая медицинская система.
+6.3. NASA-STD-3001: CMO не обязательно врач; минимум двое
+Подтверждено текущей опубликованной NASA страницей раздела Training, обновлённой 21 апреля 2026:
+•	 [V1 5003] : CMO должен получить детальную специальную медицинскую подготовку.
+•	В rationale: “CMOs often are, but are not required, to be physicians.”
+•	 [V1 3006] : минимум два подготовленных CMO на vehicle/platform.
+•	При разделении экипажа rationale предусматривает наличие двух CMO в каждой локации; иногда потребуется подготовить больше двух человек.[nasa]
+https://www.nasa.gov/reference/5-0-training/
+https://standards.nasa.gov/standard/NASA/NASA-STD-3001_VOL_1
+
+Версия стандарта на официальной карточке — Volume 1 Revision C, утверждена 15 сентября 2023 года.[nasa +1]
+6.4. «Для миссий >210 суток обязателен врач»
+Здесь нужна оговорка о версии и контексте:
+•	Первичный доклад NASA 2021 года The Exploration Crew Medical Officer of the Future действительно связывает Level V, beyond LEO >210 days и Physician CMO. Это не выдумка вторичного блога.[nasa]
+•	Историческая редакция Volume 1 также содержала требование physician-level caregiver для исключительно автономной миссии.[nasa]
+•	Но действующее универсальное требование «любая миссия дольше 210 суток обязательно имеет врача» из текущей Rev. C в просмотренных материалах не подтверждено. Раздел Training сам по себе этого не устанавливает.[nasa +1]
+https://ntrs.nasa.gov/citations/20210020201
+
+Безопасная формулировка: NASA в exploration-planning материалах связывала высший уровень автономной помощи на длительных beyond-LEO миссиях с physician CMO; текущий стандарт требует как минимум двух обученных CMO и допускает CMO без врачебной квалификации, а конкретные требования зависят от медицинской архитектуры миссии.[nasa +1]
+Что из этого можно считать твёрдо установленным
+1.	Проблема ложных аритмических тревог клинически реальна; есть крупные оригинальные исследования и открытые размеченные alarm datasets. Однако доля ложных тревог у астронавтов не установлена.[nih +1]
+2.	При физической активности качество ECG действительно ухудшается, но проценты rejected/weak windows не являются процентами ложных медицинских тревог.[nih +1]
+3.	Космически ориентированные edge-ECG и denoising работы уже существуют; заявлять отсутствие аналогов нельзя.[nature]
+4.	Для непрерывного поиска критических ритмов есть небольшие ECG-only базы; для проверки мультимодальных тревог — CinC 2015 и VTaC. VitalDB добавляет quality labels и связь с PPG, но не полностью размеченные операции.[physionet +4]
+5.	Прямой открытый полётный ECG-поток астронавтов с разметкой опасных событий — не найдено. Открытые processed astronaut data, закрытые медицинские потоки и наземные аналоги необходимо обозначать отдельно.[nih +2]
