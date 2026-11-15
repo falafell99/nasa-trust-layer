@@ -1,0 +1,1334 @@
+{
+ "n": 150,
+ "true": 53,
+ "false": 97,
+ "bootstrap": "by record, B=2000, seed 0, percentile 95%",
+ "frozen_commit": "1dad545",
+ "Q_GOOD": 0.6,
+ "T_RED": 0.5,
+ "head": "0d6ac39",
+ "methods": {
+  "keep_all": {
+   "true_red": 53,
+   "true_yellow": 0,
+   "false_red": 97,
+   "false_yellow": 0,
+   "red_n": 150,
+   "yellow_n": 0,
+   "true_share_red": 0.35333333333333333,
+   "true_share_red_ci": [
+    0.28,
+    0.43333333333333335
+   ],
+   "true_share_yellow": null,
+   "true_share_yellow_ci": [
+    null,
+    null
+   ],
+   "red_group_share": 1.0,
+   "red_group_share_ci": [
+    1.0,
+    1.0
+   ],
+   "cinc_score_secondary": 35.333333333333336,
+   "cinc_score_ci": [
+    28.0,
+    43.333333333333336
+   ],
+   "note": "red = predicted true; for V3 yellow still keeps the alarm, so the official CinC score is only a secondary comparison"
+  },
+  "type_only": {
+   "true_red": 31,
+   "true_yellow": 22,
+   "false_red": 12,
+   "false_yellow": 85,
+   "red_n": 43,
+   "yellow_n": 107,
+   "true_share_red": 0.7209302325581395,
+   "true_share_red_ci": [
+    0.5853658536585366,
+    0.8536712398373982
+   ],
+   "true_share_yellow": 0.205607476635514,
+   "true_share_yellow_ci": [
+    0.13157894736842105,
+    0.2857473544973543
+   ],
+   "red_group_share": 0.2866666666666667,
+   "red_group_share_ci": [
+    0.21333333333333335,
+    0.36
+   ],
+   "cinc_score_secondary": 48.739495798319325,
+   "cinc_score_ci": [
+    39.051094890510946,
+    60.28526924788604
+   ],
+   "note": "red = predicted true; for V3 yellow still keeps the alarm, so the official CinC score is only a secondary comparison"
+  },
+  "V0_ecg_only": {
+   "true_red": 30,
+   "true_yellow": 23,
+   "false_red": 27,
+   "false_yellow": 70,
+   "red_n": 57,
+   "yellow_n": 93,
+   "true_share_red": 0.5263157894736842,
+   "true_share_red_ci": [
+    0.4,
+    0.6545454545454545
+   ],
+   "true_share_yellow": 0.24731182795698925,
+   "true_share_yellow_ci": [
+    0.16325976042590948,
+    0.34147113306576105
+   ],
+   "red_group_share": 0.38,
+   "red_group_share_ci": [
+    0.3,
+    0.4666666666666667
+   ],
+   "cinc_score_secondary": 41.32231404958678,
+   "cinc_score_ci": [
+    32.592592592592595,
+    51.49474877394277
+   ],
+   "note": "red = predicted true; for V3 yellow still keeps the alarm, so the official CinC score is only a secondary comparison"
+  },
+  "V3": {
+   "true_red": 11,
+   "true_yellow": 42,
+   "false_red": 3,
+   "false_yellow": 94,
+   "red_n": 14,
+   "yellow_n": 136,
+   "true_share_red": 0.7857142857142857,
+   "true_share_red_ci": [
+    0.5384615384615384,
+    1.0
+   ],
+   "true_share_yellow": 0.3088235294117647,
+   "true_share_yellow_ci": [
+    0.23306959258611645,
+    0.391304347826087
+   ],
+   "red_group_share": 0.09333333333333334,
+   "red_group_share_ci": [
+    0.04666666666666667,
+    0.14016666666666577
+   ],
+   "cinc_score_secondary": 33.0188679245283,
+   "cinc_score_ci": [
+    25.683060109289617,
+    41.97080291970803
+   ],
+   "note": "red = predicted true; for V3 yellow still keeps the alarm, so the official CinC score is only a secondary comparison"
+  }
+ },
+ "v3_extra": {
+  "q_below_good": 103,
+  "p_ge_T_RED": 51
+ },
+ "per_record": [
+  {
+   "rec": "a104s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.1424,
+   "p": 0.0006,
+   "v0": 0
+  },
+  {
+   "rec": "a123l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0009,
+   "v0": 1
+  },
+  {
+   "rec": "a170s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0339,
+   "p": 0.2135,
+   "v0": 0
+  },
+  {
+   "rec": "a171l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0087,
+   "p": 0.9941,
+   "v0": 0
+  },
+  {
+   "rec": "a219l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.2842,
+   "p": 0.5577,
+   "v0": 0
+  },
+  {
+   "rec": "a223l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.5661,
+   "p": 0.0471,
+   "v0": 0
+  },
+  {
+   "rec": "a272s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0981,
+   "p": 0.0275,
+   "v0": 0
+  },
+  {
+   "rec": "a288s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.9945,
+   "p": 0.1413,
+   "v0": 0
+  },
+  {
+   "rec": "a301l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0236,
+   "p": 0.0353,
+   "v0": 0
+  },
+  {
+   "rec": "a302s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0924,
+   "p": 0.1144,
+   "v0": 0
+  },
+  {
+   "rec": "a345l",
+   "type": "Asystole",
+   "y": 1,
+   "q": 1.0,
+   "p": 0.048,
+   "v0": 0
+  },
+  {
+   "rec": "a385l",
+   "type": "Asystole",
+   "y": 1,
+   "q": 0.0804,
+   "p": 0.0237,
+   "v0": 0
+  },
+  {
+   "rec": "a420s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.8109,
+   "p": 0.3069,
+   "v0": 0
+  },
+  {
+   "rec": "a442s",
+   "type": "Asystole",
+   "y": 1,
+   "q": 0.9872,
+   "p": 0.4063,
+   "v0": 0
+  },
+  {
+   "rec": "a457l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.1009,
+   "p": 0.0029,
+   "v0": 0
+  },
+  {
+   "rec": "a462s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0878,
+   "v0": 0
+  },
+  {
+   "rec": "a539l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0551,
+   "p": 0.6809,
+   "v0": 0
+  },
+  {
+   "rec": "a603l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.811,
+   "p": 0.0954,
+   "v0": 0
+  },
+  {
+   "rec": "a631l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.1726,
+   "p": 0.0336,
+   "v0": 0
+  },
+  {
+   "rec": "a645l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0025,
+   "v0": 1
+  },
+  {
+   "rec": "a654s",
+   "type": "Asystole",
+   "y": 1,
+   "q": 0.9997,
+   "p": 0.6667,
+   "v0": 0
+  },
+  {
+   "rec": "a670s",
+   "type": "Asystole",
+   "y": 1,
+   "q": 0.0056,
+   "p": 0.8528,
+   "v0": 0
+  },
+  {
+   "rec": "a694s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.5123,
+   "p": 0.509,
+   "v0": 0
+  },
+  {
+   "rec": "a699l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.9806,
+   "p": 0.0,
+   "v0": 1
+  },
+  {
+   "rec": "a715l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.0007,
+   "p": 0.0241,
+   "v0": 0
+  },
+  {
+   "rec": "a740s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.5413,
+   "p": 0.1065,
+   "v0": 0
+  },
+  {
+   "rec": "a746s",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.9761,
+   "p": 0.2196,
+   "v0": 1
+  },
+  {
+   "rec": "a847l",
+   "type": "Asystole",
+   "y": 0,
+   "q": 0.4904,
+   "p": 0.6101,
+   "v0": 0
+  },
+  {
+   "rec": "b215l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.7766,
+   "p": 0.2606,
+   "v0": 1
+  },
+  {
+   "rec": "b220s",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9155,
+   "p": 0.9676,
+   "v0": 1
+  },
+  {
+   "rec": "b231l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.5797,
+   "p": 0.39,
+   "v0": 0
+  },
+  {
+   "rec": "b285l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.072,
+   "p": 0.3035,
+   "v0": 0
+  },
+  {
+   "rec": "b451l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.8437,
+   "p": 0.081,
+   "v0": 0
+  },
+  {
+   "rec": "b484s",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.7494,
+   "p": 0.5046,
+   "v0": 0
+  },
+  {
+   "rec": "b485l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.7675,
+   "p": 0.4139,
+   "v0": 0
+  },
+  {
+   "rec": "b486s",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.7217,
+   "p": 0.2862,
+   "v0": 0
+  },
+  {
+   "rec": "b497l",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9997,
+   "p": 0.6859,
+   "v0": 0
+  },
+  {
+   "rec": "b528s",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0017,
+   "v0": 1
+  },
+  {
+   "rec": "b672s",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9755,
+   "p": 0.0249,
+   "v0": 0
+  },
+  {
+   "rec": "b684s",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.9915,
+   "p": 0.1408,
+   "v0": 0
+  },
+  {
+   "rec": "b695l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.8977,
+   "p": 0.7179,
+   "v0": 0
+  },
+  {
+   "rec": "b764s",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9792,
+   "p": 0.8231,
+   "v0": 1
+  },
+  {
+   "rec": "b794s",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9846,
+   "p": 0.7439,
+   "v0": 0
+  },
+  {
+   "rec": "b835l",
+   "type": "Bradycardia",
+   "y": 0,
+   "q": 0.9998,
+   "p": 0.1309,
+   "v0": 1
+  },
+  {
+   "rec": "b838s",
+   "type": "Bradycardia",
+   "y": 1,
+   "q": 0.9484,
+   "p": 0.8679,
+   "v0": 0
+  },
+  {
+   "rec": "f130s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.4072,
+   "p": 0.0746,
+   "v0": 0
+  },
+  {
+   "rec": "f138s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.4906,
+   "p": 0.0177,
+   "v0": 0
+  },
+  {
+   "rec": "f144s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.1528,
+   "p": 0.016,
+   "v0": 1
+  },
+  {
+   "rec": "f362s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.2626,
+   "p": 0.0098,
+   "v0": 0
+  },
+  {
+   "rec": "f499l",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.0557,
+   "p": 0.1004,
+   "v0": 0
+  },
+  {
+   "rec": "f500s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.4121,
+   "p": 0.0198,
+   "v0": 0
+  },
+  {
+   "rec": "f529l",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.168,
+   "p": 0.0002,
+   "v0": 0
+  },
+  {
+   "rec": "f530s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0078,
+   "v0": 0
+  },
+  {
+   "rec": "f592s",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.2589,
+   "p": 0.1651,
+   "v0": 0
+  },
+  {
+   "rec": "f593l",
+   "type": "Ventricular_Flutter_Fib",
+   "y": 0,
+   "q": 0.3111,
+   "p": 0.0253,
+   "v0": 0
+  },
+  {
+   "rec": "t106s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0241,
+   "p": 0.9876,
+   "v0": 1
+  },
+  {
+   "rec": "t107l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0259,
+   "p": 0.9844,
+   "v0": 1
+  },
+  {
+   "rec": "t112s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0015,
+   "p": 0.957,
+   "v0": 1
+  },
+  {
+   "rec": "t117l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0151,
+   "p": 0.9725,
+   "v0": 1
+  },
+  {
+   "rec": "t193l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0981,
+   "p": 0.9745,
+   "v0": 0
+  },
+  {
+   "rec": "t235l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0381,
+   "p": 0.9892,
+   "v0": 1
+  },
+  {
+   "rec": "t305l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.954,
+   "p": 0.9577,
+   "v0": 0
+  },
+  {
+   "rec": "t343l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0767,
+   "p": 0.9895,
+   "v0": 1
+  },
+  {
+   "rec": "t350s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0636,
+   "p": 0.9807,
+   "v0": 1
+  },
+  {
+   "rec": "t416s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0289,
+   "p": 0.9707,
+   "v0": 0
+  },
+  {
+   "rec": "t444s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0168,
+   "p": 0.9041,
+   "v0": 1
+  },
+  {
+   "rec": "t447l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0055,
+   "p": 0.888,
+   "v0": 1
+  },
+  {
+   "rec": "t469l",
+   "type": "Tachycardia",
+   "y": 0,
+   "q": 0.3001,
+   "p": 0.9859,
+   "v0": 0
+  },
+  {
+   "rec": "t478s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0494,
+   "p": 0.9816,
+   "v0": 1
+  },
+  {
+   "rec": "t622s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0552,
+   "p": 0.9728,
+   "v0": 1
+  },
+  {
+   "rec": "t680s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0608,
+   "p": 0.99,
+   "v0": 1
+  },
+  {
+   "rec": "t698s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0097,
+   "p": 0.8081,
+   "v0": 1
+  },
+  {
+   "rec": "t700s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.749,
+   "p": 0.9994,
+   "v0": 1
+  },
+  {
+   "rec": "t719l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.09,
+   "p": 0.9623,
+   "v0": 0
+  },
+  {
+   "rec": "t737l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0209,
+   "p": 0.9635,
+   "v0": 1
+  },
+  {
+   "rec": "t741l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0441,
+   "p": 0.9468,
+   "v0": 1
+  },
+  {
+   "rec": "t744s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.092,
+   "p": 0.9833,
+   "v0": 1
+  },
+  {
+   "rec": "t745l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.871,
+   "p": 0.9771,
+   "v0": 0
+  },
+  {
+   "rec": "t762s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0189,
+   "p": 0.9889,
+   "v0": 1
+  },
+  {
+   "rec": "t787l",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0899,
+   "p": 0.9436,
+   "v0": 1
+  },
+  {
+   "rec": "t816s",
+   "type": "Tachycardia",
+   "y": 1,
+   "q": 0.0116,
+   "p": 0.819,
+   "v0": 1
+  },
+  {
+   "rec": "v113l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4724,
+   "p": 0.16,
+   "v0": 1
+  },
+  {
+   "rec": "v128s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8417,
+   "p": 0.1296,
+   "v0": 0
+  },
+  {
+   "rec": "v143l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.1949,
+   "p": 0.1676,
+   "v0": 1
+  },
+  {
+   "rec": "v159l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.2571,
+   "p": 0.5161,
+   "v0": 0
+  },
+  {
+   "rec": "v201l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.335,
+   "p": 0.241,
+   "v0": 1
+  },
+  {
+   "rec": "v202s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.7088,
+   "p": 0.1896,
+   "v0": 0
+  },
+  {
+   "rec": "v206s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.1688,
+   "p": 0.0517,
+   "v0": 0
+  },
+  {
+   "rec": "v207l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.6444,
+   "p": 0.0101,
+   "v0": 0
+  },
+  {
+   "rec": "v210s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.0028,
+   "p": 0.0141,
+   "v0": 1
+  },
+  {
+   "rec": "v211l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.2631,
+   "p": 0.0077,
+   "v0": 1
+  },
+  {
+   "rec": "v222s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.677,
+   "p": 0.0568,
+   "v0": 0
+  },
+  {
+   "rec": "v241l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4394,
+   "p": 0.0031,
+   "v0": 0
+  },
+  {
+   "rec": "v244s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4639,
+   "p": 0.0008,
+   "v0": 0
+  },
+  {
+   "rec": "v245l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 1.0,
+   "p": 0.0,
+   "v0": 0
+  },
+  {
+   "rec": "v246s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.9982,
+   "p": 0.1732,
+   "v0": 0
+  },
+  {
+   "rec": "v257l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.817,
+   "p": 0.2319,
+   "v0": 0
+  },
+  {
+   "rec": "v274s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.0206,
+   "p": 0.0355,
+   "v0": 1
+  },
+  {
+   "rec": "v280s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.5504,
+   "p": 0.1928,
+   "v0": 1
+  },
+  {
+   "rec": "v282s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8079,
+   "p": 0.1466,
+   "v0": 0
+  },
+  {
+   "rec": "v293l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.091,
+   "p": 0.2497,
+   "v0": 1
+  },
+  {
+   "rec": "v298s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.351,
+   "p": 0.1853,
+   "v0": 0
+  },
+  {
+   "rec": "v307l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.6214,
+   "p": 0.0062,
+   "v0": 0
+  },
+  {
+   "rec": "v317l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4534,
+   "p": 0.1532,
+   "v0": 0
+  },
+  {
+   "rec": "v319l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.5149,
+   "p": 0.0004,
+   "v0": 0
+  },
+  {
+   "rec": "v336s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.0831,
+   "p": 0.0374,
+   "v0": 1
+  },
+  {
+   "rec": "v348s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.6698,
+   "p": 0.5328,
+   "v0": 0
+  },
+  {
+   "rec": "v374s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8584,
+   "p": 0.2318,
+   "v0": 0
+  },
+  {
+   "rec": "v395l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.2185,
+   "p": 0.1041,
+   "v0": 0
+  },
+  {
+   "rec": "v404s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.1051,
+   "p": 0.2625,
+   "v0": 1
+  },
+  {
+   "rec": "v419l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8641,
+   "p": 0.0765,
+   "v0": 0
+  },
+  {
+   "rec": "v421l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8289,
+   "p": 0.107,
+   "v0": 0
+  },
+  {
+   "rec": "v431l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.6238,
+   "p": 0.0018,
+   "v0": 0
+  },
+  {
+   "rec": "v432s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.5016,
+   "p": 0.114,
+   "v0": 0
+  },
+  {
+   "rec": "v433l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.0543,
+   "p": 0.0105,
+   "v0": 1
+  },
+  {
+   "rec": "v437l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4056,
+   "p": 0.0883,
+   "v0": 0
+  },
+  {
+   "rec": "v438s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8911,
+   "p": 0.2267,
+   "v0": 1
+  },
+  {
+   "rec": "v448s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.5058,
+   "p": 0.0002,
+   "v0": 1
+  },
+  {
+   "rec": "v452s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.6929,
+   "p": 0.0312,
+   "v0": 0
+  },
+  {
+   "rec": "v466s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1059,
+   "p": 0.1836,
+   "v0": 1
+  },
+  {
+   "rec": "v470s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.545,
+   "p": 0.169,
+   "v0": 0
+  },
+  {
+   "rec": "v473l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1839,
+   "p": 0.2327,
+   "v0": 1
+  },
+  {
+   "rec": "v510s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4132,
+   "p": 0.037,
+   "v0": 0
+  },
+  {
+   "rec": "v531l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.2502,
+   "p": 0.1239,
+   "v0": 1
+  },
+  {
+   "rec": "v552s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1329,
+   "p": 0.0631,
+   "v0": 1
+  },
+  {
+   "rec": "v559l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.2428,
+   "p": 0.1336,
+   "v0": 1
+  },
+  {
+   "rec": "v607l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.2559,
+   "p": 0.8084,
+   "v0": 0
+  },
+  {
+   "rec": "v609l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1561,
+   "p": 0.0802,
+   "v0": 1
+  },
+  {
+   "rec": "v611l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4161,
+   "p": 0.3151,
+   "v0": 0
+  },
+  {
+   "rec": "v620s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.9298,
+   "p": 0.247,
+   "v0": 0
+  },
+  {
+   "rec": "v623l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.3039,
+   "p": 0.0308,
+   "v0": 0
+  },
+  {
+   "rec": "v628s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.0324,
+   "p": 0.406,
+   "v0": 1
+  },
+  {
+   "rec": "v629l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.2452,
+   "p": 0.5305,
+   "v0": 0
+  },
+  {
+   "rec": "v644s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.8777,
+   "p": 0.4804,
+   "v0": 0
+  },
+  {
+   "rec": "v647l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.2198,
+   "p": 0.4826,
+   "v0": 1
+  },
+  {
+   "rec": "v648s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.1323,
+   "p": 0.2304,
+   "v0": 0
+  },
+  {
+   "rec": "v652s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.1245,
+   "p": 0.6827,
+   "v0": 0
+  },
+  {
+   "rec": "v671l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.9794,
+   "p": 0.2377,
+   "v0": 0
+  },
+  {
+   "rec": "v692s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.4148,
+   "p": 0.1186,
+   "v0": 0
+  },
+  {
+   "rec": "v713l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1971,
+   "p": 0.5999,
+   "v0": 1
+  },
+  {
+   "rec": "v724s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.2293,
+   "p": 0.69,
+   "v0": 0
+  },
+  {
+   "rec": "v732s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.57,
+   "p": 0.0204,
+   "v0": 0
+  },
+  {
+   "rec": "v756s",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.832,
+   "p": 0.6265,
+   "v0": 0
+  },
+  {
+   "rec": "v758s",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.937,
+   "p": 0.5629,
+   "v0": 1
+  },
+  {
+   "rec": "v765l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.5198,
+   "p": 0.4935,
+   "v0": 0
+  },
+  {
+   "rec": "v775l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.1852,
+   "p": 0.0642,
+   "v0": 1
+  },
+  {
+   "rec": "v811l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.9648,
+   "p": 0.4922,
+   "v0": 0
+  },
+  {
+   "rec": "v815l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.0395,
+   "p": 0.3031,
+   "v0": 1
+  },
+  {
+   "rec": "v837l",
+   "type": "Ventricular_Tachycardia",
+   "y": 1,
+   "q": 0.0103,
+   "p": 0.7231,
+   "v0": 1
+  },
+  {
+   "rec": "v845l",
+   "type": "Ventricular_Tachycardia",
+   "y": 0,
+   "q": 0.2013,
+   "p": 0.5353,
+   "v0": 1
+  }
+ ]
+}

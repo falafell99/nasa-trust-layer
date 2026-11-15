@@ -109,11 +109,17 @@ class VirtualSensor:
 
 
 def run_alarm(rec, alarm_type, d):
-    """d: результат cinc_common.load. Возвращает решение + пояснения. Метка записи сюда НЕ передаётся."""
+    """d: результат cinc.load. V3 (замороженная логистическая регрессия, models/v3_logreg.json) + q (quality_v2).
+    Метка записи сюда НЕ передаётся."""
+    from . import model as M          # локально: features.py импортирует pipeline
+    from .features import extract
     e1 = d["ecg"][0] if d["ecg"] else None
     e2 = d["ecg"][1] if len(d["ecg"]) > 1 else None
     seg = {"ecg1": e1, "ecg2": e2, "ppg": d["ppg"], "alarm_type": alarm_type, "fs": FS}
     win = np.array([x[-Q_WIN * FS:] for x in d["ecg"]])
     q = quality(win) if len(win) else 0.0
-    p, info = verify_detail(seg)
-    return {"q": round(q, 3), "p_true": p, "info": info, **decide(q, p, alarm_type)}
+    v0, info = verify_detail(seg)      # V0 остаётся для пояснения (ЧСС за 10 с), не для решения
+    if e1 is None or alarm_type not in SUPPORTED:
+        return {"q": round(q, 3), "p_true": None, "info": info, **decide(q, None, alarm_type)}
+    p = M.predict(M.load(), extract(d, alarm_type))
+    return {"q": round(q, 3), "p_true": round(p, 3), "info": info, **decide(q, p, alarm_type)}

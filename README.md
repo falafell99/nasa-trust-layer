@@ -1,5 +1,10 @@
 # NASA Space Apps 2026, Budapest: Trust Layer (команда «Zakaz Konina»)
 
+**Демо (3 строки):**
+1. Установка: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` (данные в `data/` скачать по `docs/04-data-plan.md`, в git их нет).
+2. Запуск: `./run_demo.sh` (интернет не нужен: шрифты и скрипты локальные, внешних URL в коде нет).
+3. Адрес: http://127.0.0.1:8000 (сцены `?scene=true_red`, `false_bad`, `false_good`, `a`).
+
 Общая память проекта для людей и их агентов. Снимок состояния: **2026-11-15, около 03:00 по Будапешту**. Подача до **16:00**, питчи в **17:00** (3 минуты).
 
 Челлендж: «Create Health Monitoring Software for Astronauts on Space Missions». Фокус: Луна/Марс (не МКС). Цель: локальный приз, настоящий работающий прототип, а не красивый дашборд.

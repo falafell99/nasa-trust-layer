@@ -65,14 +65,13 @@ def build_b():
         if o["p_true"] is None:
             check = "Check not run: no ECG, or alarm type not supported."
         else:
-            check = ("Simple ECG rule (baseline, not a trained model): over the last 10 s, heart rate %.0f bpm from %d beats; "
-                     "condition \"%s\" %s." % (info["hr"], info["n_beats"], info["cond"], "met" if info["met"] else "not met"))
-            if info.get("ppg_hr"):
-                check += " PPG pulse %.0f bpm (shown for reference, not used)." % info["ppg_hr"]
+            check = ("Logistic model (trained on 450 ICU alarms, not validated for clinical use): model score (not calibrated) %.2f "
+                     "(red needs at least 0.50 and signal quality at least %.2f). Heart rate over the last 10 s: %.0f bpm from %d beats."
+                     % (o["p_true"], Q_GOOD, info["hr"], info["n_beats"]))
             if o["reason_code"] == "signal_quality_low":
-                check += " ECG quality is low, so the rule result is not used to set the alarm aside."
+                check += " ECG quality is low, so the result is not used to set the alarm aside."
             elif o["state"] == "yellow":
-                check += " The rule did not confirm the event, but it cannot rule it out, so the alarm stays open."
+                check += " The model did not confirm the event, but it cannot rule it out, so the alarm stays open."
         scenes.append({
             "id": key, "title": titles[key], "record": rec, "alarm_type": TYPE_RU[t], "t_alarm": 300,
             "state": o["state"], "action": ACTION[o["state"]], "reason_code": o["reason_code"],
