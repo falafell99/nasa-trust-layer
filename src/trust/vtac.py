@@ -1,5 +1,5 @@
 """Загрузка VTaC v1.1: каналы по именам (ECG = всё кроме PLETH/ABP/RESP), 250 Гц, обрезка до 300 с ДО обработки.
-Тип тревоги в файлах VTaC не указан [не подтверждено, что все события VT] -> в признаках 'unknown'."""
+VTaC = только тревоги VT (по docs/11 лида) -> тип 'Ventricular_Tachycardia'."""
 import os
 import numpy as np
 import pandas as pd
@@ -12,8 +12,12 @@ ROOT = "data/vtac"
 def events(root=ROOT):
     s = pd.read_csv(os.path.join(root, "benchmark_data_split.csv"))
     l = pd.read_csv(os.path.join(root, "event_labels.csv"))
-    m = s.merge(l, on=["record", "event"])
-    m["y"] = (m.decision.astype(str).str.lower() == "true").astype(int)  # метка только для оценки
+    assert s.event.is_unique and l.event.is_unique, "duplicate events"
+    m = s.merge(l, on=["record", "event"], validate="one_to_one")
+    assert len(m) == len(s) == len(l), (len(m), len(s), len(l))
+    dec = m.decision.astype(str).str.lower()
+    assert dec.isin(["true", "false"]).all(), "unexpected decision values: %s" % sorted(set(dec) - {"true", "false"})  # не превращаем неожиданное в 0
+    m["y"] = (dec == "true").astype(int)  # метка только для оценки
     return m
 
 
