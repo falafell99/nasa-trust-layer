@@ -1,0 +1,238 @@
+{
+  "label": "exploratory, cross-validated, not held-out",
+  "protocol": "Nested 5-fold record-level outer CV; 4-fold record-level inner CV chooses one Youden-J threshold per outer fold; 8 s windows, 4 s stride; old holdout records excluded",
+  "class_rule": "positive rhythm annotations VT, VF, VFIB; ventricular flutter excluded; windows positive at >=4 s event overlap, boundary overlap ignored",
+  "rearm_rule": "merge predicted-positive windows until 30 consecutive seconds without a positive; alarm timestamp is end of first positive 8 s window",
+  "feature_names": [
+    "qrs_rate_bpm",
+    "rr_cv",
+    "rr_median_s",
+    "spectral_concentration",
+    "tci_proxy_ms",
+    "vf_filter_leakage",
+    "sample_entropy",
+    "qrs_width_proxy_s",
+    "threshold_crossings_per_s",
+    "spectral_entropy"
+  ],
+  "source_fs_hz": {
+    "vfdb": [
+      250.0
+    ],
+    "cudb": [
+      250.0
+    ],
+    "mitdb": [
+      360.0
+    ]
+  },
+  "target_fs_hz": 250,
+  "thresholds_by_outer_fold": [
+    0.3246552133560181,
+    0.334247821569443,
+    0.35068777441978455,
+    0.5702558493614195,
+    0.2777231633663177
+  ],
+  "threshold_selection": "maximize mean per-record Youden J on inner OOF windows only",
+  "records": 78,
+  "window_metrics_by_dataset": {
+    "vfdb": {
+      "auroc_record_macro": 0.9764995250998197,
+      "sensitivity_record_macro": 0.8799527707301014,
+      "specificity_record_macro": 0.8083366894662154,
+      "window_denominators": {
+        "positive": 1481,
+        "negative": 6780
+      },
+      "ci95_record_bootstrap": {
+        "auroc_record_macro": [
+          0.9584048781964781,
+          0.9920199317297466
+        ],
+        "sensitivity_record_macro": [
+          0.7660887435608141,
+          0.9727458713883836
+        ],
+        "specificity_record_macro": [
+          0.6650923310018603,
+          0.9170006969166258
+        ]
+      },
+      "metric_record_denominators": {
+        "auroc": 15,
+        "sensitivity": 15,
+        "specificity": 16
+      },
+      "records_in_dataset": 16
+    },
+    "cudb": {
+      "auroc_record_macro": 0.9856521739130435,
+      "sensitivity_record_macro": 1.0,
+      "specificity_record_macro": 0.6555475925041142,
+      "window_denominators": {
+        "positive": 83,
+        "negative": 3191
+      },
+      "ci95_record_bootstrap": {
+        "auroc_record_macro": [
+          0.971304347826087,
+          1.0
+        ],
+        "sensitivity_record_macro": [
+          1.0,
+          1.0
+        ],
+        "specificity_record_macro": [
+          0.545928956309391,
+          0.7603785103785103
+        ]
+      },
+      "metric_record_denominators": {
+        "auroc": 2,
+        "sensitivity": 2,
+        "specificity": 26
+      },
+      "records_in_dataset": 26
+    },
+    "mitdb": {
+      "auroc_record_macro": 0.9862132352941176,
+      "sensitivity_record_macro": 0.3958333333333333,
+      "specificity_record_macro": 0.9634656710692526,
+      "window_denominators": {
+        "positive": 27,
+        "negative": 16063
+      },
+      "ci95_record_bootstrap": {
+        "auroc_record_macro": [
+          0.9724264705882352,
+          1.0
+        ],
+        "sensitivity_record_macro": [
+          0.125,
+          0.6666666666666666
+        ],
+        "specificity_record_macro": [
+          0.9229999497299357,
+          0.9918535195244145
+        ]
+      },
+      "metric_record_denominators": {
+        "auroc": 2,
+        "sensitivity": 2,
+        "specificity": 36
+      },
+      "records_in_dataset": 36
+    }
+  },
+  "episode_metrics_by_dataset": {
+    "vfdb": {
+      "episodes": 94,
+      "detected": 10,
+      "missed": 84,
+      "sensitivity": 0.10638297872340426,
+      "false_alarms": 89,
+      "background_hours": 7.665513333333333,
+      "duplicate_alarms_during_events_ignored": 0,
+      "false_alarms_per_hour": 11.610442266532269,
+      "median_delay_seconds": 4.603999999999928,
+      "delay_hits_denominator": 10,
+      "ci95_record_bootstrap": {
+        "sensitivity": [
+          0.04711611729715114,
+          0.3333333333333333
+        ],
+        "false_alarms_per_hour": [
+          7.608461922663269,
+          16.006401307299107
+        ],
+        "median_delay_seconds": [
+          4.156000000000006,
+          6.219999999999914
+        ]
+      },
+      "records": 16
+    },
+    "cudb": {
+      "episodes": 2,
+      "detected": 1,
+      "missed": 1,
+      "sensitivity": 0.5,
+      "false_alarms": 59,
+      "background_hours": 3.5817099999999997,
+      "duplicate_alarms_during_events_ignored": 0,
+      "false_alarms_per_hour": 16.472578740322362,
+      "median_delay_seconds": 5.836000000000013,
+      "delay_hits_denominator": 1,
+      "ci95_record_bootstrap": {
+        "sensitivity": [
+          0.0,
+          1.0
+        ],
+        "false_alarms_per_hour": [
+          13.18872039466768,
+          19.925816518714196
+        ],
+        "median_delay_seconds": [
+          5.836000000000013,
+          5.836000000000013
+        ]
+      },
+      "records": 26
+    },
+    "mitdb": {
+      "episodes": 50,
+      "detected": 2,
+      "missed": 48,
+      "sensitivity": 0.04,
+      "false_alarms": 61,
+      "background_hours": 18.00121200617284,
+      "duplicate_alarms_during_events_ignored": 0,
+      "false_alarms_per_hour": 3.3886607179051245,
+      "median_delay_seconds": 19.94999999999999,
+      "delay_hits_denominator": 2,
+      "ci95_record_bootstrap": {
+        "sensitivity": [
+          0.0,
+          0.1111111111111111
+        ],
+        "false_alarms_per_hour": [
+          1.561152312581591,
+          5.564537301887776
+        ],
+        "median_delay_seconds": [
+          2.172222222222217,
+          37.72777777777776
+        ]
+      },
+      "records": 36
+    }
+  },
+  "episode_metrics_all_datasets": {
+    "episodes": 146,
+    "detected": 13,
+    "missed": 133,
+    "sensitivity": 0.08904109589041095,
+    "false_alarms": 209,
+    "background_hours": 29.248435339506173,
+    "duplicate_alarms_during_events_ignored": 0,
+    "false_alarms_per_hour": 7.14568138685017,
+    "median_delay_seconds": 4.667999999999893,
+    "delay_hits_denominator": 13,
+    "ci95_record_bootstrap": {
+      "sensitivity": [
+        0.04494267369869296,
+        0.2
+      ],
+      "false_alarms_per_hour": [
+        5.264144303525851,
+        9.30641054706754
+      ],
+      "median_delay_seconds": [
+        4.156000000000006,
+        6.809999999999945
+      ]
+    },
+    "records": 78
+  }
+}
