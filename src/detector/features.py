@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.signal import butter, find_peaks, sosfilt
+from scipy.signal import butter, find_peaks, peak_widths, sosfilt
 from scipy.stats import kurtosis
 
 from src.detector.data import SignalRecord, label_windows
@@ -26,6 +26,9 @@ FEATURE_NAMES = (
     "power_below_5hz",
     "power_5_15hz",
     "power_15_40hz",
+    "spectral_concentration",
+    "threshold_crossings_per_second",
+    "qrs_width_proxy_seconds",
 )
 
 
@@ -70,6 +73,13 @@ def extract_windows(record: SignalRecord) -> WindowFeatures:
         rr = np.diff(peaks) / fs
         rr_cv = float(np.std(rr) / np.mean(rr)) if len(rr) >= 2 and np.mean(rr) > 0 else 0.0
         rr_median = float(np.median(rr)) if len(rr) else 0.0
+        widths = peak_widths(np.abs(centered), peaks, rel_height=0.5)[0] / fs if len(peaks) else np.empty(0)
+        plausible_widths = widths[(widths >= 0.02) & (widths <= 0.30)]
+        width_proxy = float(np.median(plausible_widths)) if len(plausible_widths) else 0.0
+        threshold = 1.0 * std
+        threshold_crossings = np.count_nonzero((centered[:-1] < threshold) & (centered[1:] >= threshold))
+        threshold_crossings += np.count_nonzero((centered[:-1] > -threshold) & (centered[1:] <= -threshold))
+        threshold_crossing_rate = float(threshold_crossings / WINDOW_SECONDS)
 
         spectrum = np.abs(np.fft.rfft(centered)) ** 2
         spectrum[~band_mask] = 0.0
@@ -82,8 +92,9 @@ def extract_windows(record: SignalRecord) -> WindowFeatures:
             for low, high in ((0.5, 5.0), (5.0, 15.0), (15.0, 40.0)):
                 mask = (frequencies >= low) & (frequencies < high)
                 fractions.append(float(np.sum(spectrum[mask]) / total_power))
+            concentration = float(np.max(spectrum[band_mask]) / total_power)
         else:
-            entropy, fractions = 0.0, [0.0, 0.0, 0.0]
+            entropy, fractions, concentration = 0.0, [0.0, 0.0, 0.0], 0.0
 
         matrix[i] = (
             np.log1p(rms),
@@ -96,6 +107,9 @@ def extract_windows(record: SignalRecord) -> WindowFeatures:
             rr_median,
             np.clip(entropy, 0.0, 1.0),
             *fractions,
+            concentration,
+            threshold_crossing_rate,
+            width_proxy,
         )
 
     starts_seconds = starts.astype(np.float64) / fs

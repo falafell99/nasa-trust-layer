@@ -1,0 +1,161 @@
+{
+  "protocol": "exploratory, cross-validated, not held-out; leave-one-record-out on previous train+validation records only; prior holdout records excluded before signal loading",
+  "datasets": [
+    "vfdb",
+    "cudb",
+    "mitdb"
+  ],
+  "records": 78,
+  "episodes": 146,
+  "feature_names": [
+    "log_rms",
+    "log_range",
+    "line_length_norm",
+    "zero_crossing_rate",
+    "kurtosis",
+    "qrs_rate_bpm",
+    "rr_cv",
+    "rr_median_seconds",
+    "spectral_entropy",
+    "power_below_5hz",
+    "power_5_15hz",
+    "power_15_40hz",
+    "spectral_concentration",
+    "threshold_crossings_per_second",
+    "qrs_width_proxy_seconds"
+  ],
+  "threshold_selection": "two CV operating points chosen nearest to 1 and 10 false alarms/hour from 51 deterministic score quantiles; thresholds and metrics use the same OOF predictions, so optimistic selection bias is expected",
+  "old_holdout": "excluded; no waveform or prediction from the previous holdout was read",
+  "models": {
+    "classical_rule": {
+      "operating_points": {
+        "1.0": {
+          "threshold": 2.747257947921753,
+          "metrics": {
+            "episodes_detected": 0,
+            "episodes_total": 146,
+            "sensitivity": 0.0,
+            "false_alarms": 1,
+            "non_event_hours": 29.248435339506173,
+            "false_alarms_per_hour": 0.03418986309497689,
+            "latency_median_seconds": null,
+            "latency_p90_seconds": null,
+            "sensitivity_ci95": [
+              0.0,
+              0.0
+            ],
+            "false_alarms_per_hour_ci95": [
+              0.0,
+              0.10973996584999515
+            ],
+            "latency_median_seconds_ci95": null,
+            "latency_p90_seconds_ci95": null,
+            "bootstrap": {
+              "unit": "record",
+              "replicates": 2000,
+              "seed": 0
+            },
+            "records": 78
+          }
+        },
+        "10.0": {
+          "threshold": 0.21970602869987485,
+          "metrics": {
+            "episodes_detected": 1,
+            "episodes_total": 146,
+            "sensitivity": 0.00684931506849315,
+            "false_alarms": 387,
+            "non_event_hours": 29.248435339506173,
+            "false_alarms_per_hour": 13.231477017756056,
+            "latency_median_seconds": 1.156000000000006,
+            "latency_p90_seconds": 1.156000000000006,
+            "sensitivity_ci95": [
+              0.0,
+              0.03125822368421048
+            ],
+            "false_alarms_per_hour_ci95": [
+              5.487017705721417,
+              23.506608026563672
+            ],
+            "latency_median_seconds_ci95": [
+              1.156000000000006,
+              1.156000000000006
+            ],
+            "latency_p90_seconds_ci95": [
+              1.156000000000006,
+              1.156000000000006
+            ],
+            "bootstrap": {
+              "unit": "record",
+              "replicates": 2000,
+              "seed": 0
+            },
+            "records": 78
+          }
+        }
+      }
+    },
+    "logistic": {
+      "operating_points": {
+        "1.0": {
+          "threshold": 0.9962582481980693,
+          "metrics": {
+            "episodes_detected": 0,
+            "episodes_total": 146,
+            "sensitivity": 0.0,
+            "false_alarms": 1,
+            "non_event_hours": 29.248435339506173,
+            "false_alarms_per_hour": 0.03418986309497689,
+            "latency_median_seconds": null,
+            "latency_p90_seconds": null,
+            "sensitivity_ci95": [
+              0.0,
+              0.0
+            ],
+            "false_alarms_per_hour_ci95": [
+              0.0,
+              0.10907485930676691
+            ],
+            "latency_median_seconds_ci95": null,
+            "latency_p90_seconds_ci95": null,
+            "bootstrap": {
+              "unit": "record",
+              "replicates": 2000,
+              "seed": 0
+            },
+            "records": 78
+          }
+        },
+        "10.0": {
+          "threshold": 1.1273045713055521e-07,
+          "metrics": {
+            "episodes_detected": 0,
+            "episodes_total": 146,
+            "sensitivity": 0.0,
+            "false_alarms": 309,
+            "non_event_hours": 29.248435339506173,
+            "false_alarms_per_hour": 10.56466769634786,
+            "latency_median_seconds": null,
+            "latency_p90_seconds": null,
+            "sensitivity_ci95": [
+              0.0,
+              0.0
+            ],
+            "false_alarms_per_hour_ci95": [
+              3.0817014225443677,
+              23.899483590730494
+            ],
+            "latency_median_seconds_ci95": null,
+            "latency_p90_seconds_ci95": null,
+            "bootstrap": {
+              "unit": "record",
+              "replicates": 2000,
+              "seed": 0
+            },
+            "records": 78
+          }
+        }
+      }
+    }
+  }
+}
