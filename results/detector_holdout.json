@@ -1,0 +1,247 @@
+{
+  "stage": "holdout",
+  "frozen_validation_commit": "a177a603897f4a81f24e93bee9e4a9818120b714",
+  "split_sha256": "f3c50812de327651937871eadd3f9eda1f335e612dee72cc3ed9735bedf9f028",
+  "threshold_from_validation": 0.99,
+  "baseline_rule": {
+    "overall": {
+      "episodes_detected": 7,
+      "episodes_total": 28,
+      "sensitivity": 0.25,
+      "false_alarms": 1628,
+      "non_event_hours": 10.34682077160494,
+      "false_alarms_per_hour": 157.34301733221903,
+      "latency_median_seconds": 2.75,
+      "latency_p90_seconds": 362.59520000000026,
+      "sensitivity_ci95": [
+        0.05263157894736842,
+        0.45161290322580644
+      ],
+      "false_alarms_per_hour_ci95": [
+        109.22019601013525,
+        203.99476078031242
+      ],
+      "latency_median_seconds_ci95": [
+        1.7919999999999732,
+        796.004
+      ],
+      "latency_p90_seconds_ci95": [
+        2.1751999999999843,
+        796.004
+      ],
+      "bootstrap": {
+        "unit": "record",
+        "replicates": 2000,
+        "seed": 0
+      },
+      "records": 27
+    },
+    "by_dataset": {
+      "cudb": {
+        "episodes_detected": 2,
+        "episodes_total": 5,
+        "sensitivity": 0.4,
+        "false_alarms": 136,
+        "non_event_hours": 1.2640322222222222,
+        "false_alarms_per_hour": 107.5921939402037,
+        "latency_median_seconds": 1.191999999999993,
+        "latency_p90_seconds": 1.671999999999977,
+        "sensitivity_ci95": [
+          0.4,
+          0.4
+        ],
+        "false_alarms_per_hour_ci95": [
+          55.01760563380282,
+          161.9157151288605
+        ],
+        "latency_median_seconds_ci95": [
+          1.191999999999993,
+          1.191999999999993
+        ],
+        "latency_p90_seconds_ci95": [
+          1.671999999999977,
+          1.7919999999999732
+        ],
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 9
+      },
+      "mitdb": {
+        "episodes_detected": 1,
+        "episodes_total": 11,
+        "sensitivity": 0.09090909090909091,
+        "false_alarms": 1046,
+        "non_event_hours": 6.013409660493827,
+        "false_alarms_per_hour": 173.94457704617807,
+        "latency_median_seconds": 2.75,
+        "latency_p90_seconds": 2.75,
+        "sensitivity_ci95": [
+          0.0,
+          0.15498798076923057
+        ],
+        "false_alarms_per_hour_ci95": [
+          102.01488416053087,
+          246.38234736046473
+        ],
+        "latency_median_seconds_ci95": [
+          2.75,
+          2.75
+        ],
+        "latency_p90_seconds_ci95": [
+          2.75,
+          2.75
+        ],
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 12
+      },
+      "vfdb": {
+        "episodes_detected": 4,
+        "episodes_total": 12,
+        "sensitivity": 0.3333333333333333,
+        "false_alarms": 446,
+        "non_event_hours": 3.069378888888889,
+        "false_alarms_per_hour": 145.30627079456175,
+        "latency_median_seconds": 40.559999999999945,
+        "latency_p90_seconds": 579.2996000000002,
+        "sensitivity_ci95": [
+          0.0,
+          0.7142857142857143
+        ],
+        "false_alarms_per_hour_ci95": [
+          84.14356899965647,
+          210.36973235776716
+        ],
+        "latency_median_seconds_ci95": [
+          7.463999999999942,
+          796.004
+        ],
+        "latency_p90_seconds_ci95": [
+          60.41759999999995,
+          796.004
+        ],
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 6
+      }
+    }
+  },
+  "logistic": {
+    "overall": {
+      "episodes_detected": 0,
+      "episodes_total": 28,
+      "sensitivity": 0.0,
+      "false_alarms": 0,
+      "non_event_hours": 10.34682077160494,
+      "false_alarms_per_hour": 0.0,
+      "latency_median_seconds": null,
+      "latency_p90_seconds": null,
+      "sensitivity_ci95": [
+        0.0,
+        0.0
+      ],
+      "false_alarms_per_hour_ci95": [
+        0.0,
+        0.0
+      ],
+      "latency_median_seconds_ci95": null,
+      "latency_p90_seconds_ci95": null,
+      "bootstrap": {
+        "unit": "record",
+        "replicates": 2000,
+        "seed": 0
+      },
+      "records": 27
+    },
+    "by_dataset": {
+      "cudb": {
+        "episodes_detected": 0,
+        "episodes_total": 5,
+        "sensitivity": 0.0,
+        "false_alarms": 0,
+        "non_event_hours": 1.2640322222222222,
+        "false_alarms_per_hour": 0.0,
+        "latency_median_seconds": null,
+        "latency_p90_seconds": null,
+        "sensitivity_ci95": [
+          0.0,
+          0.0
+        ],
+        "false_alarms_per_hour_ci95": [
+          0.0,
+          0.0
+        ],
+        "latency_median_seconds_ci95": null,
+        "latency_p90_seconds_ci95": null,
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 9
+      },
+      "mitdb": {
+        "episodes_detected": 0,
+        "episodes_total": 11,
+        "sensitivity": 0.0,
+        "false_alarms": 0,
+        "non_event_hours": 6.013409660493827,
+        "false_alarms_per_hour": 0.0,
+        "latency_median_seconds": null,
+        "latency_p90_seconds": null,
+        "sensitivity_ci95": [
+          0.0,
+          0.0
+        ],
+        "false_alarms_per_hour_ci95": [
+          0.0,
+          0.0
+        ],
+        "latency_median_seconds_ci95": null,
+        "latency_p90_seconds_ci95": null,
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 12
+      },
+      "vfdb": {
+        "episodes_detected": 0,
+        "episodes_total": 12,
+        "sensitivity": 0.0,
+        "false_alarms": 0,
+        "non_event_hours": 3.069378888888889,
+        "false_alarms_per_hour": 0.0,
+        "latency_median_seconds": null,
+        "latency_p90_seconds": null,
+        "sensitivity_ci95": [
+          0.0,
+          0.0
+        ],
+        "false_alarms_per_hour_ci95": [
+          0.0,
+          0.0
+        ],
+        "latency_median_seconds_ci95": null,
+        "latency_p90_seconds_ci95": null,
+        "bootstrap": {
+          "unit": "record",
+          "replicates": 2000,
+          "seed": 0
+        },
+        "records": 6
+      }
+    }
+  },
+  "holdout_policy": "Single run; no threshold changes or model selection from these results."
+}
