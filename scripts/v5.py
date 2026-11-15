@@ -35,6 +35,16 @@ def metrics(y, g, red, B=2000, seed=0):
                 precision=pt[0], precision_ci=[lo[0], hi[0]], recall=pt[1], recall_ci=[lo[1], hi[1]], coverage=pt[2], coverage_ci=[lo[2], hi[2]])
 
 
+def job(a):
+    import src.trust.model as M
+    from src.trust import vtac
+    from src.trust.features import extract as ex3
+    from src.trust.pipeline import verify
+    rec, ev = a; d = vtac.load(rec, ev); f = ex3(d, "Ventricular_Tachycardia"); p3 = M.predict(M.load(), f)
+    seg = {"ecg1": d["ecg"][0], "ecg2": d["ecg"][1] if len(d["ecg"]) > 1 else None, "ppg": None, "alarm_type": "Ventricular_Tachycardia", "fs": 250}
+    return float(f["q"]), p3, int(verify(seg))
+
+
 if __name__ == "__main__":
     tr, va, feats = data()
     if sys.argv[1] == "freeze":
@@ -57,11 +67,6 @@ if __name__ == "__main__":
         cfg = json.load(open("models/v5_config.json"))
         te = pd.read_csv("data/feat2_vtac_test.csv"); y, g = te.y.values, te.group.values
         p = lgb.Booster(model_file="models/v5_lgbm.txt").predict(te[cfg["features"]])
-        V3P = M.load()
-        def job(a):
-            rec, ev = a; d = vtac.load(rec, ev); f = ex3(d, "Ventricular_Tachycardia"); p3 = M.predict(V3P, f)
-            seg = {"ecg1": d["ecg"][0], "ecg2": d["ecg"][1] if len(d["ecg"]) > 1 else None, "ppg": None, "alarm_type": "Ventricular_Tachycardia", "fs": 250}
-            return float(f["q"]), p3, int(verify(seg))
         with ProcessPoolExecutor(16) as e:
             R = np.array(list(e.map(job, list(zip(te.group, te.record)), chunksize=8)))
         q3, p3, v0 = R[:, 0], R[:, 1], R[:, 2]
